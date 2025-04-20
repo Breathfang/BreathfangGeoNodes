@@ -1,4 +1,4 @@
-# Breathfang Node Pack
+# Breathfang's Node Pack
 Blender Geometry Node Breathfang's Node Pack. Free for commercial use.
 
 Blender version requirement: 4.2 LTS
