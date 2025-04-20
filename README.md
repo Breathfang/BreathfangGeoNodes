@@ -26,8 +26,8 @@ These feature may coming in the future, including:
 - and more...
 
 # FAQ
-Q: Is it compatible across blender version?
-A: Sure, this is compatible across blender version.
+> Q: Is it compatible across blender version?
+> A: Sure, this is compatible across blender version.
 
 ---
 - License: This project is released under the GPL License.
