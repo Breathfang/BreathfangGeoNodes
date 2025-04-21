@@ -6,7 +6,7 @@ Blender version requirement: 4.2 LTS
 # Descriptions
 Initial alpha version release, introduce to our dragons! A warrior, or a mesh? Oh yeah, this is our first public release of GeoNodes. But... this is still alpha version. Features:
 - **SculptDragonMesh Exporter**:
-This is for low poly exportion and sculpy-ready mesh
+This is for low poly exportion and sculpy-ready mesh (NOT creature generator)
 - **GeoSpiral**:
 For spiral generator based on Geometry Nodes
 - **GeoSubdivision Surface**:
