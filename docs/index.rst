@@ -8,12 +8,12 @@ Welcome to Breathfang's Node Pack documentation!
 Current GeoNode Version:
 |version|
 
-Welcome to the manual for Breathfang's Node Pack, the free and open source of Blender Node packs.
+Welcome to the manual for Breathfang's Geometry Nodes Toolset Pack, the free and open source of Blender Geometry Node Pack.
 
 The nodepack can be downloaded via:
 
 * `Gumroad <https://breathfang.gumroad.com/l/LmHKz>`_
-* `Superhivemarket (BlenderMarket) <https://superhivemarket.com/products/breathfang-node-packs>`_
+* `Superhivemarket (Blender Market) <https://superhivemarket.com/products/breathfang-node-packs>`_
 * `GitHub <https://github.com/Breathfang/BreathfangGeoNodes/tree/main>`_
 * `GitHub (Preview Version - USE with CAUTION) <https://github.com/Breathfang/BreathfangGeoNodes/tree/preview>`_
 

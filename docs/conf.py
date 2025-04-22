@@ -7,12 +7,7 @@ html_title = 'Breathfang\'s GeoNode Pack Documentation'  # Optional: title shown
 project = 'Breathfang\'s GeoNode Pack'  # This shows up in the header and browser title
 
 html_static_path = ['_static']
-html_logo = ''
-
-html_theme_options = {
-    'logo_only': True,
-    'display_version': False,
-}
+html_logo = '_static/logo.png'
 
 version = 'v1.0.1-preview'
 release = 'v1.0.1-preview'
@@ -33,7 +28,6 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
     'analytics_anonymize_ip': False,
-    'logo_only': False,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'vcs_pageview_mode': '',
@@ -47,5 +41,7 @@ html_theme_options = {
     'navigation_depth': 4,
     'includehidden': True,
     'titles_only': False,
-    'version_selector': True
+    'version_selector': True,
+    'logo_only': True,
+    'display_version': False,
 }
