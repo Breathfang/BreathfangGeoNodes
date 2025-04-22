@@ -1,5 +1,11 @@
 master_doc = 'index'
 
+extensions = [
+    'sphinx_rtd_theme',
+]
+
+html_theme = "sphinx_rtd_theme"
+
 html_theme_options = {
     'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
     'analytics_anonymize_ip': False,
