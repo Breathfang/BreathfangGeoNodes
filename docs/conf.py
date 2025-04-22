@@ -3,8 +3,8 @@ import datetime
 master_doc = 'index'
 
 # Project Setup
-project = 'Breathfang\'s Node Pack'  # This shows up in the header and browser title
-html_title = 'Breathfang\'s Node Pack Documentation'  # Optional: title shown in browser tab
+html_title = 'Breathfang\'s GeoNode Pack Documentation'  # Optional: title shown in browser tab
+project = 'Breathfang\'s GeoNode Pack'  # This shows up in the header and browser title
 
 html_static_path = ['_static']
 html_logo = ''
@@ -13,6 +13,10 @@ html_theme_options = {
     'logo_only': True,
     'display_version': False,
 }
+
+version = 'v1.0.1-preview'
+release = 'v1.0.1-preview'
+author = 'Breathfang'
 
 copyright = f'2025, Breathfang (Formerly Drageon DB)'
 
@@ -42,5 +46,6 @@ html_theme_options = {
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
-    'titles_only': False
+    'titles_only': False,
+    'version_selector': True
 }
