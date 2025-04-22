@@ -1,4 +1,6 @@
 # Breathfang's Node Pack
+![Breathfang Blender GeoNode Pack Logo Universal BG Color HD](https://github.com/user-attachments/assets/a1dcc293-1582-4459-bf55-b928728901b5)
+
 Blender Geometry Node Breathfang's Node Pack. Free for commercial use.
 
 Blender version requirement: 4.2 LTS
