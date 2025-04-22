@@ -1,5 +1,25 @@
+import datetime
+
 master_doc = 'index'
 
+# Project Setup
+project = 'Breathfang\'s Node Pack'  # This shows up in the header and browser title
+html_title = 'Breathfang\'s Node Pack Documentation'  # Optional: title shown in browser tab
+
+html_static_path = ['_static']
+html_logo = ''
+
+html_theme_options = {
+    'logo_only': True,
+    'display_version': False,
+}
+
+copyright = f'2025, Breathfang (Formerly Drageon DB)'
+
+if datetime.datetime.now().year > 2025:
+    copyright = f'2025-{datetime.datetime.now().year}, Breathfang (Formerly Drageon DB)'
+
+# Project Extensions
 extensions = [
     'sphinx_rtd_theme',
 ]
@@ -13,7 +33,7 @@ html_theme_options = {
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'vcs_pageview_mode': '',
-    'style_nav_header_background': 'white',
+    'style_nav_header_background': '#8a080d',
     'flyout_display': 'hidden',
     'version_selector': True,
     'language_selector': True,
