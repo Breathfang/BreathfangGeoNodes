@@ -3,8 +3,8 @@ import datetime
 master_doc = 'index'
 
 # Project Setup
-html_title = 'Breathfang\'s GeoNode Pack Documentation'  # Optional: title shown in browser tab
-project = 'Breathfang\'s GeoNode Pack'  # This shows up in the header and browser title
+html_title = 'Breathfang\'s Geometry Nodes Toolset Pack'  # Optional: title shown in browser tab
+project = 'Breathfang\'s Geometry Nodes Toolset Pack'  # This shows up in the header and browser title
 
 html_static_path = ['_static']
 html_logo = '_static/logo.png'

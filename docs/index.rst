@@ -8,7 +8,7 @@ Welcome to Breathfang's Node Pack documentation!
 Current GeoNode Version:
 |version|
 
-Welcome to the manual for Breathfang's Geometry Nodes Toolset Pack, the free and open source of Blender Geometry Node Pack.
+Welcome to the manual for Breathfang\'s Geometry Nodes Toolset Pack, the free and open source of Blender Geometry Node Pack.
 
 The nodepack can be downloaded via:
 
