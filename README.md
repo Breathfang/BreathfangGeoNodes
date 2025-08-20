@@ -19,11 +19,9 @@ Here is minimum software version requirement to use Breathfang's Geometry Nodes 
 | v1.0.x-preview | 4.2 LTS |
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-preview | 4.2 LTS |
-| v1.2.x-alpha | 4.2 LTS |
-| v1.3.x-preview | 4.2 LTS |
-| v1.3.x-alpha | 4.2 LTS |
-| v2.x-preview | 4.5 LTS |
-| v2.x-beta | 4.5 LTS |
+| v1.2.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
 
 # How to use
 > **Note**: To use Breathfang's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)

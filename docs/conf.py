@@ -7,10 +7,10 @@ html_title = 'Breathfang\'s Geometry Nodes Toolset Pack'  # Optional: title show
 project = 'Breathfang\'s Geometry Nodes Toolset Pack'  # This shows up in the header and browser title
 
 html_static_path = ['_static']
-html_logo = '_static/logo.png'
+html_logo = '_static/img/logo/logo.png'
 
-version = 'v1.0.1-preview'
-release = 'v1.0.1-preview'
+version = 'v1.1.0-preview'
+release = 'v1.1.0-preview'
 author = 'Breathfang'
 
 copyright = f'2025, Breathfang (Formerly Drageon DB)'
