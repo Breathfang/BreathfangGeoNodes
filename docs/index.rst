@@ -21,14 +21,14 @@ The nodepack can be downloaded via:
 .. raw:: html
 
     <ul>
-        <li>
+        <!-- <li>
             <img src="_static/img/icons/gumroad.png" alt="Gumroad" style="height:1em; vertical-align:middle;">
             <a href="https://breathfang.gumroad.com/l/LmHKz">Gumroad</a>
         </li>
         <li>
             <img src="_static/img/icons/superhivemarket.png" alt="Supehivemarket" style="height:1em; vertical-align:middle;">
             <a href="https://superhivemarket.com/products/breathfang-node-packs">Superhivemarket</a>
-        </li>
+        </li> -->
         <li>
             <img src="_static/img/icons/github.png" alt="Github" style="height:1em; vertical-align:middle;">
             <a href="https://github.com/Breathfang/BreathfangGeoNodes">Github Release</a>
@@ -64,10 +64,18 @@ Geometry Nodes
 
 Here is all the Geometry Nodes for Breathfang's Geometry Nodes Toolset Pack
 
+
+.. toctree::
+   :maxdepth: 2
+   
+   deformers
+
 * `Installation <./installation>`_
     * `Installing the add-on <./installation/install_addon>`_
     * `Installing node groups assets <./installation/install_node_groups>`_
-* `Deformers <./deformers>`_
+* `Contact/Feedback <./contact>`_
+* `Changelogs <./changelogs>`_
+* `Deformers <./deformers/>`_
     * `BFang_GeoDeform_Bend <./deformers/bfang_geo_deform_bend>`_
     * `BFang_GeoDeform_Contrast <./deformers/bfang_geo_deform_contrast>`_
     * `BFang_GeoDeform_FaceOffset <./deformers/>`_
@@ -103,6 +111,8 @@ Here is all the Geometry Nodes for Breathfang's Geometry Nodes Toolset Pack
     * `BFang_InstancesOnEdge <./generators/bfang_instances_on_edge>`_
     * `BFang_InstancesOnSurface <./generators/bfang_instances_on_surface>`_
     * `BFang_InstancesInVolume <./generators/bfang_instances_in_volume>`_
+    * `BFang_SplitMesh <./utilities/bfang_split_mesh>`_
+    * `BFang_SplitCurves <./utilities/bfang_split_curves>`_
     * `BFang_TextToMesh <./generators/bfang_text_to_mesh>`_
 * `Math Functions <./math_functions>`_
     * `BFang_FangMath_AllBooleanMath <./math_functions/bfang_fang_math_all_boolean_math>`_
@@ -152,6 +162,26 @@ Here is all the Geometry Nodes for Breathfang's Geometry Nodes Toolset Pack
     * `BFang_BlendCrashIt <./utilities/bfang_blend_crash_it>`_
     * `BFang_BoundaryEdgeSelection <./utilities/bfang_boundary_edge_selection>`_
     * `BFang_DirectionalBlurAttribute <./utilities/bfang_directional_blur_attribute>`_
+    * `BFang_VerticleIndex <./utilities/bfang_verticle_index>`_
+    * `BFang_EdgeIndex <./utilities/bfang_edge_index>`_
+    * `BFang_FaceIndex <./utilities/bfang_face_index>`_
+    * `BFang_FaceCornerIndex <./utilities/bfang_face_corner_index>`_
+    * `BFang_GetMeshType <./utilities/bfang_get_mesh_type>`_
+    * `BFang_MeshIntersectChecker <./utilities/bfang_mesh_intersect_checker>`_
+    * `BFang_MeshToSelection <./utilities/bfang_mesh_to_selection>`_
+    * `BFang_MeshVolumeGetVolume <./utilities/bfang_mesh_volume_get_volume>`_
+    * `BFang_ObjectsInfo <./utilities/bfang_objects_info>`_
+    * `BFang_PlaneBisectMeshChecker <./utilities/bfang_plane_bisect_mesh_checker>`_
+    * `BFang_PositionRangeSelection <./utilities/bfang_position_range_selection>`_
+    * `BFang_RotationalAlignment <./utilities/bfang_rotational_alignment>`_
+    * `BFang_SelectFacesByAngle <./utilities/bfang_select_faces_by_angle>`_
+    * `BFang_SetMeshNormal <./utilities/bfang_set_mesh_normal>`_
+    * `BFang_ShadowAsSelection <./utilities/bfang_shadow_as_selection>`_
+    * `BFang_SimpleRandomSelectionIsland <./utilities/bfang_simple_random_selection_island>`_
+    * `BFang_SortElements <./utilities/bfang_sort_elements>`_
+    * `BFang_StoreSharpEdge <./utilities/bfang_store_sharp_edge>`_
+
+
 
 .. ==================
 .. Indices and tables
