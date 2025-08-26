@@ -16,27 +16,34 @@ Deformer Nodes
 
 Below is a list of available deformer nodes. Each node provides a unique way to manipulate mesh geometry:
 
+.. note::
+   Some nodes are exclusively for **Blender 4.5 LTS** and it will be named as **BFangExt** as the part of **Breathfang Geometry Nodes Extension Pack**.
+
+.. warning::
+   Nodes marked with * (asterisk) are experimental and **may not work** as expected.
+
 .. toctree::
    :maxdepth: 2
-
-..    bfang_geo_deform_bend
-..    bfang_geo_deform_contrast
-..    bfang_geo_deform_face_offset
-..    bfang_geo_deform_matrix_mesh_operations
-..    bfang_geo_deform_mesh_offset
-..    bfang_geo_deform_morph_mesh
-..    bfang_geo_deform_planarize_mesh
-..    bfang_geo_deform_selection_hook
-..    bfang_geo_deform_shear
-..    bfang_geo_deform_shear_2d
-..    bfang_geo_deform_shear_3d
-..    bfang_geo_deform_simple_matrix
-..    bfang_geo_deform_smooth
-..    bfang_geo_deform_stretch
-..    bfang_geo_deform_stretch_hook
-..    bfang_geo_deform_taper
-..    bfang_geo_deform_to_sphere
-..    bfang_geo_deform_twist
+   :hidden:
+   
+   bfang_geo_deform_bend
+   bfang_geo_deform_contrast
+   bfang_geo_deform_face_offset
+   bfang_geo_deform_matrix_mesh_operations
+   bfang_geo_deform_mesh_offset
+   bfang_geo_deform_morph_mesh
+   bfang_geo_deform_planarize_mesh
+   bfang_geo_deform_selection_hook
+   bfang_geo_deform_shear
+   bfang_geo_deform_shear_2d
+   bfang_geo_deform_shear_3d
+   bfang_geo_deform_simple_matrix
+   bfang_geo_deform_smooth
+   bfang_geo_deform_stretch
+   bfang_geo_deform_stretch_hook
+   bfang_geo_deform_taper
+   bfang_geo_deform_to_sphere
+   bfang_geo_deform_twist
 
 * `BFang_GeoDeform_Bend <./bfang_geo_deform_bend>`_
    Bend the mesh around axis.
@@ -45,7 +52,7 @@ Below is a list of available deformer nodes. Each node provides a unique way to 
 * `BFang_GeoDeform_FaceOffset <./bfang_geo_deform_face_offset>`_
    Offset individual faces.
 * `BFang_GeoDeform_MatrixMeshOperations <./bfang_geo_deform_matrix_mesh_operations>`_
-   Deform the mesh using matrix operations.
+   Deform the mesh with matrix operations.
 * `BFang_GeoDeform_MeshOffset <./bfang_geo_deform_mesh_offset>`_
    Offset the entire mesh.
 * `BFang_GeoDeform_MorphMesh <./bfang_geo_deform_morph_mesh>`_

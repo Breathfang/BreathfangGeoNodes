@@ -3,7 +3,7 @@ Welcome to Breathfang's Node Pack documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: Welcome
 
 .. image:: _static/img/dummy.jpg
    :target: _static/img/dummy.jpg
@@ -47,28 +47,41 @@ Here is for getting started
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Started
 
    intro
    usage
    nodes
 
-Contents
---------
-
-Here is the content for getting started with Breathfang's Geometry Nodes Toolset Pack.
-
-
 Geometry Nodes
 ==============
 
-Here is all the Geometry Nodes for Breathfang's Geometry Nodes Toolset Pack
+.. toctree::
+   :maxdepth: 2
+   :caption: Installation
 
+   installation
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contact
+
+   contact
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Changelogs
    
-   deformers
+   changelogs
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Deformers
+   
+   deformers/bfang_geo_deform_bend
+
+Here is all the Geometry Nodes for Breathfang's Geometry Nodes Toolset Pack
+
 
 * `Installation <./installation>`_
     * `Installing the add-on <./installation/install_addon>`_

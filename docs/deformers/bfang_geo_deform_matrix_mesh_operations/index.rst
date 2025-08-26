@@ -1,4 +1,4 @@
-BFang_GeoDeform_Bend
+BFang_GeoDeform_MatrixMeshOperations
 ====================
 
 .. toctree::
@@ -13,7 +13,7 @@ BFang_GeoDeform_Bend
 Description
 -----------
 
-Bend the mesh around axis.
+Deform the mesh with matrix operations.
 
 Usage
 -----
@@ -30,11 +30,8 @@ Input
 -----
 
 * **Geometry**: Mesh input.
-* **Axis**: Axis to bend around.
-* **Axis Direction**: Vector to bend around.
-* **Center**: Center of the bend.
-* **Angle**: Angle to bend.
-* **Lock Center?**: Lock the center of the bend.
+* **Selection**: Selected faces (only on nodes).
+* **Factor**: Offset value.
 
 Output
 ------

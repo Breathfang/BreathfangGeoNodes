@@ -44,4 +44,5 @@ html_theme_options = {
     'version_selector': True,
     'logo_only': True,
     'display_version': False,
+    'includehidden': True
 }
