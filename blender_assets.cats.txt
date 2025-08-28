@@ -1,0 +1,19 @@
+# This is an Asset Catalog Definition file for Blender.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+2752fba4-e256-4f0d-acd9-e9488da271e8:Breathfang's Node Pack:Breathfang's Node Pack
+90a3ecc8-4210-469e-8ec3-6881a32af433:Breathfang's Node Pack/Curves:Breathfang's Node Pack-Curves
+deb568a2-5000-48dd-82aa-f12179abd8f3:Breathfang's Node Pack/Deformers:Breathfang's Node Pack-Deformers
+004dbc79-033f-4bf8-9035-cb48a8990b92:Breathfang's Node Pack/Generators:Breathfang's Node Pack-Generators
+9aceb8f7-7269-4ed1-a4b2-6a928b023b8a:Breathfang's Node Pack/Math Functions:Breathfang's Node Pack-Math Functions
+c3becf90-f134-45a8-87d8-a536bd276030:Breathfang's Node Pack/Modifiers:Breathfang's Node Pack-Modifiers
+b5b6ae0c-35d8-4c0b-b0c9-bdf99f858e36:Breathfang's Node Pack/Shapes:Breathfang's Node Pack-Shapes
+465094da-81e3-420b-b0b4-e96dcb5ab684:Breathfang's Node Pack/Special Tools:Breathfang's Node Pack-Special Tools
+37e6af38-d598-4649-9f19-186b49fe1629:Breathfang's Node Pack/UV Tools:Breathfang's Node Pack-UV Tools
+d900bdf2-8912-4c9d-9c2f-5d6a77e24608:Breathfang's Node Pack/Utilities:Breathfang's Node Pack-Utilities
+90dbe7de-5e40-4816-bd15-6cb2aa449029:Breathfang's Node Pack/temp:Breathfang's Node Pack-temp
