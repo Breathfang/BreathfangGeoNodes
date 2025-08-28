@@ -1,0 +1,2 @@
+@echo off
+md bfang_geo_deform_shear_3d bfang_geo_deform_simple_matrix bfang_geo_deform_smooth bfang_geo_deform_stretch bfang_geo_deform_stretch_hook bfang_geo_deform_taper bfang_geo_deform_to_sphere bfang_geo_deform_twist

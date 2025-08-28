@@ -1,5 +1,5 @@
-BFang_GeoDeform_MeshOffset
-==========================
+BFang_GeoDeform_Shear
+=====================
 
 .. toctree::
     :maxdepth: 2
@@ -13,7 +13,7 @@ BFang_GeoDeform_MeshOffset
 Description
 -----------
 
-Offset the entire mesh.
+General 3D shear (skew) transform to distort geometry
 
 Usage
 -----
@@ -26,11 +26,10 @@ Input
 -----
 
 * **Geometry**: Mesh input.
-* **Exclusion**: Selected faces for exclusion (only on nodes).
-* **Factor**: Offset factor value.
+* **Selection**: Selected faces (only on nodes).
+* **Factor**: Offset value.
 
 Output
 ------
 
 * **Geometry**: Mesh output
-* **Displacement**: Displacement map

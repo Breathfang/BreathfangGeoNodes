@@ -18,10 +18,6 @@ Bend the mesh around axis.
 Usage
 -----
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
-
 .. image:: example.jpg
    :target: example.jpg
    :width: 400px

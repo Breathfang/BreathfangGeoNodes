@@ -1,5 +1,5 @@
-BFang_GeoDeform_MeshOffset
-==========================
+BFang_GeoDeform_MorphMesh
+=========================
 
 .. toctree::
     :maxdepth: 2
@@ -13,7 +13,7 @@ BFang_GeoDeform_MeshOffset
 Description
 -----------
 
-Offset the entire mesh.
+Morph the mesh between two mesh states using a factor.
 
 Usage
 -----
@@ -26,11 +26,10 @@ Input
 -----
 
 * **Geometry**: Mesh input.
-* **Exclusion**: Selected faces for exclusion (only on nodes).
-* **Factor**: Offset factor value.
+* **Morph Target**: Targeted mesh.
+* **Factor**: Morph factor.
 
 Output
 ------
 
 * **Geometry**: Mesh output
-* **Displacement**: Displacement map

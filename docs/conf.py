@@ -46,3 +46,8 @@ html_theme_options = {
     'display_version': False,
     'includehidden': True
 }
+
+rst_epilog = """
+.. |packname| replace:: Breathfang's Geometry Nodes Toolset Pack
+.. |packnamebold| replace:: **Breathfang's Geometry Nodes Toolset Pack**
+"""

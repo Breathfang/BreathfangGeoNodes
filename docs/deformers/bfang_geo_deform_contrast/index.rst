@@ -1,5 +1,5 @@
 BFang_GeoDeform_Contrast
-====================
+========================
 
 .. toctree::
     :maxdepth: 2
@@ -17,10 +17,6 @@ Amplify or reduce the "contrast" of the mesh. This is can be used for sharpen or
 
 Usage
 -----
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
 
 .. image:: example.jpg
    :target: example.jpg

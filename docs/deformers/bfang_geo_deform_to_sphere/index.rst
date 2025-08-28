@@ -1,5 +1,5 @@
-BFang_GeoDeform_MeshOffset
-==========================
+BFang_GeoDeform_ToSphere
+========================
 
 .. toctree::
     :maxdepth: 2
@@ -13,7 +13,7 @@ BFang_GeoDeform_MeshOffset
 Description
 -----------
 
-Offset the entire mesh.
+Transform the mesh towards a spherical shape.
 
 Usage
 -----
@@ -26,11 +26,10 @@ Input
 -----
 
 * **Geometry**: Mesh input.
-* **Exclusion**: Selected faces for exclusion (only on nodes).
-* **Factor**: Offset factor value.
+* **Selection**: Selected faces (only on nodes).
+* **Factor**: Offset value.
 
 Output
 ------
 
 * **Geometry**: Mesh output
-* **Displacement**: Displacement map
