@@ -1,5 +1,5 @@
 BFang_GeoDeform_MeshOffset
-====================
+==========================
 
 .. toctree::
     :maxdepth: 2
@@ -18,10 +18,6 @@ Offset the entire mesh.
 Usage
 -----
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
-
 .. image:: example.jpg
    :target: example.jpg
    :width: 400px
@@ -30,10 +26,11 @@ Input
 -----
 
 * **Geometry**: Mesh input.
-* **Selection**: Selected faces (only on nodes).
-* **Factor**: Offset value.
+* **Exclusion**: Selected faces for exclusion (only on nodes).
+* **Factor**: Offset factor value.
 
 Output
 ------
 
 * **Geometry**: Mesh output
+* **Displacement**: Displacement map

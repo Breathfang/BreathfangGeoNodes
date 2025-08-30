@@ -12,7 +12,7 @@ Deformer nodes are used to deform meshes in various ways. They can be used to cr
 
 
 Deformer Nodes
-==============
+--------------
 
 Below is a list of available deformer nodes. Each node provides a unique way to manipulate mesh geometry:
 
@@ -21,29 +21,6 @@ Below is a list of available deformer nodes. Each node provides a unique way to 
 
 .. warning::
    Nodes marked with * (asterisk) are experimental and **may not work** as expected.
-
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   
-   bfang_geo_deform_bend
-   bfang_geo_deform_contrast
-   bfang_geo_deform_face_offset
-   bfang_geo_deform_matrix_mesh_operations
-   bfang_geo_deform_mesh_offset
-   bfang_geo_deform_morph_mesh
-   bfang_geo_deform_planarize_mesh
-   bfang_geo_deform_selection_hook
-   bfang_geo_deform_shear
-   bfang_geo_deform_shear_2d
-   bfang_geo_deform_shear_3d
-   bfang_geo_deform_simple_matrix
-   bfang_geo_deform_smooth
-   bfang_geo_deform_stretch
-   bfang_geo_deform_stretch_hook
-   bfang_geo_deform_taper
-   bfang_geo_deform_to_sphere
-   bfang_geo_deform_twist
 
 * `BFang_GeoDeform_Bend <./bfang_geo_deform_bend>`_
    Bend the mesh around axis.

@@ -1,5 +1,5 @@
 BFang_GeoDeform_FaceOffset
-====================
+==========================
 
 .. toctree::
     :maxdepth: 2
@@ -17,10 +17,6 @@ Offset individual faces.
 
 Usage
 -----
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
 
 .. image:: example.jpg
    :target: example.jpg

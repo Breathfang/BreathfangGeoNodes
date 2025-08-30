@@ -20,30 +20,34 @@ Here is minimum software version requirement to use Breathfang's Geometry Nodes 
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-preview | 4.2 LTS |
 | v1.2.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v1.3.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v1.3.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.0.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.0.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| and more | ... |
 
 # How to use
 > **Note**: To use Breathfang's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
 > **Please NEVER download .zip files that has been created by GitHub. Instead use the officially packaged versions.**
 
 To import our geonode, it has two ways:
-### Manual Import
-To manually import Breathfang's Geometry Nodes Pack, here is the steps:
-1. Download either `Breathfang's Geometry Nodes Pack.blend` or `Breathfang's Geometry Nodes Pack v1.0.x.zip`
-2. If you downloaded .zip file, extract it first. It contains folder and has .blend file. Just like you found a werewolf warrior inside werewolf camp.
-3. Open `File -> Append -> <downloaded_blend_file_here> -> NodeTree`
-4. Select some or all node what you want (by icon or name), and then `Append` it
-5. And now, all nodes are in your project file! Thanks to a werewolf warrior for accompanying you!
 
 ### Setup as Asset Library
 If you want permanently available in Blender, so you can use Breathfang's Geometry Nodes Pack to all project files, here is the steps:
-1. Download either `Breathfang's Geometry Nodes Pack.blend` or `Breathfang's Geometry Nodes Pack v1.0.x.zip`
-2. If you downloaded .zip file, extract it first. It contains folder and has .blend file. Just like you found a werewolf warrior inside werewolf camp.
+1. Download `Breathfang's Geometry Nodes Pack v1.0.x - Asset Library.zip`
+2. Extract it to your desired destination
 3. Open `Edit -> Preferences`
 4. Go to `File paths -> Asset Libraries` then click `[+]` icon
-5. Select `<downloaded_blend_path_directory>` then press `Add Asset Library`
+5. Select `<downloaded_breathfang_geonode_pack_directory>` then press `Add Asset Library`
 6. Then you're done! This is like a dragon honor invitiation! Hahaha...
+
+## Setup as Add-on
+If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps:
+1. Download `Breathfang's Geometry Nodes Pack v1.0.x - Add-on.zip`
+2. Extract it to your desired destination
+3. Open `Edit -> Preferences`
+4. Go to `Add-ons -> Install` then click `[+]` icon
+5. Select `<downloaded_breathfang_geonode_pack_directory>` then press `Install`
 
 # Updating
 If you want to update Breathfang's Geometry Nodes Pack into newer version, just only download either .blend file or .zip file. But it has note, the note is your existing project that you've already using our Geometry Nodes will remain intact and will not be replaced. To update to newer node, you need to reconnecting again the nodes and re-setup again.
@@ -58,38 +62,37 @@ If you have any trouble or problem or a question that means the documentation is
 Please provide information as much as possible, including the details, problems, such as steps to reproduce the issue, screenshots, and so on.
 
 # Contributing
-Pull requests are welcome! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome! Anyone can simply fork my repo, work on your changes, and then anyone can submit a pull request. We will recheck strictly what we allow in. But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
+Pull requests are welcome! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome!
+
+Anyone can simply fork my repo, work on your changes, and then anyone can place .blend file and your icon .png for node icon into `nodes_collab` directory. We will recheck strictly what we allow in.
+
+But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
 
 I have one my today sentence: "I'm a Breathfang, Fang in your monster, despawn foes!"
 
-# Upcoming Features
-These feature might be coming in the future, including:
-- **BFang_GeoGen_CircularArray**
-- **BFang_GeoEdgeOffset**
-- **BFang_GeoShape_TriangleGrid**
-- **BFang_GeoShape_HexaGrid**
-- **BFang_GeoBevel**
-- **BFang_GeoInset**
-- **BFang_RandomDisappearance**
-- **BFang_GeoDecimate**
-- **BFang_GeoDisplacement**
-- **BFang_GeoMeshToAscii**
-- **BFang_GeoShape_Torus**
-- **BFang_GeoShape_RoundedCube**
-- **BFang_GeoGen_Blocky**
-- **BFang_GeoGen_Spin**
-- **BFang_GeoSelect_BoundEdge**
-- **BFang_GeoGen_Pointy**
-- **BFang_GeoGen_BlcokyInstances**
-- **BFang_GeoGen_WerewolfImageTracer**
-- **BFang_GeoGen_WyvernDonutGen**
-- **BFang_VerticlesIndex**
-- **BFang_FaceIndex**
-- **BFang_AdvancedRandomValue**
-- **BFang_AttributeSelector**
-- **BFang_Timewarper**
-- **BFang_GeoVolumeToMesh**
-- and more...
+# Contributing Requirements
+- Blender 4.2 LTS (for base version) or 4.5 LTS (for extension pack)
+- Python 3.13 or higher
+- Required Packages: (you can auto install required packages by running _PackageAutoSetup.py_)
+  - sphinx
+  - sphinx-autobuild
+  - sphinx_rtd_theme
+  - pandas
+  - logging
 
----
-- License: This project is released under the GPL-3 License.
+# How to run Guidebook preview before commit to GitHub
+You can run .docsbuild.bat for build the documentation and it will host under http://127.0.0.1:8000.
+
+If you update the documentation, it will be automatically refresh by sphinx-autobuild. This is includes save files, delete files, and putting files inside docs folder.
+
+# How to generate .zip packaged file for Node Pack
+To generate .zip packaged file for Node Pack, you can run _NodepackZipGenerator.py for generate .zip file.
+
+# Upcoming Features
+To see upcoming features, see in [Github Project](https://github.com/Breathfang/BreathfangGeoNodes/projects/)
+
+
+# License
+This project is released under the GPL-3 License. You can read the license in [Github](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/LICENSE)
+
+You can use Nodepack for commercial use freely.

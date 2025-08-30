@@ -1,0 +1,53 @@
+THANK YOU FOR DOWNLOADING AND USING BREATHFANG GEOMETRY NODES TOOLSET PACK
+==========================================================================
+This is a pack of Geometry Nodes for Blender, free for Commercial Use based on GPL-3. You can use it to generate, add modifier into GeoNode which will help you during modelling the model or scenering.
+
+Here is your dragon signature: "Wyurarh... Wydnkk??? Ghavnhkkk, vkkkk"
+
+
+
+HOW TO INSTALL BREATHFANG GEOMETRY NODES TOOLSET PACK
+=====================================================
+
+1. Locate the downloaded Breathfang's Geometry Nodes Toolset Pack <version>.zip
+2. Extract the Breathfang's Geometry Nodes Toolset Pack <version>.blend in any location
+3. Open File -> Preferences -> File Paths -> Asset Libraries
+4. Click (+) Add Asset Library
+5. Locate the Breathfang’s Geometry Nodes Toolset Pack folder and select Breathfang's Geometry Nodes Toolset Pack <version>.blend.
+6. Click Add Asset Library
+
+Note: Make sure you've set Import Method as Append (Reuse Data) to prevent breaking changes when updating
+
+
+
+
+HOW TO UPDATE BREATHFANG GEOMETRY NODES TOOLSET PACK
+====================================================
+
+1. Here is the steps to update Breathfang’s Geometry Nodes Toolset Pack:
+2. Extract the Breathfang's Geometry Nodes Toolset Pack <new version>.zip
+3. Locate Breathfang's Geometry Nodes Toolset Pack <new version>.blend in extracted folder, then press CTRL + C or right click -> Copy
+4. Open your directory that contains Breathfang's Geometry Nodes Toolset Pack <old version>.blend
+5. Rename the Breathfang's Geometry Nodes Toolset Pack <old version>.blend to Breathfang's Geometry Nodes Toolset Pack <old version>.blend.old, then press CTRL + V or right click -> Paste.
+6. (Optional) You can delete Breathfang's Geometry Nodes Toolset Pack <old version>.blend.old.
+7. Restart Blender
+
+Warning: If you set Import Method as Link, you need to set Import Method as Append (Reuse Data) first. Otherwise it will break your project file.
+
+
+
+HOW TO REINSTALL BREATHFANG GEOMETRY NODES TOOLSET PACK
+=======================================================
+If you want to reinstall Breathfang’s Geometry Nodes Toolset Pack, this is same as how to update Breathfang’s Geometry Nodes Toolset Pack.
+
+Just download the same version as you’ve downloaded before, and then extract it.
+
+
+
+HOW TO UNINSTALL BREATHFANG GEOMETRY NODES TOOLSET PACK
+=======================================================
+
+1. Open File -> Preferences -> File Paths -> Asset Libraries
+2. Select Breathfang's Geometry Nodes Toolset Pack <version>.blend and click Remove
+
+Note: You can delete your package folder to free up space of your disk.

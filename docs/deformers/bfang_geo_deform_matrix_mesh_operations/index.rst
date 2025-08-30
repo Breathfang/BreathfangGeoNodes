@@ -1,5 +1,5 @@
 BFang_GeoDeform_MatrixMeshOperations
-====================
+====================================
 
 .. toctree::
     :maxdepth: 2
@@ -17,10 +17,6 @@ Deform the mesh with matrix operations.
 
 Usage
 -----
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
 
 .. image:: example.jpg
    :target: example.jpg
