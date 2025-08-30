@@ -1,5 +1,5 @@
 BFang_GeoDeform_SimpleMatrix
-=========================
+============================
 
 .. toctree::
     :maxdepth: 2

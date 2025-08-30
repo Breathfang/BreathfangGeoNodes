@@ -1,3 +1,13 @@
 *.pur
 docs/_build/
 blend_addon_src/
+*.log
+Icons/backup_icons
+Icons/old_icons
+Icons/raw_icons/.output
+Icons/raw_icons/.output_resized
+Icons/raw_icons/logs
+Icons/raw_icons/temp.svg
+*.blend1
+*.blend2
+*.blend3

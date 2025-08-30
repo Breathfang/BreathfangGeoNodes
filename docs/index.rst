@@ -47,9 +47,9 @@ Welcome to Breathfang's Node Pack documentation!
 Current GeoNode Version:
 |version|
 
-Welcome to the manual for Breathfang\'s Geometry Nodes Toolset Pack, the free and open source of Blender Geometry Node Pack.
+Welcome to the manual for |packnamebold|, the free and open source of Blender Geometry Node Pack.
 
-Breathfang's Geometry Nodes Toolset Pack is a collection of Geometry Nodes tools designed to enhance your workflow in Blender. This pack includes various node groups and deformers that can be used to create complex geometry effects with ease.
+|packnamebold| is a collection of Geometry Nodes tools designed to enhance your workflow in Blender. This pack includes various node groups and deformers that can be used to create complex geometry effects with ease.
 
 The nodepack can be downloaded via:
 
