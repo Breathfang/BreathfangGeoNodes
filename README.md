@@ -20,8 +20,11 @@ Here is minimum software version requirement to use Breathfang's Geometry Nodes 
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-preview | 4.2 LTS |
 | v1.2.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v1.3.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v1.3.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.0.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v2.0.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| and more | ... |
 
 # How to use
 > **Note**: To use Breathfang's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
@@ -59,7 +62,11 @@ If you have any trouble or problem or a question that means the documentation is
 Please provide information as much as possible, including the details, problems, such as steps to reproduce the issue, screenshots, and so on.
 
 # Contributing
-Pull requests are welcome! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome! Anyone can simply fork my repo, work on your changes, and then anyone can submit a pull request. We will recheck strictly what we allow in. But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
+Pull requests are welcome! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome!
+
+Anyone can simply fork my repo, work on your changes, and then anyone can place .blend file and your icon .png for node icon into `nodes_collab` directory. We will recheck strictly what we allow in.
+
+But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
 
 I have one my today sentence: "I'm a Breathfang, Fang in your monster, despawn foes!"
 

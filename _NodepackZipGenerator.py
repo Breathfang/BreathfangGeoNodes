@@ -29,6 +29,7 @@ logger.addHandler(handler)
 logger.addHandler(console_handler)
 
 def main():
+    
     node_version = input("Node Version: (example: v1.1.0-alpha): ")
     nodepack_name = f"Breathfang's Geometry Nodes Toolset Pack {node_version}"
     
@@ -39,8 +40,12 @@ def main():
     files.append(("Read Before Use Nodes.txt", "READ THIS BEFORE USE NODES.txt"))
     files.append(("blender_assets.cats.txt", "blender_assets.cats.txt"))
 
+    # Check is the directory exists or not for _NodepackGeneratedZipFiles
+    if not os.path.exists('_NodepackGeneratedZipFiles'):
+        os.mkdir('_NodepackGeneratedZipFiles')
+    
     # Create zip
-    with zipfile.ZipFile(f"{nodepack_name}.zip", "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
+    with zipfile.ZipFile(f"_NodepackGeneratedZipFiles/{nodepack_name} - Asset Library.zip", "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zipf:
         for file in files:
             _arcname = file[1] if file[1] else file[0]
             zipf.write(file[0], arcname=_arcname)

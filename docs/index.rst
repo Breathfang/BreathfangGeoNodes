@@ -79,7 +79,7 @@ The nodepack can be downloaded via:
 Getting Started
 ===============
 
-Here is for getting started
+To get started with |packnamebold|, here is the pages:
 
 .. toctree::
    :maxdepth: 2
