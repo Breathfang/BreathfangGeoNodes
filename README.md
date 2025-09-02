@@ -79,6 +79,9 @@ I have one my today sentence: "I'm a Breathfang, Fang in your monster, despawn f
   - sphinx_rtd_theme
   - pandas
   - logging
+  - For math debug room purposes:
+      - numpy
+      - sympy
 
 # How to run Guidebook preview before commit to GitHub
 You can run .docsbuild.bat for build the documentation and it will host under http://127.0.0.1:8000.

@@ -25,7 +25,7 @@ def main():
         return
 
     # Required packages
-    packages = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme", "pandas", "logging"]
+    packages = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme", "pandas", "logging", "sympy", "numpy"]
 
     for package in packages:
         spec = importlib.util.find_spec(package)
