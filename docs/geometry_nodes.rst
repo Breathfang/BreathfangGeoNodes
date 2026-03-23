@@ -23,7 +23,7 @@ List of All Geometry Nodes
 --------------------------
 
 .. note::
-   Some nodes are exclusively for **Blender 4.5 LTS** and it will be named as **BFangExt** as the part of **Breathfang Geometry Nodes Extension Pack**.
+   Some nodes are exclusively for **Blender 5.x LTS** and it will be named as **BFangExt** as the part of **Breathfang Geometry Nodes Extension Pack**.
 
 .. warning::
    Nodes marked with * (asterisk) are experimental and **may not work** as expected.
@@ -132,14 +132,14 @@ Here is all the Geometry Nodes for |packnamebold|
     * `[N/A] BFang_FangMath_Digamma <./math_functions/bfang_fang_math_digamma>`_
     * `[N/A] BFang_FangMath_DegMinuteSeconds <./math_functions/bfang_fang_math_deg_minute_seconds>`_
     * `[N/A] BFang_FangMath_Deriative <./math_functions/bfang_fang_math_derivative>`_
-    * `BFang_FangMath_EulerToQuaternion <./math_functions/bfang_fang_math_euler_to_quaternion>`_
     * `BFang_FangMath_Factorial <./math_functions/bfang_fang_math_factorial>`_
     * `BFang_FangMath_Fibonacci <./math_functions/bfang_fang_math_fibonacci>`_
     * `BFang_FangMath_FlipValue <./math_functions/bfang_fang_math_flip_value>`_
     * `BFang_FangMath_FlipValueVector <./math_functions/bfang_fang_math_flip_value_vector>`_
     * `BFang_FangMath_FloorQuantization <./math_functions/bfang_fang_math_floor_quantization>`_
     * `[N/A] BFang_FangMath_GCD_LCM <./math_functions/bfang_fang_math_gdc_lcm>`_
-    * `[N/A] BFang_FangMath_GetDecimal <./math_functions/bfang_fang_math_get_decimal>`_
+    * `BFang_FangMath_OnceRandom <./math_functions/bfang_fang_math_once_random>`_
+    * `BFang_FangMath_OnceRandom_Vector <./math_functions/bfang_fang_math_once_random_vector>`_
     * `[N/A] BFang_FangMath_GradiansToRadian <./math_functions/bfang_fang_math_radian_to_gradians>`_
     * `[N/A] BFang_FangMath_HarmonicNumbers <./math_functions/bfang_fang_math_harmonic_numbers>`_
     * `[N/A] BFang_FangMath_HeavisideStepFunction <./math_functions/bfang_fang_math_heaviside_step_function>`_
@@ -151,11 +151,10 @@ Here is all the Geometry Nodes for |packnamebold|
     * `BFang_FangMath_NormalizeVectorAngle <./math_functions/bfang_fang_math_normalize_vector_angle>`_
     * `[N/A] BFang_FangMath_NegativeBinomialCoefficient <./math_functions/bfang_fang_math_binomial_coefficient>`_
     * `[N/A] BFang_FangMath_Polygamma <./math_functions/bfang_fang_math_polygamma>`_
-    * `[N/A] BFang_FangMath_PrimeCheck <./math_functions/bfang_fang_math_prime_check>`_
-    * `[N/A] BFang_FangMath_Permutation <./math_functions/bfang_fang_math_permutation>`_
+    * `BFang_FangMath_PrimeCheck <./math_functions/bfang_fang_math_prime_check>`_
+    * `BFang_FangMath_Permutation <./math_functions/bfang_fang_math_permutation>`_
     * `BFang_FangMath_PythagoreanTheorem <./math_functions/bfang_fang_math_pythagorean_theorem>`_
     * `BFang_FangMath_PythagoreanTheorem3D <./math_functions/bfang_fang_math_pythagorean_theorem_3d>`_
-    * `BFang_FangMath_QuaternionToEuler <./math_functions/bfang_fang_math_quaternion_to_euler>`_
     * `[N/A] BFang_FangMath_RandomMatrix <./math_functions/bfang_fang_math_random_matrix>`_
     * `[N/A] BFang_FangMath_RandomRotation <./math_functions/bfang_fang_math_random_rotation>`_
     * `[N/A] BFang_FangMath_RadianToGradians <./math_functions/bfang_fang_math_radian_to_gradians>`_
@@ -164,21 +163,24 @@ Here is all the Geometry Nodes for |packnamebold|
     * `[N/A] BFang_FangMath_SignumFunction <./math_functions/bfang_fang_math_signum_function>`_
     * `[N/A] BFang_FangMath_SphericalToCartesian <./math_functions/bfang_fang_math_spherical_to_cartesian>`_
     * `[N/A] BFang_FangMath_TaylorSeries <./math_functions/bfang_fang_math_taylor_series>`_
-    * `[N/A]BFang_FangMath_TrimDecimal <./math_functions/bfang_fang_math_trim_decimal>`_
+    * `BFang_FangMath_SliceDecimal <./math_functions/bfang_fang_math_slice_decimal>`_
+    * `BFang_FangMath_LimitDecimal <./math_functions/bfang_fang_math_limit_decimal>`_
     * `* BFang_FangMath_Tribonacci <./math_functions/bfang_fang_math_tribonacci>`_
     * `BFang_FangMath_VectorAngleConventer <./math_functions/bfang_fang_math_vector_angle_conventer>`_
     * `[N/A] BFang_FangMath_VectorCalculus <./math_functions/bfang_fang_math_vector_calculus>`_
     * `BFang_FangMath_VectorClamp <./math_functions/bfang_fang_math_vector_clamp>`_
-    * `[N/A] BFang_FangMath_VectorSwap <./math_functions/bfang_fang_math_vector_swap>`_
+    * `BFang_FangMath_VectorMapping <./math_functions/bfang_fang_math_vector_mapping>`_
+    * `BFang_FangMath_VectorSwap <./math_functions/bfang_fang_math_vector_swap>`_
 * `Mesh Modifiers <./mesh_modifiers>`_
     * `[N/A] BFang_AlignMeshIsland <./modifiers/bfang_align_mesh_island>`_
     * `BFang_DecimateMesh <./modifiers/bfang_decimate_mesh>`_
     * `BFang_DeleteByMeshElements <./modifiers/bfang_delete_by_mesh_elements>`_
-    * `[N/A] BFang_DualMesh <./modifiers/bfang_dual_mesh>`_
+    * `BFang_DualMesh <./modifiers/bfang_dual_mesh>`_
     * `BFang_EdgeBisect <./modifiers/bfang_edge_bisect>`_
     * `BFang_EdgeOffset <./modifiers/bfang_edge_offset>`_
+    * `BFang_FlattenMesh <./modifiers/bfang_flatten_mesh>`_
     * `BFang_FitSizeFromMeasure <./modifiers/bfang_fit_size_from_measure>`_
-    * `[N/A] BFang_FlipMesh <./modifiers/bfang_flip_mesh>`_
+    * `BFang_FlipMesh <./modifiers/bfang_flip_mesh>`_
     * `BFang_FollowTransform <./modifiers/bfang_follow_transform>`_
     * `BFang_GeoDisplacement <./modifiers/bfang_geo_displacement>`_
     * `* BFang_GeoInset <./modifiers/bfang_geo_inset>`_
@@ -242,21 +244,21 @@ Here is all the Geometry Nodes for |packnamebold|
 * `Normal Smoothness Tools <./normal_tools>`_
     * `[N/A] BFangExt_AverageNormal <./normal_tools/bfangext_average_normal>`_
     * `[N/A] BFangExt_FakeNormal <./normal_tools/bfangext_fake_normal>`_
-    * `[N/A] BFangExt_FlipNormal <./normal_tools/bfangext_flip_normal>`_
+    * `BFang_FlipNormal <./normal_tools/bfangext_flip_normal>`_
     * `[N/A] BFangExt_GeoCustomNormal <./normal_tools/bfang_geo_custom_normal>`_
-    * `[N/A] BFangExt_InvertNormal <./normal_tools/bfang_invert_normal>`_
+    * `BFang_InvertNormal <./normal_tools/bfang_invert_normal>`_
     * `[N/A] BFangExt_NormalBlend <./normal_tools/bfang_normal_blend>`_
     * `[N/A] BFangExt_NormalCustomWeight <./normal_tools/bfang_normal_custom_weight>`_
     * `[N/A] BFangExt_NormalDirectional <./normal_tools/bfang_normal_directional>`_
     * `[N/A] BFangExt_NormalMirror <./normal_tools/bfang_normal_mirror>`_
     * `[N/A] BFangExt_NormalSmooth <./normal_tools/bfang_normal_smooth>`_
     * `[N/A] BFangExt_NormalTransfer <./normal_tools/bfang_normal_transfer>`_
-    * `[N/A] BFangExt_RandomNormal <./normal_tools/bfang_random_normal>`_
+    * `BFang_RandomNormal <./normal_tools/bfang_random_normal>`_
     * `[N/A] BFangExt_ResetNormal <./normal_tools/bfang_reset_normal>`_
     * `[N/A] BFangExt_SetMeshNormal <./normal_tools/bfang_set_mesh_normal>`_
     * `[N/A] BFangExt_SharpenNormal <./normal_tools/bfang_sharpen_normal>`_
     * `[N/A] BFangExt_SmoothNormal <./normal_tools/bfang_smooth_normal>`_
-    * `[N/A] BFangExt_ZeroNormal <./normal_tools/bfang_zero_normal>`_
+    * `BFang_ZeroNormal <./normal_tools/bfang_zero_normal>`_
 * `SDF Shapes <./sdf_shapes>`_
     * `[N/A] BFang_GeoSDF_Cylinder <./sdf_shapes/bfang_geo_sdf_cylinder>`_
     * `[N/A] BFang_GeoSDF_Cube <./sdf_shapes/bfang_geo_sdf_cube>`_
@@ -291,7 +293,7 @@ Here is all the Geometry Nodes for |packnamebold|
     * `[N/A] BFangExt_Explosion <./simulations/bfang_flame>`_
     * `[N/A] BFangExt_Fire <./simulations/bfang_fire>`_
     * `[N/A] BFangExt_Fluid <./simulations/bfang_fluid>`_
-    * `[N/A] BFangExt_GunShoot <./simulations/bfang_gun_shoot>`_
+    * `[N/A] BFangExt_Projectile <./simulations/bfang_projectile>`_
     * `[N/A] BFangExt_Hail <./simulations/bfang_hail>`_
     * `[N/A] BFangExt_LavaFlow <./simulations/bfang_lightning>`_
     * `[N/A] BFangExt_Rain <./simulations/bfang_rain>`_
@@ -304,37 +306,36 @@ Here is all the Geometry Nodes for |packnamebold|
     * `BFang_BoxUVProject <./uv_tools/bfang_box_uv_project>`_
     * `[N/A] BFang_CameraUVProject <./uv_tools/bfang_camera_uv_project>`_
     * `[N/A] BFang_CylinderUVProject <./uv_tools/bfang_camera_uv_project>`_
-    * `[N/A] BFang_DeleteUV <./uv_tools/bfang_delete_uv>`_
+    * `BFang_DeleteUV <./uv_tools/bfang_delete_uv>`_
     * `BFang_GetUVSeams <./uv_tools/bfang_get_uv_seams>`_
     * `BFang_MeshProjectUV <./uv_tools/bfang_mesh_project_uv>`_
     * `BFang_MeshUnwrap <./uv_tools/bfang_mesh_unwrap>`_
     * `[N/A] BFang_RandomizeVertexUV <./uv_tools/bfang_randomize_vertex_uv>`_
     * `[N/A] BFang_RandomizeIslandUV <./uv_tools/bfang_randomize_island_uv>`_
-    * `[N/A] BFang_RepeatUV <./uv_tools/bfang_repeat_uv>`_
     * `[N/A] BFang_SphereUVProject <./uv_tools/bfang_circle_uv_project>`_
     * `[N/A] BFang_SquareUV <./uv_tools/bfang_square_uv>`_
     * `[N/A] BFang_UVIslandSingularity <./uv_tools/bfang_uv_transform>`_
-    * `[N/A] BFang_UVSingularity <./uv_tools/bfang_uv_singularity>`_
-    * `[N/A] BFang_UVTransform <./uv_tools/bfang_uv_transform>`_
+    * `BFang_UVSingularity <./uv_tools/bfang_uv_singularity>`_
+    * `BFang_UVMapping <./uv_tools/bfang_uv_mapping>`_
     * `BFang_UVUnwrap <./uv_tools/bfang_uv_unwrap>`_
     * `[N/A] BFang_UVRelax <./uv_tools/bfang_uv_relax>`_
+    * `BFang_ReadUVMap <./uv_tools/bfang_read_uv_map>`_
 * `Utilities <./utilities>`_
     * `BFang_AdvancedNoiseTools <./utilities/bfang_advanced_noise_tools>`_
     * `BFang_BoundaryEdgeSelection <./utilities/bfang_boundary_edge_selection>`_
     * `[N/A] BFang_ColorToHex <./utilities/bfang_color_to_hex>`_
     * `BFang_DirectionalBlurAttribute <./utilities/bfang_directional_blur_attribute>`_
-    * `[N/A] BFang_VerticleIndex <./utilities/bfang_verticle_index>`_
-    * `[N/A] BFang_EdgeIndex <./utilities/bfang_edge_index>`_
+    * `BFang_VerticleIndex <./utilities/bfang_verticle_index>`_
+    * `BFang_EdgeIndex <./utilities/bfang_edge_index>`_
     * `BFang_FaceIndex <./utilities/bfang_face_index>`_
     * `BFang_FaceCornerIndex <./utilities/bfang_face_corner_index>`_
     * `BFang_GetMeshType <./utilities/bfang_get_mesh_type>`_
-    * `[N/A] BFang_HexToColor <./utilities/bfang_hex_to_color>`_
+    * `BFang_IntegerToColor <./utilities/bfang_integer_to_color>`
     * `BFang_MeshIntersectChecker <./utilities/bfang_mesh_intersect_checker>`_
     * `BFang_MeshToSelection <./utilities/bfang_mesh_to_selection>`_
     * `BFang_MeshVolumeGetVolume <./utilities/bfang_mesh_volume_get_volume>`_
     * `BFang_ObjectsInfo <./utilities/bfang_objects_info>`_
     * `BFang_PlaneBisectMeshChecker <./utilities/bfang_plane_bisect_mesh_checker>`_
-    * `[N/A] BFang_PointCloudIndex <./utilities/bfang_point_cloud_index>`_
     * `BFang_PositionRangeSelection <./utilities/bfang_position_range_selection>`_
     * `BFang_RotationalAlignment <./utilities/bfang_rotational_alignment>`_
     * `BFang_SelectFacesByAngle <./utilities/bfang_select_faces_by_angle>`_
@@ -342,4 +343,8 @@ Here is all the Geometry Nodes for |packnamebold|
     * `BFang_SimpleRandomSelectionIsland <./utilities/bfang_simple_random_selection_island>`_
     * `BFang_SortElements <./utilities/bfang_sort_elements>`_
     * `BFang_StoreSharpEdge <./utilities/bfang_store_sharp_edge>`_
-    * `[N/A] BFang_StringToValue <./utilities/bfang_string_to_value>`_
+    * `BFang_StringToValue <./utilities/bfang_string_to_value>`_
+    * `BFang_GetCharFromString <./utilities/bfang_get_char_from_string>`_
+    * `BFang_CharToNumber <./utilities/bfang_char_to_number>`_
+    * `[N/A] BFang_NumberToHEX <./utilities/bfang_number_to_hex>`_
+    * `BFang_ContainsNumber <./utilities/bfang_contains_number>`_
