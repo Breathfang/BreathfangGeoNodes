@@ -11,6 +11,9 @@ If you want to get other version (not including dev/preview version), here is th
 - [Superhivemarket (Blender Market)](https://superhivemarket.com/products/breathfang-node-packs)
 - [extensions.blender.org](https://extensions.blender.org/add-ons/breathfangs-geometry-nodes-toolset-pack/)
 
+# Bledner requirements
+- Blender 4.5 LTS or newer (Beta)
+
 # Blender Version Requirements
 Here is minimum software version requirement to use Breathfang's Geometry Nodes Toolset Pack here:
 | Version | Blender Version |
