@@ -17,3 +17,4 @@ b5b6ae0c-35d8-4c0b-b0c9-bdf99f858e36:Breathfang's Node Pack/Shapes:Breathfang's 
 37e6af38-d598-4649-9f19-186b49fe1629:Breathfang's Node Pack/UV Tools:Breathfang's Node Pack-UV Tools
 d900bdf2-8912-4c9d-9c2f-5d6a77e24608:Breathfang's Node Pack/Utilities:Breathfang's Node Pack-Utilities
 90dbe7de-5e40-4816-bd15-6cb2aa449029:Breathfang's Node Pack/temp:Breathfang's Node Pack-temp
+c4b212ae-297e-4f45-9647-712cc5f68269:Breathfang's Node Pack/⚠️ Beta Nodes:Breathfang's Node Pack-⚠️ Beta Nodes
