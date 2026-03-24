@@ -60,7 +60,7 @@ For changelogs, please see in either [Github releases](https://github.com/Breath
 
 # Getting Support
 If you have any trouble, problem, encounter a bug, or a question, you can:
-- Create a new [issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/new/choose) on Breathfang's Geometry Nodes Toolset Pack page
+- Create a new [issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/new/choose) on DragonGraph's Toolset Pack page
 - Message me in our social media, including [@DrageonDB (X Twitter)](https://x.com/DrageonDB) or via [ArtStation](https://www.artstation.com/breathfang).
 
 Please provide information as much as possible, including the details, problems, such as steps to reproduce the issue, screenshots, and so on.
@@ -68,13 +68,14 @@ Please provide information as much as possible, including the details, problems,
 # Contributing
 Pull requests are welcome for anyone! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome!
 
-Anyone can simply fork my repo, work on your changes, and then anyone can place .blend file and your icon .png for node icon into `nodes_collab` directory. We will recheck strictly what we allow in.
+If you want to contribute, please read [Contributing Requirements](#Contributing-Requirements) first.
 
 But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
 
 # Contributing Requirements
 ### For contributing blend file
 - Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
+- For contributing .blend file, you will need to create a new blend file and put into `GN_Blend_File` folder.
 
 ### For contributing addon file
 - Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
@@ -97,6 +98,12 @@ If you update the documentation, it will be automatically refresh by sphinx-auto
 
 ### How to generate .zip packaged file for Node Pack
 To generate .zip packaged file for Node Pack, you can run _NodepackZipGenerator.py for generate .zip file. You just need only require Python 3.13 or higher.
+
+### Can I use Node Pack for commercial use?
+Yes, you can use Node Pack for commercial use. We released Node Pack under GPL-3 license.
+
+### Can I contribute to Node Pack?
+Yes, you can contribute to Node Pack. But as long as you following our [Contributing Requirements](#Contributing-Requirements), then you're welcome to contribute to Node Pack.
 
 # Upcoming Features
 To see upcoming features, see in [Github Project](https://github.com/Breathfang/BreathfangGeoNodes/projects/)
