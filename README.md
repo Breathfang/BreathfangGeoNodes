@@ -21,7 +21,7 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 | Version | Blender Version |
 | ------- | ---------------- |
 | v0.1.0-alpha | 4.2 LTS |
-| v1.0.x-preview | 4.2 LTS |
+| v1.0.x-preview | 4.2 LTS | 
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-beta | 4.5 LTS |
 | v1.3.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |

@@ -36,14 +36,13 @@ def main():
     files = []
     
     # File that needs to be appended
-    files.append(("Breathfang's Nodes.blend", f"DragonGraph's Toolset Pack {node_version}.blend"))
     files.append(("Read Before Use Nodes.txt", "READ THIS BEFORE USE NODES.txt"))
-    files.append(("blender_assets.cats.txt", "blender_assets.cats.txt"))
+    files.append(("GN_Blend_File/blender_assets.cats.txt", "GN_Blend_File/blender_assets.cats.txt"))
     
     # check inside directory of nodes_collab then append it, only include .blend
-    for file in os.listdir("nodes_collab"):
+    for file in os.listdir("GN_Blend_File"):
         if file.endswith(".blend"):
-            files.append(("nodes_collab/" + file, file))
+            files.append(("GN_Blend_File/" + file, file))
 
     # Check is the directory exists or not for _NodepackGeneratedZipFiles
     if not os.path.exists('_NodepackGeneratedZipFiles'):
