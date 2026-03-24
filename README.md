@@ -7,12 +7,12 @@ If you're not understand or newbie user want to use nodes and not understand, re
 
 # Other websites to download our GeoNodes pack
 If you want to get other version (not including dev/preview version), here is the link, no worries for my :
-- [Gumroad](https://breathfang.gumroad.com/l/LmHKz)
-- [Superhivemarket (Blender Market)](https://superhivemarket.com/products/breathfang-node-packs)
-- [extensions.blender.org](https://extensions.blender.org/add-ons/breathfangs-geometry-nodes-toolset-pack/)
+- ~~[Gumroad](https://breathfang.gumroad.com/l/LmHKz)~~
+- ~~[Superhivemarket (Blender Market)](https://superhivemarket.com/products/breathfang-node-packs)~~
+- ~~[extensions.blender.org](https://extensions.blender.org/add-ons/breathfangs-geometry-nodes-toolset-pack/)~~
 
 # Bledner requirements
-- Blender 4.5 LTS or newer (Beta)
+- Blender 4.5 LTS or newer (Starting at v1.2.x-beta)
 
 # Blender Version Requirements
 Here is minimum software version requirement to use Breathfang's Geometry Nodes Toolset Pack here:
@@ -21,12 +21,11 @@ Here is minimum software version requirement to use Breathfang's Geometry Nodes 
 | v0.1.0-alpha | 4.2 LTS |
 | v1.0.x-preview | 4.2 LTS |
 | v1.1.x-alpha | 4.2 LTS |
-| v1.2.x-preview | 4.2 LTS |
-| v1.2.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v1.3.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v1.3.x-alpha | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.0.x-preview | 4.2 LTS & 4.5 LTS (Extension Pack) |
-| v2.0.x-beta | 4.2 LTS & 4.5 LTS (Extension Pack) |
+| v1.2.x-beta | 4.5 LTS |
+| v1.3.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.4.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.5.x-beta| 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v2.0.x | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | and more | ... |
 
 # How to use
@@ -74,7 +73,7 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
 I have one my today sentence: "I'm a Breathfang, Fang in your monster, despawn foes!"
 
 # Contributing Requirements
-- Blender 4.2 LTS (for base version) or 4.5 LTS (for extension pack)
+- Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
 - Python 3.13 or higher
 - Required Packages: (you can auto install required packages by running _PackageAutoSetup.py_)
   - sphinx
@@ -82,9 +81,6 @@ I have one my today sentence: "I'm a Breathfang, Fang in your monster, despawn f
   - sphinx_rtd_theme
   - pandas
   - logging
-  - For math debug room purposes:
-      - numpy
-      - sympy
 
 # How to run Guidebook preview before commit to GitHub
 You can run .docsbuild.bat for build the documentation and it will host under http://127.0.0.1:8000.
