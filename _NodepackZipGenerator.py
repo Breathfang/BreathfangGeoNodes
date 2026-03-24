@@ -31,12 +31,12 @@ logger.addHandler(console_handler)
 def main():
     
     node_version = input("Node Version: (example: v1.1.0-alpha): ")
-    nodepack_name = f"Breathfang's Geometry Nodes Toolset Pack {node_version}"
+    nodepack_name = f"Dragongraph's Toolset Pack {node_version}"
     
     files = []
     
     # File that needs to be appended
-    files.append(("Breathfang's Nodes.blend", f"Breathfang's Geometry Nodes Toolset Pack {node_version}.blend"))
+    files.append(("Breathfang's Nodes.blend", f"DragonGraph's Toolset Pack {node_version}.blend"))
     files.append(("Read Before Use Nodes.txt", "READ THIS BEFORE USE NODES.txt"))
     files.append(("blender_assets.cats.txt", "blender_assets.cats.txt"))
     
