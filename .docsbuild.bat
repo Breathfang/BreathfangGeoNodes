@@ -1,7 +1,7 @@
 @echo off
 REM Clean up old builds
 IF EXIST "./docs/_build" (
-    echo Removing _build...
+    echo "Removing _build..."
     rmdir /s /q "./docs/_build"
 ) ELSE (
     echo Folder ./docs/_build not found.

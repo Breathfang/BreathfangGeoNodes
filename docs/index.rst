@@ -34,7 +34,7 @@
 
 
 
-Welcome to Breathfang's Node Pack documentation!
+Welcome to DragonGraph's (formerly Breathfang) Node Pack documentation!
 ================================================
 
 .. toctree::

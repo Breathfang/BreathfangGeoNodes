@@ -9,9 +9,9 @@ html_static_path = ['_static']
 html_logo = '_static/img/logo/logo.png'
 
 # Project Information
-version = 'v1.1.0-preview'
-release = 'v1.1.0-preview'
-author = 'Breathfang'
+version = 'v1.2.0-preview'
+release = 'v1.2.0-preview'
+author = 'Breathfang (Formerly Drageon DB)'
 
 # Update copyright
 copyright = f'2025, Breathfang (Formerly Drageon DB)'
@@ -64,7 +64,7 @@ rst_epilog = """
 .. |packnamezipver| replace:: ``{0} <version>.zip``
 .. |packnamezipold| replace:: ``{0} <old version>.zip``
 .. |packnamezipnew| replace:: ``{0} <new version>.zip``
-.. |blenderminver| replace:: **Blender 4.2 LTS**
-.. |blenderextminver| replace:: **Blender 4.5 LTS**
+.. |blenderminver| replace:: **Blender 4.5 LTS**
+.. |blenderextminver| replace:: **Blender 5.2 LTS**
 """
-rst_epilog = rst_epilog.format("Breathfang's Geometry Nodes Toolset Pack", "Breathfang's Geometry Nodes Toolset Extension Pack")
+rst_epilog = rst_epilog.format("DragonGraph's Nodes Pack", "DragonGraph's Nodes Extension Pack")

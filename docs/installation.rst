@@ -10,11 +10,11 @@ Requirements
 
 Before you install |packnamebold|, here is the requirements
 
-* For base |packnamebold|, the minimum version of Blender is |blenderminver|. The node prefix is ``BFang_``
-* For |packnameextbold|, the minimum version of Blender is |blenderextminver|. The node prefix is ``BFangExt_``
+* For base |packnamebold|, the minimum version of Blender is |blenderminver|. The node prefix is ``DGraph_``
+* For |packnameextbold|, the minimum version of Blender is |blenderextminver|. The node prefix is ``DGraphNXT_``
 
 .. warning::
-   If you installed in older version, be prepare of compatibility issues. Such as ``BFangExt_`` node will not work or weird behavior in |blenderminver|.
+   If you installed in older version, be prepare of compatibility issues. Such as ``DGraphNXT_`` node will not work or weird behavior in |blenderminver|.
    
    Some nodes may disappear automatically by Blender if you attempt to using |packnameextbold| in |blenderminver|.
 

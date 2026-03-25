@@ -13,3 +13,4 @@ Icons/raw_icons/temp.svg
 *.blend3
 github-createissue.txt
 _NodepackGeneratedZipFiles/
+_NodepackGeneratedZipFiles/*
