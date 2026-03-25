@@ -1,10 +1,21 @@
 # DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack)
-<center><img src="Logo_Designs/Legacy Logo Designs/Breathfang Blender GeoNode Pack Logo Universal BG Color.png" width="80%"></center>
+<div align="center">
+  <img src="Logo_Designs/Legacy Logo Designs/Breathfang Blender GeoNode Pack Logo Universal BG Color.png" width="80%">
+</div>
 
 <div align="center">
-DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
-<br><br>
-If you're not understand or newbie user want to use nodes, refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a>
+  <img alt="version-v1.2.1-beta" src="https://img.shields.io/badge/version-v1.2.1--beta-blue">
+  <img alt="150+-nodes" src="https://img.shields.io/badge/150+-nodes-orange">
+  <img alt="60+-commits" src="https://img.shields.io/badge/60+-commits-brown">
+
+  DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
+
+  <br><br>
+
+  If you're not understand or newbie user want to use nodes, refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a>
+
+  <img src="banner.png" width="80%">
+
 </div>
 
 # Official websites to download DragonGraph's Toolset Pack
