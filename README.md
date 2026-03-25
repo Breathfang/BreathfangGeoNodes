@@ -10,9 +10,9 @@
 
   DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
 
-  <br><br>
+  <br>
 
-  If you're not understand or newbie user want to use nodes, refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a>
+  If you're not understand or newbie user want to use nodes, refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a> You're free to use it and even can contribute! 🐲
 
   <img src="banner.png" width="80%">
 
