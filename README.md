@@ -4,10 +4,18 @@
 </div>
 
 <div align="center">
-  <img alt="version-v1.2.1-beta" src="https://img.shields.io/badge/version-v1.2.1--beta-blue">
-  <img alt="150+-nodes" src="https://img.shields.io/badge/150+-nodes-orange">
-  <img alt="60+-commits" src="https://img.shields.io/badge/60+-commits-brown">
-  <img alt="4+-stars" src="https://img.shields.io/badge/4+-stars-gold">
+  <a href="https://github.com/Breathfang/BreathfangGeoNodes/tags">
+    <img alt="version-v1.2.1-beta" src="https://img.shields.io/badge/version-v1.2.1--beta-blue">
+  </a>
+  <a href="#">
+    <img alt="150+-nodes" src="https://img.shields.io/badge/150+-nodes-orange">
+  </a>
+  <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
+    <img alt="70+-commits" src="https://img.shields.io/badge/70+-commits-brown">
+  </a>
+  <a href="https://github.com/Breathfang/BreathfangGeoNodes/stargazers">
+    <img alt="4+-stars" src="https://img.shields.io/badge/4+-stars-gold">
+  </a>
 
   DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
 
@@ -37,9 +45,11 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 | v1.0.x-preview | 4.2 LTS | 
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-beta | 4.5 LTS |
-| v1.3.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.3.x-beta | 4.5 LTS |
 | v1.4.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | v1.5.x-beta| 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.6.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.7.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | v2.0.x | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | and more | ... |
 
@@ -102,6 +112,7 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
   - sphinx_rtd_theme
   - pandas
   - logging
+- I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
 
 # Q&A (Frequently Asked Questions)
 ### How to run Guidebook preview before commit to GitHub
