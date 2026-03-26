@@ -1,4 +1,7 @@
 # DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack)
+
+> Note: This documentation of DragonGraph's Toolset Pack readthedocs is outdated. I'm very prioritizing geometry nodes than documentation. If you're want to update the documentation, refers to Contribute section.
+
 <div align="center">
   <img src="Logo_Designs/Legacy Logo Designs/Breathfang Blender GeoNode Pack Logo Universal BG Color.png" width="80%">
 </div>
@@ -75,6 +78,7 @@ If you want permanently available in Blender, so you can use DragonGraph's Tools
 6. Then you're done! This is like a dragon honor invitiation! Hahaha...
 
 ### Setup as Add-on (Coming soon)
+> Note: This feature is still under development and will be available in the future version
 If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps:
 1. Download `DragonGraph's Toolset Pack <version> - Add-on.zip`
 2. Extract it to your desired destination
@@ -105,6 +109,8 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
 ### For contributing blend file
 - Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
 - For contributing .blend file, you will need to create a new blend file and put into `GN_Blend_File` folder.
+- I could improve your nodes and merge it into a main file if I consider your blend file is ready.
+- You can comtribute between Geometry Nodes and Shading Nodes.
 
 ### For contributing addon file
 - Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
