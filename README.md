@@ -7,12 +7,13 @@
   <img alt="version-v1.2.1-beta" src="https://img.shields.io/badge/version-v1.2.1--beta-blue">
   <img alt="150+-nodes" src="https://img.shields.io/badge/150+-nodes-orange">
   <img alt="60+-commits" src="https://img.shields.io/badge/60+-commits-brown">
+  <img alt="4+-stars" src="https://img.shields.io/badge/4+-stars-gold">
 
   DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
 
   <br>
 
-  If you're not understand or newbie user want to use nodes, refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a> You're free to use it and even can contribute! 🐲
+  If you're new user want to use our nodes, you can refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a> You're free to use it and even can contribute! 🐲
 
   <img src="banner.png" width="80%">
 
@@ -26,6 +27,7 @@ If you want to get other version (not including dev/preview version), here is th
 
 # Blender requirements
 - Blender 4.5 LTS or newer (Starting at v1.2.x-beta)
+- Blender 5.2 LTS or newer (For extension pack)
 
 # Blender Version Requirements
 Here is minimum software version requirement to use DragonGraph's Toolset Pack Toolset Pack here:
@@ -45,7 +47,7 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 > **Note**: To use DragonGraph's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
 > **Please NEVER download .zip files that has been created by GitHub. Instead use the officially packaged versions.**
 
-To import our geonode, here is the some ways to import:
+To import our DragonGraph's Toolset Pack, here is the some ways to import:
 
 ### Setup as Asset Library
 If you want permanently available in Blender, so you can use DragonGraph's Toolset Pack Pack to all project files, here is the steps:
