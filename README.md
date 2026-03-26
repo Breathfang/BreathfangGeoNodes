@@ -47,13 +47,19 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 | v1.2.x-beta | 4.5 LTS |
 | v1.3.x-beta | 4.5 LTS |
 | v1.4.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v1.5.x-beta| 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v1.5.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | v1.6.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
 | v1.7.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v2.0.x | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v2.0.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v2.1.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v2.2.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
+| v2.3.x-preview | 5.2 LTS |
+| v2.4.x-preview | 5.2 LTS |
+| v2.5.x-preview | 5.2 LTS |
+| v3.0.x (Stable) | 5.2 LTS |
 | and more | ... |
 
-# How to use
+# How to use DragonGraph's Toolset Pack
 > **Note**: To use DragonGraph's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
 > **Please NEVER download .zip files that has been created by GitHub. Instead use the officially packaged versions.**
 
@@ -68,7 +74,7 @@ If you want permanently available in Blender, so you can use DragonGraph's Tools
 5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Add Asset Library`
 6. Then you're done! This is like a dragon honor invitiation! Hahaha...
 
-### Setup as Add-on
+### Setup as Add-on (Coming soon)
 If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps:
 1. Download `DragonGraph's Toolset Pack <version> - Add-on.zip`
 2. Extract it to your desired destination
@@ -76,7 +82,7 @@ If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps
 4. Go to `Add-ons -> Install` then click `[+]` icon
 5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Install`
 
-# Updating
+# Updating DragonGraph's Toolset Pack
 If you want to update DragonGraph's Toolset Pack into newer version, just only download either .blend file or .zip file. But it has note, the note is your existing project that you've already using our Geometry Nodes will remain intact and will not be replaced. To update to newer node, you need to reconnecting again the nodes and re-setup again.
 
 For changelogs, please see in either [Github releases](https://github.com/Breathfang/BreathfangGeoNodes/releases), [extensions.blender.org Changelogs](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/versions/) or [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
@@ -113,6 +119,7 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
   - pandas
   - logging
 - I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
+- Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
 
 # Q&A (Frequently Asked Questions)
 ### How to run Guidebook preview before commit to GitHub
