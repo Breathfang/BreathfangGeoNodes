@@ -42,7 +42,7 @@ If you want to get other version (not including dev/preview version), here is th
 
 # Blender Version Requirements
 Here is minimum software version requirement to use DragonGraph's Toolset Pack Toolset Pack here:
-| Version | Blender Version |
+| Version | Blender Version Minimum |
 | ------- | ---------------- |
 | v0.1.0-alpha | 4.2 LTS |
 | v1.0.x-preview | 4.2 LTS | 
