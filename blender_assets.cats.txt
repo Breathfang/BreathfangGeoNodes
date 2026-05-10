@@ -10,10 +10,12 @@ VERSION 1
 4a82626e-c200-4f89-88cb-3fcdf6f210f1:🐲 DragonGraph's Node Pack/!⚠️ Deprecated Nodes:🐲 DragonGraph's Node Pack-!⚠️ Deprecated Nodes
 c4b212ae-297e-4f45-9647-712cc5f68269:🐲 DragonGraph's Node Pack/⚠️ Beta Nodes:🐲 DragonGraph's Node Pack-⚠️ Beta Nodes
 90a3ecc8-4210-469e-8ec3-6881a32af433:🐲 DragonGraph's Node Pack/🐲 Curve Modifiers:🐲 DragonGraph's Node Pack-🐲 Curve Modifiers
+3dfadc92-afb1-425b-8f90-a1bd1aa80b1f:🐲 DragonGraph's Node Pack/🐲 DataField Utilities:🐲 DragonGraph's Node Pack-🐲 DataField Utilities
 deb568a2-5000-48dd-82aa-f12179abd8f3:🐲 DragonGraph's Node Pack/🐲 Deformers:🐲 DragonGraph's Node Pack-🐲 Deformers
 004dbc79-033f-4bf8-9035-cb48a8990b92:🐲 DragonGraph's Node Pack/🐲 Generators:🐲 DragonGraph's Node Pack-🐲 Generators
 9aceb8f7-7269-4ed1-a4b2-6a928b023b8a:🐲 DragonGraph's Node Pack/🐲 Math Functions:🐲 DragonGraph's Node Pack-🐲 Math Functions
 c3becf90-f134-45a8-87d8-a536bd276030:🐲 DragonGraph's Node Pack/🐲 Mesh Modifiers:🐲 DragonGraph's Node Pack-🐲 Mesh Modifiers
+70a017b1-d666-4bb8-9260-1142d5d6d26d:🐲 DragonGraph's Node Pack/🐲 Normal Tools:🐲 DragonGraph's Node Pack-🐲 Normal Tools
 b5b6ae0c-35d8-4c0b-b0c9-bdf99f858e36:🐲 DragonGraph's Node Pack/🐲 Shapes:🐲 DragonGraph's Node Pack-🐲 Shapes
 465094da-81e3-420b-b0b4-e96dcb5ab684:🐲 DragonGraph's Node Pack/🐲 Special Tools:🐲 DragonGraph's Node Pack-🐲 Special Tools
 37e6af38-d598-4649-9f19-186b49fe1629:🐲 DragonGraph's Node Pack/🐲 UV Tools:🐲 DragonGraph's Node Pack-🐲 UV Tools
