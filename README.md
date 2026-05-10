@@ -110,6 +110,8 @@ If you want to contribute, please read [Contributing Requirements](#Contributing
 
 But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
 
+All contributors are requested to follow the [Contributing Guidelines](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md).
+
 # Contributing Requirements
 ### For contributing blend file
 - Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
@@ -127,12 +129,11 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
   - sphinx
   - sphinx-autobuild
   - sphinx_rtd_theme
-  - pandas
   - logging
 - I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
 - Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
 
-Additional information can be found in [Contributing Guide](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md)
+> Additional information can be found in [Contributing Guide](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md)
 
 # Q&A (Frequently Asked Questions)
 ### How to run Guidebook preview before commit to GitHub
