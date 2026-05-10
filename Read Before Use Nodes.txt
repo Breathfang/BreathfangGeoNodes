@@ -16,7 +16,7 @@ HOW TO INSTALL DRAGONGRAPH TOOLSET PACK
 5. Locate the DragonGraph's Toolset Pack folder and select DragonGraph's Toolset Pack <version>.blend.
 6. Click Add Asset Library
 
-Note: Make sure you've set Import Method as Append (Reuse Data) to prevent breaking changes when updating
+Note: Make sure you've set Import Method as Append (Reuse Data) or Pack to prevent breaking changes when updating
 
 
 
@@ -32,7 +32,7 @@ HOW TO UPDATE DRAGONGRAPH GEOMETRY NODES TOOLSET PACK
 6. (Optional) You can delete DragonGraph's Toolset Pack <old version>.blend.old.
 7. Restart Blender
 
-Warning: If you set Import Method as Link, you need to set Import Method as Append (Reuse Data) first. Otherwise it will break your project file.
+Warning: If you set Import Method as Link, you need to set Import Method as Append (Reuse Data) or Append first. Otherwise it will break your project file.
 
 
 

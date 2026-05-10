@@ -3,8 +3,6 @@ import zipfile
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-import pandas as pd
-import shutil
 
 log_file = os.path.join(".", "_NodepackZipGenerator.log")
 
@@ -29,7 +27,6 @@ logger.addHandler(handler)
 logger.addHandler(console_handler)
 
 def main():
-    
     node_version = input("Node Version: (example: v1.1.0-alpha): ")
     nodepack_name = f"Dragongraph's Toolset Pack {node_version}"
     

@@ -75,7 +75,7 @@ If you want permanently available in Blender, so you can use DragonGraph's Tools
 3. Open `Edit -> Preferences`
 4. Go to `File paths -> Asset Libraries` then click `[+]` icon
 5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Add Asset Library`
-6. Then you're done! This is like a dragon honor invitiation! Hahaha...
+6. Set to Append (Reuse Data) or Pack.
 
 ### Setup as Add-on (Coming soon)
 > Note: This feature is still under development and will be available in the future version
@@ -87,7 +87,11 @@ If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps
 5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Install`
 
 # Updating DragonGraph's Toolset Pack
-If you want to update DragonGraph's Toolset Pack into newer version, just only download either .blend file or .zip file. But it has note, the note is your existing project that you've already using our Geometry Nodes will remain intact and will not be replaced. To update to newer node, you need to reconnecting again the nodes and re-setup again.
+If you want to update DragonGraph's Toolset Pack into newer version, just only download either .blend file or .zip file. 
+
+But it has note, the note is your existing project that you've already using our Geometry Nodes will remain intact and will not be replaced as long as your import method is set to "Append (Reuse Data)" or "Pack".
+
+To update to newer node, you need to reconnecting again the nodes and re-setup again.
 
 For changelogs, please see in either [Github releases](https://github.com/Breathfang/BreathfangGeoNodes/releases), [extensions.blender.org Changelogs](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/versions/) or [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
 
@@ -95,6 +99,7 @@ For changelogs, please see in either [Github releases](https://github.com/Breath
 If you have any trouble, problem, encounter a bug, or a question, you can:
 - Create a new [issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/new/choose) on DragonGraph's Toolset Pack page
 - Message me in our social media, including [@DrageonDB (X Twitter)](https://x.com/DrageonDB) or via [ArtStation](https://www.artstation.com/breathfang).
+- Email me via COMING SOON
 
 Please provide information as much as possible, including the details, problems, such as steps to reproduce the issue, screenshots, and so on.
 
@@ -126,6 +131,8 @@ But all suggestions, recommendations, and more are welcome. If anyone unsure wha
   - logging
 - I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
 - Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
+
+Additional information can be found in [Contributing Guide](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md)
 
 # Q&A (Frequently Asked Questions)
 ### How to run Guidebook preview before commit to GitHub

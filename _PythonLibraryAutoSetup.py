@@ -25,7 +25,7 @@ def main():
         return
 
     # Required packages
-    packages = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme", "pandas", "logging", "sympy", "numpy"]
+    packages = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme", "logging"]
 
     for package in packages:
         spec = importlib.util.find_spec(package)
@@ -45,4 +45,5 @@ try:
     main()
 except Exception as e:
     print("Traceback: %s", traceback.format_exc())
+    print("Something wrong. Process stopped.")
     input("Press enter to exit...")
