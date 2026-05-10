@@ -1,6 +1,8 @@
 # CONTRIBUTING REQUIREMENTS
 Here is some contributing requirements:
 
+## Requirements
+
 ### For contributing blend file
 - Blender 4.5 LTS (for base version)
 - Blender 5.2 LTS (for extension pack)
@@ -24,6 +26,8 @@ Here is some contributing requirements:
   - logging
 - I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
 - Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
+
+## Q&A
 
 ### How to contribute
 To contribute to this project, here are some ways:
