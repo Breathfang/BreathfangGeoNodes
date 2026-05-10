@@ -14,6 +14,16 @@
 - Addon must be interoperable with Blender 4.5 LTS and 5.2 LTS, but it's not required for newer version of Blender until next Blender LTS released.
 - Python 3.13 or higher
 - Some required packages that you can install by running _PackageAutoSetup.py_
+- Blend file size must be less than 100 MB. If it's more than 100 MB, it will be rejected. Please splitting your blend file into multiple blend files instead. I do not allow to enable LFS for this project.
+
+
+### For contributing icon file
+- You have drawing software
+- You have to be good at drawing
+- I recommend you to use Affinity Designer or Adobe Illustrator
+- It will be useful if you want to create your own icon for this project
+- It will be merged as soon as possible to main file, yeah inside .blend file for asset pack
+- Icon art style should be simple and clean, and consistent with the rest of the icons in this project
 
 
 ### For contributing documentation
