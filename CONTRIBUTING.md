@@ -1,6 +1,3 @@
-# CONTRIBUTING REQUIREMENTS
-Here is some contributing requirements:
-
 ## Requirements
 
 ### For contributing blend file
