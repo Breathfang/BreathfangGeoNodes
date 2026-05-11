@@ -8,13 +8,13 @@
 
 <div align="center">
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/tags">
-    <img alt="version-v1.2.1-beta" src="https://img.shields.io/badge/version-v1.2.1--beta-blue">
+    <img alt="version-v1.2.2-beta" src="https://img.shields.io/badge/version-v1.2.2--beta-blue">
   </a>
   <a href="#">
-    <img alt="150+-nodes" src="https://img.shields.io/badge/150+-nodes-orange">
+    <img alt="160+-nodes" src="https://img.shields.io/badge/160+-nodes-orange">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
-    <img alt="80+-commits" src="https://img.shields.io/badge/80+-commits-brown">
+    <img alt="90+-commits" src="https://img.shields.io/badge/90+-commits-brown">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/stargazers">
     <img alt="10+-stars" src="https://img.shields.io/badge/10+-stars-gold">
