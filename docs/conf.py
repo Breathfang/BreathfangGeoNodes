@@ -64,7 +64,7 @@ rst_epilog = """
 .. |packnamezipver| replace:: ``{0} <version>.zip``
 .. |packnamezipold| replace:: ``{0} <old version>.zip``
 .. |packnamezipnew| replace:: ``{0} <new version>.zip``
-.. |blenderminver| replace:: **Blender 4.5 LTS**
+.. |blenderminver| replace:: **Blender 5.2 LTS**
 .. |blenderextminver| replace:: **Blender 5.2 LTS**
 """
 rst_epilog = rst_epilog.format("DragonGraph's Nodes Pack", "DragonGraph's Nodes Extension Pack")

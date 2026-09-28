@@ -14,7 +14,7 @@ from pathlib import Path
 _SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = _SCRIPT_DIR.parent
 
-LOG_FILE = REPO_ROOT / "_NodepackZipGenerator.log"
+LOG_FILE = REPO_ROOT / "nodepack_zip_generator.log"
 LOG_MAX_BYTES = 1_000_000
 LOG_BACKUP_COUNT = 5
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"

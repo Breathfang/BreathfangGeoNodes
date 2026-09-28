@@ -8,7 +8,7 @@ on:
       - "!DragonGraph's Project/**/*.md"
       - "!DragonGraph's Project/**/*.log"
       - "!DragonGraph's Project/**/*.tmp"
-      - "!DragonGraph's Project Python Utilities/**"
+      - "!DragonGraph's Project Utilities/**"
 
 permissions:
   contents: write
@@ -85,7 +85,7 @@ jobs:
 
       # Step 2: build the nightly ZIP under DragonGraph's Nighty Build/
       # (files ending .md/.log/.tmp and editor backups are excluded inside the
-      # scripts; the Python Utilities sibling folder is outside the scan root).
+      # scripts; the Utilities sibling folder is outside the scan root).
       - name: Build nightly zip
         if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
         shell: bash

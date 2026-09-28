@@ -90,24 +90,27 @@ social media channels linked in the
 
 ## Repository scripts
 
-Both scripts require **Python 3.13 or higher** and must be run from the repository root.
+The developer tools require **Python 3.13 or higher**; the `.bat` helpers are Windows only.
+Full usage notes live in the
+[Utilities guide](DragonGraph's%20Project%20Utilities/README.md).
 
 ### How do I preview the documentation before committing?
 
-Run [`.docsbuild.bat`](.docsbuild.bat). It builds the documentation and serves it at
+Run [`.docsbuild.bat`](DragonGraph's%20Project%20Utilities/.docsbuild.bat). It builds the
+documentation and serves it at
 <http://127.0.0.1:8000>, opening your browser automatically.
 
 `[sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)` reloads automatically
 when you save, delete, or add a file inside `docs/`.
 
 If the packages are not installed yet, run
-[`_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py)
+[`python_library_autosetup.py`](DragonGraph's%20Project%20Utilities/python_library_autosetup.py)
 first.
 
 ### How do I generate the release .zip?
 
 Run
-[`_NodepackZipGenerator.py`](DragonGraph's%20Project%20Python%20Utilities/_NodepackZipGenerator.py)
+[`nodepack_zip_generator.py`](DragonGraph's%20Project%20Utilities/nodepack_zip_generator.py)
 and enter the version, for example
 `v1.1.0-alpha`. Or pass `--node-version v1.1.0-alpha` to skip the prompt
 (required when running non-interactively).

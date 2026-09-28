@@ -7,7 +7,7 @@ import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-LOG_FILE = Path("_PythonLibraryAutoSetup.log")
+LOG_FILE = Path("python_library_autosetup.log")
 LOG_MAX_BYTES = 1_000_000
 LOG_BACKUP_COUNT = 5
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"

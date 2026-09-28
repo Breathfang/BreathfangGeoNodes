@@ -5,7 +5,7 @@ Scans .py files in the repository (or changed since a given git base) with AST
 analysis and a tokenizer-level scan for obfuscated / comment-obscured patterns.
 
 The scan roots cover the shipped, untrusted code: "DragonGraph's Project" (which
-must never contain Python) and "DragonGraph's Project Python Utilities" (the
+must never contain Python) and "DragonGraph's Project Utilities" (the
 toolset scripts that are bundled into the nightly packs).
 
 Default policy (derived from the repository CONTRIBUTING.md):
@@ -37,7 +37,7 @@ import sys
 import tokenize
 from pathlib import Path
 
-DEFAULT_ROOTS = ("DragonGraph's Project", "DragonGraph's Project Python Utilities")
+DEFAULT_ROOTS = ("DragonGraph's Project", "DragonGraph's Project Utilities")
 EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
 DENIED_MODULES = {
@@ -394,7 +394,7 @@ def main(argv: list[str] | None = None) -> int:
         dest="allow_paths",
         metavar="FILE:MODULE",
         help="Whitelist a module for one repo-relative file, e.g. "
-        "--allow-path 'DragonGraph's Project Python Utilities/_NodepackZipGenerator.py:subprocess'",
+        "--allow-path 'DragonGraph's Project Utilities/nodepack_zip_generator.py:subprocess'",
     )
     parser.add_argument(
         "--skip-file",

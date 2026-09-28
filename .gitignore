@@ -13,6 +13,7 @@ env/
 # Tooling output
 # ---------------------------------------------------------------------------
 *.log
+*.tmp
 Generated Nodepacks/
 docs/_build/
 

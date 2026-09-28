@@ -69,16 +69,16 @@
 
 | Pack | Minimum Blender | Node prefix |
 | ---- | --------------- | ----------- |
-| Base asset library | 4.5 LTS | `DGraph_` |
-| Extension add-on pack | 5.2 LTS | `DGraphNXT_` |
+| Base asset library | 5.2 LTS | `DGraph: Node Name Here` |
 
 Contributors should develop against **Blender 5.2 LTS**. See
 [Minimum version by pack version](#minimum-blender-version-by-pack-version) for the full
 compatibility table, and note the warning below.
 
 > [!WARNING]
-> `DGraphNXT_` nodes do not work in Blender 4.5 LTS. Blender may silently drop them when you
-> append them into a 4.5 LTS project.
+> The pack requires **Blender 5.2 LTS or newer**. Newer `DGraph: Node Name Here` nodes do not
+> work in older LTS releases such as Blender 4.5 LTS &mdash; Blender may silently drop them when
+> you append them into an older project.
 
 ### Minimum Blender version by pack version
 
@@ -117,7 +117,7 @@ The pack is also planned for the platforms below. These listings are not live ye
 | -------- | ------ | ---- |
 | Blender Extensions | _Coming soon_ | [extensions.blender.org](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/) |
 | Gumroad | _Coming soon_ | [breathfang.gumroad.com](https://breathfang.gumroad.com/l/LmHKz) |
-| SuperHive Market | _Coming soon_ | [superhivemarket.com](https://superhivemarket.com/products/breathfang-node-packs) |
+| SuperHive Market | _Coming soon_ | [superhivemarket.com](https://superhivemarket.com/products/dragongraphs-geometry-nodes-toolset-packs) |
 
 > [!NOTE]
 > Until these listings go live, download from the
@@ -189,17 +189,19 @@ Before you start, please read [CONTRIBUTING.md](CONTRIBUTING.md) for the require
 
 ## Repository scripts
 
-These helper scripts live in the repository root and require **Python 3.13 or higher**.
+These helper scripts live in [`DragonGraph's Project Utilities/`](DragonGraph's%20Project%20Utilities/) and require **Python 3.13 or higher**.
 The toolset scripts are development utilities; the asset snapshots built by
-`.github/scripts/nightly_builder.py` deliberately keep `DragonGraph's Project Python Utilities/`
-out of the shipped `.zip`.
+`.github/scripts/nightly_builder.py` deliberately keep `DragonGraph's Project Utilities/`
+out of the shipped `.zip`. For full usage, see the
+[Utilities guide](DragonGraph's%20Project%20Utilities/README.md).
 
 | Script | Purpose |
 | ------ | ------- |
-| [`DragonGraph's Project Python Utilities/_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
-| [`.docsbuild.bat`](.docsbuild.bat) | Builds the documentation and serves it at <http://127.0.0.1:8000> with live reload. Windows only. |
-| [`DragonGraph's Project Python Utilities/_NodepackZipGenerator.py`](DragonGraph's%20Project%20Python%20Utilities/_NodepackZipGenerator.py) | Packages `DragonGraph's Project/` recursively into a release `.zip` under `Generated Nodepacks/` (or a nightly snapshot under `DragonGraph's Nighty Build/` with `--nightly`), with that folder as the archive root. Run from the repository root. |
-| [`DragonGraph's Project Python Utilities/_TemporaryFileCleaner.py`](DragonGraph's%20Project%20Python%20Utilities/_TemporaryFileCleaner.py) | Interactive CLI that lists temporary files (10 per page), shows a preview, then deletes them on confirmation. Cleans `.log`, `.tmp`, `*~`, `*.orig`, `*.rej`, `.blend1`–`.blend9` — only inside the repository (never escapes). Add `--dry-run` to preview without deleting. |
+| [`DragonGraph's Project Utilities/python_library_autosetup.py`](DragonGraph's%20Project%20Utilities/python_library_autosetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
+| [`DragonGraph's Project Utilities/.docsbuild.bat`](DragonGraph's%20Project%20Utilities/.docsbuild.bat) | Builds the documentation and serves it at <http://127.0.0.1:8000> with live reload. Windows only. |
+| [`DragonGraph's Project Utilities/language_server_taskkill_blender_save.bat`](DragonGraph's%20Project%20Utilities/language_server_taskkill_blender_save.bat) | Kills the Blender language server process (`language_server_windows_x64.exe`) so `.blend` save prompts do not hang. Windows only. |
+| [`DragonGraph's Project Utilities/nodepack_zip_generator.py`](DragonGraph's%20Project%20Utilities/nodepack_zip_generator.py) | Packages `DragonGraph's Project/` recursively into a release `.zip` under `Generated Nodepacks/` (or a nightly snapshot under `DragonGraph's Nighty Build/` with `--nightly`), with that folder as the archive root. Run from the repository root. |
+| [`DragonGraph's Project Utilities/temporary_file_cleaner.py`](DragonGraph's%20Project%20Utilities/temporary_file_cleaner.py) | Interactive CLI that lists temporary files (10 per page), shows a preview, then deletes them on confirmation. Cleans `.log`, `.tmp`, `*~`, `*.orig`, `*.rej`, `.blend1`–`.blend9` — only inside the repository (never escapes). Add `--dry-run` to preview without deleting. |
 
 ## Upcoming features
 

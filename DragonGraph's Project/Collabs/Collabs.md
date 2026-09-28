@@ -22,6 +22,7 @@ Once approved, add your handle to the table above.
 
 ## Related
 
+- [Utilities guide](../../DragonGraph's%20Project%20Utilities/README.md) &mdash; development scripts used by maintainers to build packs, preview docs, and clean temporary files.
 - [Contributing requirements](../../CONTRIBUTING.md#requirements) &mdash; what every
   contribution must meet before it is merged.
 - [FAQ](../../FAQ.md) &mdash; common questions, including why a contribution has not been
