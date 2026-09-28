@@ -48,18 +48,16 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 | v1.0.x-preview | 4.2 LTS | 
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-beta | 4.5 LTS |
-| v1.3.x-beta | 4.5 LTS |
-| v1.4.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v1.5.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v1.6.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v1.7.x-beta | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v2.0.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v2.1.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v2.2.x-preview | 4.5 LTS & 5.2 LTS (Extension Pack) |
-| v2.3.x-preview | 5.2 LTS |
-| v2.4.x-preview | 5.2 LTS |
-| v2.5.x-preview | 5.2 LTS |
-| v3.0.x (Stable) | 5.2 LTS |
+| v1.3.x-beta | 5.2 LTS |
+| v1.4.x-beta | 5.2 LTS |
+| v1.5.x-beta | 5.2 LTS |
+| v2.0.x-preview | 5.2 LTS |
+| v2.1.x-preview | 5.2 LTS |
+| v2.2.x-preview | 5.5 LTS |
+| v2.3.x-preview | 5.5 LTS |
+| v2.4.x-preview | 5.5 LTS |
+| v2.5.x-preview | 5.5 LTS |
+| v3.0.x (Stable) | 6.2 LTS |
 | and more | ... |
 
 # How to use DragonGraph's Toolset Pack
@@ -114,13 +112,13 @@ All contributors are requested to follow the [Contributing Guidelines](https://g
 
 # Contributing Requirements
 ### For contributing blend file
-- Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
+- Blender 5.2 LTS
 - For contributing .blend file, you will need to create a new blend file and put into `GN_Blend_File` folder.
 - I could improve your nodes and merge it into a main file if I consider your blend file is ready.
 - You can comtribute between Geometry Nodes and Shading Nodes.
 
 ### For contributing addon file
-- Blender 4.5 LTS (for base version) or 5.2 LTS (for extension pack)
+- Blender 5.2 LTS
 - Python 3.13 or higher
 - Some required packages that you can install by running _PackageAutoSetup.py_
 

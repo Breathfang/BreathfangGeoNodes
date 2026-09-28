@@ -9,6 +9,7 @@ GN_Icons/RawIcons/.output_resized
 GN_Icons/RawIcons/logs
 GN_Icons/RawIcons/temp.svg
 *.blend[0-9]
-github-createissue.txt
 _NodepackGeneratedZipFiles/
 _NodepackGeneratedZipFiles/*
+
+.unused

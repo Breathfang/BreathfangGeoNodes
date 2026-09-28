@@ -71,54 +71,54 @@ Here is all the Geometry Nodes for |packnamebold|
     * `[N/A] DGraph_GeoCurve_Triangle <./curve_shapes/bfang_geo_curve_triangle>`_
     * `[N/A] DGraph_GeoCurve_Viviani <./curve_shapes/bfang_geo_curve_viviani>`_
 * `Deformers <./deformers/>`_
-    * `DGraph_GeoDeform_Bend <./deformers/bfang_geo_deform_bend>`_
-    * `[N/A] DGraph_GeoDeform_MeshBendSpline <./deformers/bfang_geo_deform_mesh_bend_spline>`_
-    * `DGraph_GeoDeform_Contrast <./deformers/bfang_geo_deform_contrast>`_
-    * `DGraph_GeoDeform_FaceOffset <./deformers/bfang_geo_deform_face_offset>`_
-    * `[N/A] DGraph_GeoDeform_Lattice <./generators/bfang_geo_deform_lattice>`_
-    * `DGraph_GeoDeform_MatrixMeshOperations <./deformers/bfang_geo_deform_matrix_mesh_operations>`_
-    * `[N/A] DGraph_GeoDeform_MeshEdgeFlowCorrector <./deformers/bfang_geo_deform_mesh_edge_flow_corrector>`_
-    * `DGraph_GeoDeform_MeshOffset <./deformers/bfang_geo_deform_mesh_offset>`_
-    * `DGraph_GeoDeform_MorphMesh <./deformers/bfang_geo_deform_morph_mesh>`_
-    * `DGraph_GeoDeform_PlanarizeMesh <./deformers/bfang_geo_deform_planarize_mesh>`_
-    * `[N/A] DGraph_GeoDeform_RandomizeVertex <./deformers/bfang_geo_deform_randomize_vertex>`_
-    * `DGraph_GeoDeform_SelectionHook <./deformers/bfang_geo_deform_selection_hook>`_
-    * `DGraph_GeoDeform_Shear <./deformers/bfang_geo_deform_shear>`_
-    * `DGraph_GeoDeform_Shear_2D <./deformers/bfang_geo_deform_shear_2d>`_
-    * `DGraph_GeoDeform_Shear_3D <./deformers/bfang_geo_deform_shear_3d>`_
-    * `DGraph_GeoDeform_SimpleMatrix <./deformers/bfang_geo_deform_simple_matrix>`_
-    * `DGraph_GeoDeform_Smooth <./deformers/bfang_geo_deform_smooth>`_
-    * `DGraph_GeoDeform_Stretch <./deformers/bfang_geo_deform_stretch>`_
-    * `DGraph_GeoDeform_StretchHook <./deformers/bfang_geo_deform_stretch_hook>`_
-    * `DGraph_GeoDeform_Taper <./deformers/bfang_geo_deform_taper>`_
-    * `DGraph_GeoDeform_ToSphere <./deformers/bfang_geo_deform_to_sphere>`_
-    * `DGraph_GeoDeform_Twist <./deformers/bfang_geo_deform_twist>`_
-    * `DGraph_GeoDeform_Wave <./deformers/bfang_geo_deform_wave>`_
+    * `DGraph_GeoDeform_Bend <./deformers/bend>`_
+    * `[N/A] DGraph_GeoDeform_MeshBendSpline <./deformers/mesh_bend_spline>`_
+    * `DGraph_GeoDeform_Contrast <./deformers/contrast>`_
+    * `DGraph_GeoDeform_FaceOffset <./deformers/face_offset>`_
+    * `[N/A] DGraph_GeoDeform_Lattice <./generators/geo_deform_lattice>`_
+    * `DGraph_GeoDeform_MatrixMeshOperations <./deformers/matrix_mesh_op>`_
+    * `[N/A] DGraph_GeoDeform_MeshEdgeFlowCorrector <./deformers/mesh_edge_flow_corrector>`_
+    * `DGraph_GeoDeform_MeshOffset <./deformers/mesh_offset>`_
+    * `DGraph_GeoDeform_MorphMesh <./deformers/morph_mesh>`_
+    * `DGraph_GeoDeform_PlanarizeMesh <./deformers/planarize_mesh>`_
+    * `[N/A] DGraph_GeoDeform_RandomizeVertex <./deformers/randomize_vertex>`_
+    * `DGraph_GeoDeform_SelectionHook <./deformers/selection_hook>`_
+    * `DGraph_GeoDeform_Shear <./deformers/shear>`_
+    * `DGraph_GeoDeform_Shear_2D <./deformers/shear_2d>`_
+    * `DGraph_GeoDeform_Shear_3D <./deformers/shear_3d>`_
+    * `DGraph_GeoDeform_SimpleMatrix <./deformers/simple_matrix>`_
+    * `DGraph_GeoDeform_Smooth <./deformers/smooth>`_
+    * `DGraph_GeoDeform_Stretch <./deformers/stretch>`_
+    * `DGraph_GeoDeform_StretchHook <./deformers/stretch_hook>`_
+    * `DGraph_GeoDeform_Taper <./deformers/taper>`_
+    * `DGraph_GeoDeform_ToSphere <./deformers/to_sphere>`_
+    * `DGraph_GeoDeform_Twist <./deformers/twist>`_
+    * `DGraph_GeoDeform_Wave <./deformers/wave>`_
 * `Generators <./generators>`_
-    * `DGraph_3DFillCurves <./generators/bfang_3d_fill_curves>`_
-    * `DGraph_3DGridInstances <./generators/bfang_3d_grid_instances>`_
-    * `DGraph_AdvancedArray <./generators/bfang_advanced_array>`_
-    * `DGraph_AnimFollowCurve <./generators/bfang_anim_follow_curve>`_
-    * `DGraph_CircularArray <./generators/bfang_circular_array>`_
-    * `DGraph_ConnectPoints <./generators/bfang_connect_points>`_
-    * `[N/A] DGraph_CubeRecursiveSubdivision <./generators/bfang_cube_recursive_subdivision>`_
-    * `DGraph_DrakeRemesher <./generators/bfang_drake_remesher>`_
-    * `[N/A] DGraph_GeometricRemesher <./generators/bfang_geometric_remesher>`_
-    * `DGraph_DynamicRotateObjectByCurve <./generators/bfang_dynamic_rotate_object_by_curve>`_
-    * `DGraph_DynamicScaleObjectByCurve <./generators/bfang_dynamic_scale_object_by_curve>`_
-    * `[N/A] DGraph_FaceDivider <./generators/bfang_face_divider>`_
-    * `[N/A] DGraph_Fracture <./generators/bfang_fracture>`_
-    * `DGraph_GeoLerp <./generators/bfang_geo_lerp>`_
-    * `DGraph_GeoMeshAlongCurves <./generators/bfang_geo_mesh_along_curves>`_
-    * `DGraph_InstancesInVolume <./generators/bfang_instances_in_volume>`_
-    * `DGraph_InstancesOnEdge <./generators/bfang_instances_on_edge>`_
-    * `DGraph_InstancesOnSurface <./generators/bfang_instances_on_surface>`_
-    * `DGraph_InstancesInVolume <./generators/bfang_instances_in_volume>`_
-    * `DGraph_AlignInstances <./generators/bfang_align_instances>`_
-    * `[N/A] DGraph_TopologyRandomDisappearance <./generators/bfang_topology_random_disappearance>`_
-    * `DGraph_SplitMesh <./generators/bfang_split_mesh>`_
-    * `DGraph_SplitCurves <./generators/bfang_split_curves>`_
-    * `DGraph_TextToMesh <./generators/bfang_text_to_mesh>`_
+    * `DGraph_3DFillCurves <./generators/3d_fill_curves>`_
+    * `DGraph_3DGridInstances <./generators/3d_grid_instances>`_
+    * `DGraph_AdvancedArray <./generators/advanced_array>`_
+    * `DGraph_AnimFollowCurve <./generators/anim_follow_curve>`_
+    * `DGraph_CircularArray <./generators/circular_array>`_
+    * `DGraph_ConnectPoints <./generators/connect_points>`_
+    * `[N/A] DGraph_CubeRecursiveSubdivision <./generators/cube_recursive_subdivision>`_
+    * `DGraph_DrakeRemesher <./generators/drake_remesher>`_
+    * `[N/A] DGraph_GeometricRemesher <./generators/geometric_remesher>`_
+    * `DGraph_DynamicRotateObjectByCurve <./generators/dynamic_rotate_object_by_curve>`_
+    * `DGraph_DynamicScaleObjectByCurve <./generators/dynamic_scale_object_by_curve>`_
+    * `[N/A] DGraph_FaceDivider <./generators/face_divider>`_
+    * `[N/A] DGraph_Fracture <./generators/fracture>`_
+    * `DGraph_GeoLerp <./generators/geo_lerp>`_
+    * `DGraph_GeoMeshAlongCurves <./generators/geo_mesh_along_curves>`_
+    * `DGraph_InstancesInVolume <./generators/instances_in_volume>`_
+    * `DGraph_InstancesOnEdge <./generators/instances_on_edge>`_
+    * `DGraph_InstancesOnSurface <./generators/instances_on_surface>`_
+    * `DGraph_InstancesInVolume <./generators/instances_in_volume>`_
+    * `DGraph_AlignInstances <./generators/align_instances>`_
+    * `[N/A] DGraph_TopologyRandomDisappearance <./generators/topology_random_disappearance>`_
+    * `DGraph_SplitMesh <./generators/split_mesh>`_
+    * `DGraph_SplitCurves <./generators/split_curves>`_
+    * `DGraph_TextToMesh <./generators/text_to_mesh>`_
 * `Math Functions <./math_functions>`_
     * `[N/A] DGraph_FangMath_AdvancedTrigonometry <./math_functions/bfang_fang_math_advanced_trigonometry>`_
     * `[N/A] DGraph_FangMath_AdvancedBooleanMath <./math_functions/bfang_fang_math_advanced_trigonometry>`_

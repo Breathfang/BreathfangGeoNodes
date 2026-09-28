@@ -35,40 +35,40 @@ Nodes
     * `BFang_CurveCatenaryEffect <./curve_modifiers/bfang_curve_catenary_effect>`_
     * `BFang_LoftSplines <./curve_modifiers/bfang_loft_splines>`_
 * Deformers:
-    * `BFang_GeoDeform_Bend <./bfang_geo_deform_bend>`_
-    * `BFang_GeoDeform_Contrast <./bfang_geo_deform_contrast>`_
-    * `BFang_GeoDeform_FaceOffset <./bfang_geo_deform_face_offset>`_
-    * `BFang_GeoDeform_MatrixMeshOperations <./bfang_geo_deform_matrix_mesh_operations>`_
-    * `BFang_GeoDeform_MeshOffset <./bfang_geo_deform_mesh_offset>`_
-    * `BFang_GeoDeform_MorphMesh <./bfang_geo_deform_morph_mesh>`_
-    * `BFang_GeoDeform_PlanarizeMesh <./bfang_geo_deform_planarize_mesh>`_
-    * `BFang_GeoDeform_SelectionHook <./bfang_geo_deform_selection_hook>`_
-    * `BFang_GeoDeform_Shear <./bfang_geo_deform_shear>`_
-    * `BFang_GeoDeform_Shear_2D <./bfang_geo_deform_shear_2d>`_
-    * `BFang_GeoDeform_Shear_3D <./bfang_geo_deform_shear_3d>`_
-    * `BFang_GeoDeform_SimpleMatrix <./bfang_geo_deform_simple_matrix>`_
-    * `BFang_GeoDeform_Smooth <./bfang_geo_deform_smooth>`_
-    * `BFang_GeoDeform_Stretch <./bfang_geo_deform_stretch>`_
-    * `BFang_GeoDeform_StretchHook <./bfang_geo_deform_stretch_hook>`_
-    * `BFang_GeoDeform_Taper <./bfang_geo_deform_taper>`_
-    * `BFang_GeoDeform_ToSphere <./bfang_geo_deform_to_sphere>`_
-    * `BFang_GeoDeform_Twist <./bfang_geo_deform_twist>`_
+    * `BFang_GeoDeform_Bend <./deformers/bend>`_
+    * `BFang_GeoDeform_Contrast <./deformers/contrast>`_
+    * `BFang_GeoDeform_FaceOffset <./deformers/face_offset>`_
+    * `BFang_GeoDeform_MatrixMeshOperations <./deformers/matrix_mesh_op>`_
+    * `BFang_GeoDeform_MeshOffset <./deformers/mesh_offset>`_
+    * `BFang_GeoDeform_MorphMesh <./deformers/morph_mesh>`_
+    * `BFang_GeoDeform_PlanarizeMesh <./deformers/planarize_mesh>`_
+    * `BFang_GeoDeform_SelectionHook <./deformers/selection_hook>`_
+    * `BFang_GeoDeform_Shear <./deformers/shear>`_
+    * `BFang_GeoDeform_Shear_2D <./deformers/shear_2d>`_
+    * `BFang_GeoDeform_Shear_3D <./deformers/shear_3d>`_
+    * `BFang_GeoDeform_SimpleMatrix <./deformers/simple_matrix>`_
+    * `BFang_GeoDeform_Smooth <./deformers/smooth>`_
+    * `BFang_GeoDeform_Stretch <./deformers/stretch>`_
+    * `BFang_GeoDeform_StretchHook <./deformers/stretch_hook>`_
+    * `BFang_GeoDeform_Taper <./deformers/taper>`_
+    * `BFang_GeoDeform_ToSphere <./deformers/to_sphere>`_
+    * `BFang_GeoDeform_Twist <./deformers/twist>`_
 * Generators:
-    * `BFang_3DFillCurves <./generators/bfang_3d_fill_curves>`_
-    * `BFang_3DGridInstances <./generators/bfang_3d_grid_instances>`_
-    * `BFang_AdvancedArray <./generators/bfang_advanced_array>`_
-    * `BFang_AnimFollowCurve <./generators/bfang_anim_follow_curve>`_
-    * `BFang_CircularArray <./generators/bfang_circular_array>`_
-    * `BFang_ConnectPoints <./generators/bfang_connect_points>`_
-    * `BFang_DrakeRemesher <./generators/bfang_drake_remesher>`_
-    * `BFang_DynamicRotateObjectByCurve <./generators/bfang_dynamic_rotate_object_by_curve>`_
-    * `BFang_DynamicScaleObjectByCurve <./generators/bfang_dynamic_scale_object_by_curve>`_
-    * `BFang_GeoLerp <./generators/bfang_geo_lerp>`_
-    * `BFang_InstancesInVolume <./generators/bfang_instances_in_volume>`_
-    * `BFang_InstancesOnEdge <./generators/bfang_instances_on_edge>`_
-    * `BFang_InstancesOnSurface <./generators/bfang_instances_on_surface>`_
-    * `BFang_InstancesInVolume <./generators/bfang_instances_in_volume>`_
-    * `BFang_SpinFromSplines <./generators/bfang_spin_from_splines>`_
+    * `BFang_3DFillCurves <./generators/3d_fill_curves>`_
+    * `BFang_3DGridInstances <./generators/3d_grid_instances>`_
+    * `BFang_AdvancedArray <./generators/advanced_array>`_
+    * `BFang_AnimFollowCurve <./generators/anim_follow_curve>`_
+    * `BFang_CircularArray <./generators/circular_array>`_
+    * `BFang_ConnectPoints <./generators/connect_points>`_
+    * `BFang_DrakeRemesher <./generators/drake_remesher>`_
+    * `BFang_DynamicRotateObjectByCurve <./generators/dynamic_rotate_object_by_curve>`_
+    * `BFang_DynamicScaleObjectByCurve <./generators/dynamic_scale_object_by_curve>`_
+    * `BFang_GeoLerp <./generators/geo_lerp>`_
+    * `BFang_InstancesInVolume <./generators/instances_in_volume>`_
+    * `BFang_InstancesOnEdge <./generators/instances_on_edge>`_
+    * `BFang_InstancesOnSurface <./generators/instances_on_surface>`_
+    * `BFang_InstancesInVolume <./generators/instances_in_volume>`_
+    * `BFang_SpinFromSplines <./generators/spin_from_splines>`_
 * Math Functions:
     * `BFang_FangMath_Constants <./math_functions/bfang_fang_math_constants>`_
     * `BFang_FangMath_EulerToQuaternion <./math_functions/bfang_fang_math_euler_to_quaternion>`_
