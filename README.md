@@ -41,8 +41,19 @@
 > currently **outdated** &mdash; geometry nodes are being prioritised over docs. Contributions to
 > the documentation are very welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Stargazer History
+
+<a href="https://www.star-history.com/?repos=breathfang%2Fbreathfanggeonodes&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=breathfang/breathfanggeonodes&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=breathfang/breathfanggeonodes&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=breathfang/breathfanggeonodes&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## Table of contents
 
+- [Star History](#star-history)
 - [Requirements](#requirements)
 - [Installation](#installation)
   - [Method 1: as an Add-on](#method-1-as-an-add-on)
