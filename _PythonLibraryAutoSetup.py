@@ -1,49 +1,135 @@
+import importlib.metadata
+import logging
+import platform
 import subprocess
-import importlib.util
 import sys
-import traceback
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-min_py = (3, 13)
-min_py_ver = ".".join(map(str, min_py))
+LOG_FILE = Path("_PythonLibraryAutoSetup.log")
+LOG_MAX_BYTES = 1_000_000
+LOG_BACKUP_COUNT = 5
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 
-# Check python version
-def main():
-    print("Check python version...")
-    print("Python version minimum: %s" % min_py_ver)
-    print("Your current python version: %s" % sys.version)
-    print("Your current environment: %s" % sys.executable)
+MIN_PYTHON = (3, 13)
+MIN_PYTHON_VERSION = ".".join(map(str, MIN_PYTHON))
 
-    if not min_py <= sys.version_info:
-        raise Exception("Python version must be 3.%s or higher." % min_py_ver)
+# PyPI distribution names. Note these differ from import names for some packages
+# (for example sphinx-autobuild is imported as sphinx_autobuild).
+REQUIRED_PACKAGES = (
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx_rtd_theme",
+)
 
-    # Confirm if you want to install required packages
-    confirm = input("Do you want to install required packages? (y/n): ")
+PAUSE_PROMPT = "Press enter to exit..."
 
-    if confirm != "y":
-        print("Process stopped by user.")
-        input("Press enter to exit...")
-        return
 
-    # Required packages
-    packages = ["sphinx", "sphinx-autobuild", "sphinx_rtd_theme", "logging"]
+def setup_logging() -> logging.Logger:
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
 
-    for package in packages:
-        spec = importlib.util.find_spec(package)
-        
-        # Check is it installed or not
-        if spec is None:
-            subprocess.run(["pip", "install", package])
-        else:
-            print(f"{package} is already installed. Checking for updates...")
-            subprocess.run(["pip", "install", "--upgrade", package])
-        
-    print("All packages has been installed.")
-    input("Press enter to exit...")
-    return
+    formatter = logging.Formatter(LOG_FORMAT)
 
-try:    
-    main()
-except Exception as e:
-    print("Traceback: %s", traceback.format_exc())
-    print("Something wrong. Process stopped.")
-    input("Press enter to exit...")
+    file_handler = RotatingFileHandler(LOG_FILE, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT)
+    file_handler.setFormatter(formatter)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    return logger
+
+
+def pause() -> None:
+    if sys.stdin.isatty():
+        input(PAUSE_PROMPT)
+
+
+def describe_environment(logger: logging.Logger) -> None:
+    logger.info("Minimum Python version: %s", MIN_PYTHON_VERSION)
+    logger.info("Current Python version: %s", platform.python_version())
+    logger.info("Interpreter: %s", sys.executable)
+
+
+def check_python_version() -> None:
+    if sys.version_info[:2] < MIN_PYTHON:
+        raise RuntimeError(
+            f"Python {MIN_PYTHON_VERSION} or higher is required, "
+            f"but this interpreter is {platform.python_version()}."
+        )
+
+
+def prompt_yes_no(question: str) -> bool:
+    return input(f"{question} (y/n): ").strip().lower() in {"y", "yes"}
+
+
+def is_installed(distribution: str) -> bool:
+    try:
+        importlib.metadata.version(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return False
+    return True
+
+
+def install(distribution: str, upgrade: bool, logger: logging.Logger) -> bool:
+    command = [sys.executable, "-m", "pip", "install"]
+    if upgrade:
+        command.append("--upgrade")
+    command.append(distribution)
+
+    action = "Updating" if upgrade else "Installing"
+    logger.info("%s %s...", action, distribution)
+
+    result = subprocess.run(command)
+    if result.returncode != 0:
+        logger.error("pip exited with code %d while handling %s", result.returncode, distribution)
+        return False
+    return True
+
+
+def install_required_packages(logger: logging.Logger) -> list[str]:
+    failed = []
+    for distribution in REQUIRED_PACKAGES:
+        upgrade = is_installed(distribution)
+        if upgrade:
+            logger.info("%s is already installed, checking for updates...", distribution)
+        if not install(distribution, upgrade, logger):
+            failed.append(distribution)
+    return failed
+
+
+def main(logger: logging.Logger) -> int:
+    logger.info("Checking Python version...")
+    describe_environment(logger)
+    check_python_version()
+
+    if not prompt_yes_no("Do you want to install the required documentation packages?"):
+        logger.info("Process stopped by user.")
+        return 0
+
+    failed = install_required_packages(logger)
+    if failed:
+        logger.error("Failed to set up: %s", ", ".join(failed))
+        return 1
+
+    logger.info("All required packages are installed.")
+    return 0
+
+
+def run() -> int:
+    logger = setup_logging()
+    try:
+        exit_code = main(logger)
+    except Exception as error:
+        logger.error("Error: %s", error, exc_info=True)
+        exit_code = 1
+
+    pause()
+    return exit_code
+
+
+if __name__ == "__main__":
+    raise SystemExit(run())

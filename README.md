@@ -1,16 +1,17 @@
-# DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack)
+# DragonGraph's Toolset Pack
 
-> Note: This documentation of DragonGraph's Toolset Pack readthedocs is outdated. I'm very prioritizing geometry nodes than documentation. If you're want to update the documentation, refers to Contribute section.
+> Previously known as *Breathfang's Geometry Nodes Toolset Pack*. The GitHub repository URL
+> ([Breathfang/BreathfangGeoNodes](https://github.com/Breathfang/BreathfangGeoNodes)) is unchanged.
 
 <div align="center">
-  <img src="Logo_Designs/Legacy Logo Designs/Breathfang Blender GeoNode Pack Logo Universal BG Color.png" width="80%">
+  <img src="Icon and Logo Designs/Legacy Logo Designs/Breathfang Blender GeoNode Pack Logo Universal BG Color.png" width="80%">
 </div>
 
 <div align="center">
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/tags">
-    <img alt="version-v1.2.2-beta" src="https://img.shields.io/badge/version-v1.2.2--beta-blue">
+    <img alt="version-v1.3.0-beta" src="https://img.shields.io/badge/version-v1.3.0--beta-blue">
   </a>
-  <a href="#">
+  <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
     <img alt="160+-nodes" src="https://img.shields.io/badge/160+-nodes-orange">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
@@ -20,32 +21,60 @@
     <img alt="10+-stars" src="https://img.shields.io/badge/10+-stars-gold">
   </a>
 
-  DragonGraph's Toolset Pack (previously Breathfang's Geometry Nodes Toolset Pack) is a open source of Pre-made Geometry Nodes for Blender that can generate, adding modifier into GeoNode which will help you during modelling the model or scenering. This Toolset pack is free for Commercial Use based on GPL-3.
+  <h3>DragonGraph's Toolset Pack</h3>
 
-  <br>
+  <p>
+    An open source collection of pre-made Geometry Nodes for Blender. The nodes generate
+    geometry and add modifiers that speed up modelling and scenography.
+  </p>
 
-  If you're new user want to use our nodes, you can refer at here: <a href="https://breathfanggeonodes.readthedocs.io/en/latest/">breathfanggeonodes.readthedocs.io</a> You're free to use it and even can contribute! 🐲
+  <p>
+    Free for commercial use, released under the
+    <a href="LICENSE">GPL-3 License</a>. 🐲
+  </p>
 
   <img src="banner.png" width="80%">
-
 </div>
 
-# Official websites to download DragonGraph's Toolset Pack
-If you want to get other version (not including dev/preview version), here is the link, no worries for my:
-- ~~[Gumroad](https://breathfang.gumroad.com/l/LmHKz)~~
-- ~~[Superhivemarket (Blender Market)](https://superhivemarket.com/products/breathfang-node-packs)~~
-- ~~[extensions.blender.org](https://extensions.blender.org/add-ons/breathfangs-geometry-nodes-toolset-pack/)~~
+> **New here?** The [documentation](https://breathfanggeonodes.readthedocs.io/en/latest/) covers
+> installation, every node group, and troubleshooting. Note that the hosted documentation is
+> currently **outdated** &mdash; geometry nodes are being prioritised over docs. Contributions to
+> the documentation are very welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-# Blender requirements
-- Blender 4.5 LTS or newer (Starting at v1.2.x-beta)
-- Blender 5.2 LTS or newer (For extension pack)
+## Table of contents
 
-# Blender Version Requirements
-Here is minimum software version requirement to use DragonGraph's Toolset Pack Toolset Pack here:
-| Version | Blender Version Minimum |
-| ------- | ---------------- |
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Method 1: as an Add-on](#method-1-as-an-add-on)
+  - [Method 2: as an Asset Library](#method-2-as-an-asset-library)
+- [Updating](#updating)
+- [Getting support](#getting-support)
+- [Contributing](#contributing)
+- [Repository scripts](#repository-scripts)
+- [Upcoming features](#upcoming-features)
+- [License](#license)
+
+## Requirements
+
+| Pack | Minimum Blender | Node prefix |
+| ---- | --------------- | ----------- |
+| Base asset library | 4.5 LTS | `DGraph_` |
+| Extension add-on pack | 5.2 LTS | `DGraphNXT_` |
+
+Contributors should develop against **Blender 5.2 LTS**. See
+[Minimum version by pack version](#minimum-blender-version-by-pack-version) for the full
+compatibility table, and note the warning below.
+
+> [!WARNING]
+> `DGraphNXT_` nodes do not work in Blender 4.5 LTS. Blender may silently drop them when you
+> append them into a 4.5 LTS project.
+
+### Minimum Blender version by pack version
+
+| Pack version | Minimum Blender |
+| ------------ | --------------- |
 | v0.1.0-alpha | 4.2 LTS |
-| v1.0.x-preview | 4.2 LTS | 
+| v1.0.x-preview | 4.2 LTS |
 | v1.1.x-alpha | 4.2 LTS |
 | v1.2.x-beta | 4.5 LTS |
 | v1.3.x-beta | 5.2 LTS |
@@ -57,101 +86,101 @@ Here is minimum software version requirement to use DragonGraph's Toolset Pack T
 | v2.3.x-preview | 5.5 LTS |
 | v2.4.x-preview | 5.5 LTS |
 | v2.5.x-preview | 5.5 LTS |
-| v3.0.x (Stable) | 6.2 LTS |
+| v3.0.x (stable) | 6.2 LTS |
 | and more | ... |
 
-# How to use DragonGraph's Toolset Pack
-> **Note**: To use DragonGraph's Geometry Nodes Pack, refers to [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
-> **Please NEVER download .zip files that has been created by GitHub. Instead use the officially packaged versions.**
+## Installation
 
-To import our DragonGraph's Toolset Pack, here is the some ways to import:
+> [!IMPORTANT]
+> **Never use a `.zip` file built by GitHub Actions.** Download an officially packaged release
+> instead &mdash; see [Where to download](#where-to-download).
 
-### Setup as Asset Library
-If you want permanently available in Blender, so you can use DragonGraph's Toolset Pack Pack to all project files, here is the steps:
-1. Download `DragonGraph's Toolset Pack <version> - Asset Library.zip`
-2. Extract it to your desired destination
-3. Open `Edit -> Preferences`
-4. Go to `File paths -> Asset Libraries` then click `[+]` icon
-5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Add Asset Library`
-6. Set to Append (Reuse Data) or Pack.
+### Where to download
 
-### Setup as Add-on (Coming soon)
-> Note: This feature is still under development and will be available in the future version
-If you want to use Breathfang's Geometry Nodes Pack as Add-on, here is the steps:
+Stable and dev builds are published on the
+[GitHub releases page](https://github.com/Breathfang/BreathfangGeoNodes/releases).
+
+> [!NOTE]
+> The Gumroad and SuperHive Market listings have been retired.
+
+### Method 1: as an Add-on
+
 1. Download `DragonGraph's Toolset Pack <version> - Add-on.zip`
-2. Extract it to your desired destination
-3. Open `Edit -> Preferences`
-4. Go to `Add-ons -> Install` then click `[+]` icon
-5. Select `<downloaded_dragongraph_geonode_pack_directory>` then press `Install`
+2. Extract it to a destination of your choice
+3. Open `Edit -> Preferences -> Get Extensions`
+4. Use the dropdown menu and choose `Install from disk...`
+5. Select `<your_extracted_directory>/dragongraphs_geometry_nodes_toolset_pack.zip` and click
+   `Install`
 
-# Updating DragonGraph's Toolset Pack
-If you want to update DragonGraph's Toolset Pack into newer version, just only download either .blend file or .zip file. 
+### Method 2: as an Asset Library
 
-But it has note, the note is your existing project that you've already using our Geometry Nodes will remain intact and will not be replaced as long as your import method is set to "Append (Reuse Data)" or "Pack".
+Use this method if you want the nodes available in every project, permanently.
 
-To update to newer node, you need to reconnecting again the nodes and re-setup again.
+1. Download `DragonGraph's Toolset Pack <version> - Asset Library.zip`
+2. Extract it to a destination of your choice
+3. Open `Edit -> Preferences -> File Paths -> Asset Libraries`
+4. Click `(+)` to add a new library
+5. Select `<your_extracted_directory>` and click `Add Asset Library`
+6. Set the **Import Method** to `Append (Reuse Data)`
 
-For changelogs, please see in either [Github releases](https://github.com/Breathfang/BreathfangGeoNodes/releases), [extensions.blender.org Changelogs](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/versions/) or [breathfanggeonodes.readthedocs.io](https://breathfanggeonodes.readthedocs.io/en/latest/)
+> [!WARNING]
+> `Append (Reuse Data)` is mandatory. Setting the import method to `Link` will **break your
+> project file** when you update to a newer version of the pack.
 
-# Getting Support
-If you have any trouble, problem, encounter a bug, or a question, you can:
-- Create a new [issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/new/choose) on DragonGraph's Toolset Pack page
-- Message me in our social media, including [@DrageonDB (X Twitter)](https://x.com/DrageonDB) or via [ArtStation](https://www.artstation.com/breathfang).
-- Email me via COMING SOON
+## Updating
 
-Please provide information as much as possible, including the details, problems, such as steps to reproduce the issue, screenshots, and so on.
+To update, download the newer release and replace the old installation. Your existing project
+files and node setups stay intact, as long as the import method is `Append (Reuse Data)`.
 
-# Contributing
-Pull requests are welcome for anyone! If you'be like to add feature inside geometry nodes, new geometry node, fixing the geometry nodes bug, GeoNode icon changes, and so on then you're welcome!
+However, you do need to **reconnect the nodes and re-set up your values by hand** after updating.
+Existing node setups are not migrated automatically.
 
-If you want to contribute, please read [Contributing Requirements](#Contributing-Requirements) first.
+- **Add-on method** &mdash; `Edit -> Preferences -> Get Extensions`, search for the extension,
+  then click `Update`.
+- **Asset Library method** &mdash; replace the `.blend` file in your library directory with the
+  newer one, then restart Blender.
 
-But all suggestions, recommendations, and more are welcome. If anyone unsure what you want to contribute, then anyone can [open issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/).
+For full changelogs, see the
+[GitHub releases](https://github.com/Breathfang/BreathfangGeoNodes/releases),
+[extensions.blender.org](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/versions/),
+or the [documentation changelogs](https://breathfanggeonodes.readthedocs.io/en/latest/).
 
-All contributors are requested to follow the [Contributing Guidelines](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md).
+## Getting support
 
-# Contributing Requirements
-### For contributing blend file
-- Blender 5.2 LTS
-- For contributing .blend file, you will need to create a new blend file and put into `GN_Blend_File` folder.
-- I could improve your nodes and merge it into a main file if I consider your blend file is ready.
-- You can comtribute between Geometry Nodes and Shading Nodes.
+If you hit a bug, run into a problem, or just have a question:
 
-### For contributing addon file
-- Blender 5.2 LTS
-- Python 3.13 or higher
-- Some required packages that you can install by running _PackageAutoSetup.py_
+- Open an [issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/new/choose)
+- Reach out on social media:
+  [@DrageonDB on X](https://x.com/DrageonDB) or
+  [Breathfang on ArtStation](https://www.artstation.com/breathfang)
+- Email &mdash; _coming soon_
 
-### For contributing documentation
-- Required Packages: (you can auto install required packages by running _PackageAutoSetup.py_)
-  - sphinx
-  - sphinx-autobuild
-  - sphinx_rtd_theme
-  - logging
-- I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
-- Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
+Please include as much detail as you can: steps to reproduce, screenshots, Blender version, and
+pack version.
 
-> Additional information can be found in [Contributing Guide](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/CONTRIBUTING.md)
+## Contributing
 
-# Q&A (Frequently Asked Questions)
-### How to run Guidebook preview before commit to GitHub
-You can run .docsbuild.bat for build the documentation and it will host under http://127.0.0.1:8000.
+Pull requests are welcome. New geometry nodes, new shading nodes, bug fixes, icon changes, and
+documentation improvements are all in scope. If you are unsure what to contribute, just
+[open an issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/) and ask.
 
-If you update the documentation, it will be automatically refresh by sphinx-autobuild. This is includes save files, delete files, and putting files inside docs folder.
+Before you start, please read [CONTRIBUTING.md](CONTRIBUTING.md) for the requirements, and
+[FAQ.md](FAQ.md) for the questions that come up most often.
 
-### How to generate .zip packaged file for Node Pack
-To generate .zip packaged file for Node Pack, you can run _NodepackZipGenerator.py for generate .zip file. You just need only require Python 3.13 or higher.
+## Repository scripts
 
-### Can I use Node Pack for commercial use?
-Yes, you can use Node Pack for commercial use. We released Node Pack under GPL-3 license.
+These helper scripts live in the repository root and require **Python 3.13 or higher**.
 
-### Can I contribute to Node Pack?
-Yes, you can contribute to Node Pack. But as long as you following our [Contributing Requirements](#Contributing-Requirements), then you're welcome to contribute to Node Pack.
+| Script | Purpose |
+| ------ | ------- |
+| [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
+| [`.docsbuild.bat`](.docsbuild.bat) | Builds the documentation and serves it at <http://127.0.0.1:8000> with live reload. Windows only. |
+| [`_NodepackZipGenerator.py`](_NodepackZipGenerator.py) | Packages the `.blend` file and the readme into a release `.zip` under `Generated Nodepacks/`. Run from the repository root. |
 
-# Upcoming Features
-To see upcoming features, see in [Github Project](https://github.com/Breathfang/BreathfangGeoNodes/projects/)
+## Upcoming features
 
-# License
-This project is released under the GPL-3 License. You can read the license in [Github](https://github.com/Breathfang/BreathfangGeoNodes/blob/main/LICENSE)
+See the [GitHub Projects board](https://github.com/Breathfang/BreathfangGeoNodes/projects/).
 
-You can use Nodepack for commercial use freely.
+## License
+
+Released under the [GPL-3 License](LICENSE). You are free to use the pack commercially.

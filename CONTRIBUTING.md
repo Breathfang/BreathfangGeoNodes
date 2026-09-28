@@ -1,80 +1,97 @@
+# Contributing to DragonGraph's Toolset Pack
+
+Thank you for contributing. This document covers the requirements for each type of
+contribution, and the workflow for getting your work merged.
+
+New here? Check [FAQ.md](FAQ.md) first &mdash; it answers the questions that come up most often.
+
+- [Requirements](#requirements)
+  - [Blend file contributions](#blend-file-contributions)
+  - [Add-on contributions](#add-on-contributions)
+  - [Icon contributions](#icon-contributions)
+  - [Documentation contributions](#documentation-contributions)
+- [How to contribute](#how-to-contribute)
+- [Merge process](#merge-process)
+- [Repository layout](#repository-layout)
+
 ## Requirements
 
-### For contributing blend file
-- Blender 4.5 LTS (for base version)
-- Blender 5.2 LTS (for extension pack)
-- For contributing .blend file, you will need to create a new blend file and put into `GN_Blend_File` folder.
-- I could improve your nodes and merge it into a main file if I've considered your .blend file is ready to merge it (with notification).
-- You can comtribute between Geometry Nodes and Shading Nodes.
+Develop against **Blender 5.2 LTS** unless a section below says otherwise.
 
+### Blend file contributions
 
-### For contributing addon file
-- Blender 4.5 LTS (for base version)
-- Blender 5.2 LTS (for extension pack)
-- Addon must be interoperable with Blender 4.5 LTS and 5.2 LTS, but it's not required for newer version of Blender until next Blender LTS released.
-- Python 3.13 or higher
-- Some required packages that you can install by running _PackageAutoSetup.py_
-- Blend file size must be less than 100 MB. If it's more than 100 MB, it will be rejected. Please splitting your blend file into multiple blend files instead. I do not allow to enable LFS for this project.
+- Authored in **Blender 5.2 LTS**.
+- Create a **new** `.blend` file and place it in the `DragonGraph's Project` folder. Do not edit
+  the main pack file directly.
+- Geometry Nodes and Shading Nodes are both welcome.
+- The file must stay under **100 MB**. Git LFS is not enabled for this project, and oversized
+  files are rejected. If your work does not fit, split it into several `.blend` files instead.
+- **Never embed Python scripts in a `.blend` file.** This is a hard rule &mdash; see
+  [Can I embed Python scripts inside a .blend file?](FAQ.md#can-i-embed-python-scripts-inside-a-blend-file).
+  Python is fine inside the add-on directory.
 
+### Add-on contributions
 
-### For contributing icon file
-- You have drawing software
-- You have to be good at drawing
-- I recommend you to use Affinity Designer or Adobe Illustrator
-- It will be useful if you want to create your own icon for this project
-- It will be merged as soon as possible to main file, yeah inside .blend file for asset pack
-- Icon art style should be simple and clean, and consistent with the rest of the icons in this project
+- Authored in **Blender 5.2 LTS**.
+- Must remain interoperable with **Blender 4.5 LTS and 5.2 LTS**.
+- Support for non-LTS Blender versions is not required until the next LTS release.
+- Requires **Python 3.13 or higher**. Run
+  [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) to install the required packages
+  into your current interpreter.
 
+### Icon contributions
 
-### For contributing documentation
-- Required Packages: (you can auto install required packages by running _PackageAutoSetup.py_)
-  - sphinx
-  - sphinx-autobuild
-  - sphinx_rtd_theme
-  - logging
-- I recommend to debug documentation using [sphinx-autobuild](https://sphinx-autobuild.readthedocs.io/en/latest/)
-- Documentation SHOULD BE READY and COMPLETED before v3.0.0-stable
+- You will need drawing software. Affinity Designer or Adobe Illustrator are both recommended.
+- Art style should be **simple, clean, and consistent** with the existing icons in the project.
+- Icons are merged into the main pack `.blend` file as soon as possible, so keep the source
+  artwork around &mdash; SVG or AI files are preferred over flattened PNGs.
 
-## Q&A
+### Documentation contributions
 
-### How to contribute
-To contribute to this project, here are some ways:
-- Just by creating a new .blend file. DO NOT edit the main file, I will merge it manually.
-- OR you can create issue on Github and upload your created/updated node .blend file.
+- Run [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) to install the required
+  packages: `sphinx`, `sphinx-autobuild`, and `sphinx_rtd_theme`.
+- Run [`.docsbuild.bat`](.docsbuild.bat) to build the documentation and preview it at
+  <http://127.0.0.1:8000>. `sphinx-autobuild` reloads automatically when you save, delete, or add
+  a file inside `docs/`.
+- Documentation **should be ready and complete before v3.0.0-stable**.
 
+## How to contribute
 
-### How long time does it take to merge?
-I will merge your .blend file as soon as possible if I consider your .blend file is ready and your .blend file is okay.
+Two options, both welcome:
 
+1. **Open a pull request** with a new `.blend` file or script change. Do not edit the main pack
+   file &mdash; it gets merged manually.
+2. **Open an issue** and attach your created or updated `.blend` file.
 
-### Do I allow embed python script inside .blend file?
-NO, you can't embed python script inside .blend file. This is due to security reasons and how blender works. If you already embed python script inside .blend file, then you're not allowed to contribute to this project or you will be banned from contributing. But you can embed python script inside addon folder, but NOT inside .blend file.
+Suggestions, recommendations, and questions are welcome too, even if you are not contributing
+code. If you are unsure what to contribute, just
+[open an issue](https://github.com/Breathfang/BreathfangGeoNodes/issues/) and ask.
 
+### Repository scripts
 
-### Why my node isn't merged after getting next update of DragonGraph Toolset Pack?
-Here are some reasons why my node isn't merged after getting next update of DragonGraph Toolset Pack:
-- Your node isn't ready yet.
-- Your node is not okay.
-- Your node is buggy or unsafe.
-- Your node contains python script.
-- Your pull request or issue isn't getting approved (if you have created a pull request or issue).
+| Script | Purpose |
+| ------ | ------- |
+| [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) | Installs the documentation toolchain. |
+| [`.docsbuild.bat`](.docsbuild.bat) | Builds and serves the documentation with live reload. |
+| [`_NodepackZipGenerator.py`](_NodepackZipGenerator.py) | Packages the current pack into a release `.zip` in `Generated Nodepacks/`. |
 
+## Merge process
 
-### Can I contribute to Node Pack for non-geometry nodes (like shading nodes, composite nodes, etc)?
-Sure, you can contribute to Node Pack for non-geometry nodes, but you need to create a new category inside Blender Assets for non-geometry nodes.
+1. You submit a pull request or an issue with your file attached.
+2. It gets reviewed. If it is not ready yet, you will be notified.
+3. Once it is considered ready, it gets polished and merged into the main pack file.
+4. You get a notification when it lands in an update.
 
+There is no guaranteed turnaround time. Merging happens as soon as a contribution is considered
+ready and acceptable. If your work is not merged after an update, the usual reasons are listed
+in [Why isn't my node merged yet?](FAQ.md#why-isnt-my-node-merged-after-an-update).
 
-### Can I use other node from other node pack (Like Bradley's Node Pack, Higgsas's Node Pack, etc) to remake my node for contributing to Node Pack?
-Yeah, it's okay as long as you're improving remade node after you already remake it. I don't allow to contribute with remake other node from other node pack and copying to this node pack without significant changes or improvements.
+## Repository layout
 
-
-### Can I contribute with newer version of Blender (not base version or extension pack)?
-Sure, you can contribute with newer version of Blender. But you will be delayed to get merged into main file until next Blender LTS release. But I will try to get merged as soon as possible after Blender next LTS released. You'll need to create a new category inside Blender Assets for newer version of Blender, like `Collabs > 5.3`.
-
-
-### Can I use Node Pack for commercial use?
-Yes, you can use Node Pack for commercial use. We released Node Pack under GPL-3 license.
-
-
-### Why I'm getting banned from contributing?
-If you're getting banned from contributing, it's because you're not following our [Contributing Requirements](#Contributing-Requirements). If you're getting banned from contributing, DO NOT circumvent it with other github account. Appeal it via social media that i've listed in [Github](https://github.com/Breathfang/BreathfangGeoNodes).
+| Path | Contents |
+| ---- | -------- |
+| `DragonGraph's Project/` | Source `.blend` files and the readme. This is where new `.blend` contributions go. |
+| `blend_addon_src/` | Add-on source. Not tracked by Git. |
+| `docs/` | Sphinx documentation sources. |
+| `Generated Nodepacks/` | Release `.zip` output. Not tracked by Git. |
+| `Icon and Logo Designs/` | Icon and logo source artwork. |
