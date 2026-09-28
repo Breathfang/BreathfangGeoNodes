@@ -190,12 +190,16 @@ Before you start, please read [CONTRIBUTING.md](CONTRIBUTING.md) for the require
 ## Repository scripts
 
 These helper scripts live in the repository root and require **Python 3.13 or higher**.
+The toolset scripts are development utilities; the asset snapshots built by
+`.github/scripts/nightly_builder.py` deliberately keep `DragonGraph's Project Python Utilities/`
+out of the shipped `.zip`.
 
 | Script | Purpose |
 | ------ | ------- |
-| [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
+| [`DragonGraph's Project Python Utilities/_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
 | [`.docsbuild.bat`](.docsbuild.bat) | Builds the documentation and serves it at <http://127.0.0.1:8000> with live reload. Windows only. |
-| [`_NodepackZipGenerator.py`](_NodepackZipGenerator.py) | Packages the `.blend` file and the readme into a release `.zip` under `Generated Nodepacks/`. Run from the repository root. |
+| [`DragonGraph's Project Python Utilities/_NodepackZipGenerator.py`](DragonGraph's%20Project%20Python%20Utilities/_NodepackZipGenerator.py) | Packages `DragonGraph's Project/` recursively into a release `.zip` under `Generated Nodepacks/` (or a nightly snapshot under `DragonGraph's Nighty Build/` with `--nightly`), with that folder as the archive root. Run from the repository root. |
+| [`DragonGraph's Project Python Utilities/_TemporaryFileCleaner.py`](DragonGraph's%20Project%20Python%20Utilities/_TemporaryFileCleaner.py) | Interactive CLI that lists temporary files (10 per page), shows a preview, then deletes them on confirmation. Cleans `.log`, `.tmp`, `*~`, `*.orig`, `*.rej`, `.blend1`–`.blend9` — only inside the repository (never escapes). Add `--dry-run` to preview without deleting. |
 
 ## Upcoming features
 

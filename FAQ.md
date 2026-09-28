@@ -101,13 +101,31 @@ Run [`.docsbuild.bat`](.docsbuild.bat). It builds the documentation and serves i
 when you save, delete, or add a file inside `docs/`.
 
 If the packages are not installed yet, run
-[`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) first.
+[`_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py)
+first.
 
 ### How do I generate the release .zip?
 
-Run [`_NodepackZipGenerator.py`](_NodepackZipGenerator.py) and enter the version, for example
-`v1.1.0-alpha`.
+Run
+[`_NodepackZipGenerator.py`](DragonGraph's%20Project%20Python%20Utilities/_NodepackZipGenerator.py)
+and enter the version, for example
+`v1.1.0-alpha`. Or pass `--node-version v1.1.0-alpha` to skip the prompt
+(required when running non-interactively).
 
-The script collects every `.blend` file from `DragonGraph's Project` along with the readme and
-`blender_assets.cats.txt`, then writes
+The script packages the contents of `DragonGraph's Project/` with that folder as
+the archive root (every file type, original names and paths),
+excluding documented files, then writes
 `Generated Nodepacks/DragonGraph's Toolset Pack <version> - Asset Library.zip`.
+
+### What are the nightly builds?
+
+Nightly snapshots are built automatically by GitHub Actions whenever anything inside
+`DragonGraph's Project/` changes (and daily on a schedule), packaged by
+`.github/scripts/nightly_builder.py`. They are named
+`Dragongraph's Toolset Pack NightlyBuilds_<short-sha>_<timestamp>.zip` and committed under
+`DragonGraph's Nighty Build/` while an identical copy is kept as a GitHub Actions artifact
+(7-day retention). To build a nightly snapshot manually run:
+
+```text
+python .github/scripts/nightly_builder.py
+```

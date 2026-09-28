@@ -36,7 +36,8 @@ Develop against **Blender 5.2 LTS** unless a section below says otherwise.
 - Must remain interoperable with **Blender 4.5 LTS and 5.2 LTS**.
 - Support for non-LTS Blender versions is not required until the next LTS release.
 - Requires **Python 3.13 or higher**. Run
-  [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) to install the required packages
+  [`_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py)
+  to install the required packages
   into your current interpreter.
 
 ### Icon contributions
@@ -48,7 +49,9 @@ Develop against **Blender 5.2 LTS** unless a section below says otherwise.
 
 ### Documentation contributions
 
-- Run [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) to install the required
+- Run
+  [`_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py)
+  to install the required
   packages: `sphinx`, `sphinx-autobuild`, and `sphinx_rtd_theme`.
 - Run [`.docsbuild.bat`](.docsbuild.bat) to build the documentation and preview it at
   <http://127.0.0.1:8000>. `sphinx-autobuild` reloads automatically when you save, delete, or add
@@ -71,9 +74,9 @@ code. If you are unsure what to contribute, just
 
 | Script | Purpose |
 | ------ | ------- |
-| [`_PythonLibraryAutoSetup.py`](_PythonLibraryAutoSetup.py) | Installs the documentation toolchain. |
+| [`_PythonLibraryAutoSetup.py`](DragonGraph's%20Project%20Python%20Utilities/_PythonLibraryAutoSetup.py) | Installs the documentation toolchain. |
 | [`.docsbuild.bat`](.docsbuild.bat) | Builds and serves the documentation with live reload. |
-| [`_NodepackZipGenerator.py`](_NodepackZipGenerator.py) | Packages the current pack into a release `.zip` in `Generated Nodepacks/`. |
+| [`_NodepackZipGenerator.py`](DragonGraph's%20Project%20Python%20Utilities/_NodepackZipGenerator.py) | Packages the current pack into a release `.zip` in `Generated Nodepacks/`, or a nightly snapshot in `DragonGraph's Nighty Build/` with `--nightly`. |
 
 ## Merge process
 

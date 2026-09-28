@@ -16,7 +16,7 @@ REM    L  show the build log       C  clean rebuild
 REM    Q  stop the server and quit
 REM
 REM  Requires Python 3.13+ with sphinx and sphinx-autobuild installed.
-REM  Run _PythonLibraryAutoSetup.py first if they are missing.
+REM  Run "DragonGraph's Project Python Utilities\_PythonLibraryAutoSetup.py" first if they are missing.
 REM ==========================================================================
 
 setlocal EnableExtensions EnableDelayedExpansion
@@ -87,7 +87,7 @@ if not exist "%DOCS_DIR%\" (
 "%PY%" -c "import sphinx, sphinx_autobuild" >nul 2>&1
 if errorlevel 1 (
     call :log ERROR "sphinx and sphinx-autobuild are not installed for this interpreter."
-    call :log INFO  "Run _PythonLibraryAutoSetup.py to install them, then try again."
+    call :log INFO  "Run DragonGraph's Project Python Utilities\_PythonLibraryAutoSetup.py to install them, then try again."
     call :pause
     endlocal & exit /b 1
 )

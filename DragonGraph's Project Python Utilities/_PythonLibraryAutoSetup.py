@@ -1,3 +1,4 @@
+import argparse
 import importlib.metadata
 import logging
 import platform
@@ -101,12 +102,12 @@ def install_required_packages(logger: logging.Logger) -> list[str]:
     return failed
 
 
-def main(logger: logging.Logger) -> int:
+def main(logger: logging.Logger, assume_yes: bool) -> int:
     logger.info("Checking Python version...")
     describe_environment(logger)
     check_python_version()
 
-    if not prompt_yes_no("Do you want to install the required documentation packages?"):
+    if not assume_yes and not prompt_yes_no("Do you want to install the required documentation packages?"):
         logger.info("Process stopped by user.")
         return 0
 
@@ -119,15 +120,27 @@ def main(logger: logging.Logger) -> int:
     return 0
 
 
-def run() -> int:
+def run(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Install the Sphinx documentation toolchain used by the docs build."
+    )
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip the confirmation prompt and install directly (for CI).",
+    )
+    parser.add_argument("--no-pause", action="store_true", help="Do not wait for Enter on exit.")
+    args = parser.parse_args(argv)
+
     logger = setup_logging()
     try:
-        exit_code = main(logger)
+        exit_code = main(logger, args.yes)
     except Exception as error:
         logger.error("Error: %s", error, exc_info=True)
         exit_code = 1
 
-    pause()
+    if not args.no_pause:
+        pause()
     return exit_code
 
 

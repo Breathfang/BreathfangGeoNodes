@@ -1,0 +1,153 @@
+name: Nightly build pipeline
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "DragonGraph's Project/**"
+      - "!DragonGraph's Project/**/*.md"
+      - "!DragonGraph's Project/**/*.log"
+      - "!DragonGraph's Project/**/*.tmp"
+      - "!DragonGraph's Project Python Utilities/**"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: nightly-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Security scan, build, clean, upload, commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # Master toggle: set BUILDS_ENABLED = False in
+      # .github/scripts/nightly_builder.py to pause the pipeline. If reading it
+      # crashes, the pipeline is treated as disabled and bypassed (never aborts).
+      - name: Check nightly-builds toggle
+        id: gate
+        shell: bash
+        run: |
+          if python -c "import sys; sys.path.insert(0, '.github/scripts'); import nightly_builder; print('enabled=' + ('true' if nightly_builder.BUILDS_ENABLED else 'false'))" >> "$GITHUB_OUTPUT" 2>/dev/null; then
+            :
+          else
+            echo "[nightly] WARNING: could not read BUILDS_ENABLED (scripts crashed at import); treating the pipeline as DISABLED and bypassing." >&2
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Step 1: Python security scanner — AST + tokenizer check for dangerous
+      # system calls in every .py file below DragonGraph's Project (the only
+      # code that can end up inside the shipped .zip). A non-zero exit (crash OR
+      # a real finding) bypasses the rest of the pipeline: no build, no push.
+      - name: Scan .py files for dangerous patterns
+        if: steps.gate.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set +e
+          python .github/scripts/python_security_scanner.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --root "DragonGraph's Project"
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            echo "[nightly] python_security_scanner.py exited $rc; bypassing the nightly pipeline for this push (no build/commit/push)." >&2
+            touch .nightly-bypassed
+          fi
+
+      # Extra policy guard (CONTRIBUTING.md): no Python embedded in .blend files.
+      # Added alongside the requested steps because the recursive builder now
+      # packages every asset under DragonGraph's Project/ untouched.
+      - name: Scan .blend files for embedded Python
+        if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
+        shell: bash
+        run: |
+          set +e
+          python .github/scripts/blend_scanner.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --root "DragonGraph's Project"
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            echo "[nightly] blend_scanner.py exited $rc; bypassing the nightly pipeline for this push (no build/commit/push)." >&2
+            touch .nightly-bypassed
+          fi
+
+      # Step 2: build the nightly ZIP under DragonGraph's Nighty Build/
+      # (files ending .md/.log/.tmp and editor backups are excluded inside the
+      # scripts; the Python Utilities sibling folder is outside the scan root).
+      - name: Build nightly zip
+        if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
+        shell: bash
+        run: |
+          set +e
+          python .github/scripts/nightly_builder.py \
+            --repo "$GITHUB_WORKSPACE"
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            echo "[nightly] nightly_builder.py exited $rc; bypassing the nightly pipeline for this push (no build/commit/push)." >&2
+            touch .nightly-bypassed
+          fi
+          ls -lh "DragonGraph's Nighty Build"
+
+      # Step 3: rotate/cleanup — keep at most 10 builds or 300 MiB, oldest first.
+      # Skipped whenever a previous step failed, so stale archives are never
+      # deleted (and a deletion can never be committed) in a bypassed run.
+      - name: Rotate and clean nightly builds
+        if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
+        shell: bash
+        run: |
+          set +e
+          python .github/scripts/nightly_cleaner.py \
+            --repo "$GITHUB_WORKSPACE"
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            echo "[nightly] nightly_cleaner.py exited $rc; bypassing the nightly pipeline for this push (no deletion / commit / push)." >&2
+            touch .nightly-bypassed
+          fi
+
+      # Step 4: dual-output — store the identical ZIP as a GitHub Actions
+      # artifact (7-day retention) for direct download from the Actions UI.
+      - name: Upload nightly build artifact
+        if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-build
+          path: DragonGraph's Nighty Build/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      # Step 5: commit and push the ZIP back into DragonGraph's Nighty Build/
+      # on the branch that triggered the workflow. Path filters exclude that
+      # directory, so this does not re-trigger the pipeline. Skipped whenever
+      # the toggle is off OR any earlier step was bypassed (never a forced push).
+      - name: Commit and push nightly build
+        if: steps.gate.outputs.enabled == 'true' && ! hashFiles('.nightly-bypassed')
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "DragonGraph's Nighty Build"
+          if git diff --cached --quiet; then
+            echo "No new nightly zip to commit."
+            exit 0
+          fi
+          git commit -m "build(nightly): toolset pack snapshot $(date -u +%Y%m%d-%H%M%S)"
+          git push
+
+      # Visible summary when something was bypassed — the run stays green.
+      - name: Note - nightly pipeline bypassed
+        if: hashFiles('.nightly-bypassed')
+        shell: bash
+        run: |
+          echo "[nightly] A script exited non-zero this run, so nothing was built, uploaded, committed or pushed. See the logs above for the reason. (Run ends green on purpose.)"
