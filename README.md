@@ -100,8 +100,17 @@ compatibility table, and note the warning below.
 Stable and dev builds are published on the
 [GitHub releases page](https://github.com/Breathfang/BreathfangGeoNodes/releases).
 
+The pack is also planned for the platforms below. These listings are not live yet.
+
+| Platform | Status | Link |
+| -------- | ------ | ---- |
+| Blender Extensions | _Coming soon_ | [extensions.blender.org](https://extensions.blender.org/add-ons/dragongraphs-geometry-nodes-toolset-pack/) |
+| Gumroad | _Coming soon_ | [breathfang.gumroad.com](https://breathfang.gumroad.com/l/LmHKz) |
+| SuperHive Market | _Coming soon_ | [superhivemarket.com](https://superhivemarket.com/products/breathfang-node-packs) |
+
 > [!NOTE]
-> The Gumroad and SuperHive Market listings have been retired.
+> Until these listings go live, download from the
+> [GitHub releases page](https://github.com/Breathfang/BreathfangGeoNodes/releases).
 
 ### Method 1: as an Add-on
 
