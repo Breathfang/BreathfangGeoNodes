@@ -1,6 +1,17 @@
+#!/usr/bin/env python3
+"""Package DragonGraph's Project into a release or nightly .zip.
+
+Runs interactively (no options) or non-interactively (any --option, or under
+GitHub Actions). Paths, naming templates, the ZIP exclusion policy and the
+logging setup all come from the single ``.env`` in this folder, read through
+``functions/``; every one of them falls back to a built-in default, so the
+script also runs with no ``.env`` present.
+"""
+
+from __future__ import annotations
+
 import argparse
 import datetime
-import logging
 import os
 import re
 import secrets
@@ -8,34 +19,50 @@ import subprocess
 import sys
 import zipfile
 from dataclasses import dataclass
-from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = _SCRIPT_DIR.parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-LOG_FILE = REPO_ROOT / "nodepack_zip_generator.log"
-LOG_MAX_BYTES = 1_000_000
-LOG_BACKUP_COUNT = 5
-LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+from functions import env_utils, log_utils, path_utils, prompt_utils  # noqa: E402
 
-SOURCE_DIR = REPO_ROOT / "DragonGraph's Project"
-PACK_NAME_TEMPLATE = "DragonGraph's Toolset Pack {node_version}"
-RELEASE_OUTPUT_DIR = REPO_ROOT / "Generated Nodepacks"
-RELEASE_NAME_TEMPLATE = "{pack_name} - Asset Library.zip"
+REPO_ROOT = path_utils.repo_root()
 
-DEFAULT_NODE_VERSION = "v1.1.0-alpha"  # last-resort fallback for non-interactive runs
+LOG_FILE = path_utils.resolve_under_root(
+    env_utils.get_str("ZIP_GENERATOR_LOG", "nodepack_zip_generator.log")
+)
 
-NIGHTLY_OUTPUT_DIR = REPO_ROOT / "DragonGraph's Nighty Build"
-NIGHTLY_NAME_TEMPLATE = "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip"
+SOURCE_DIR = path_utils.resolve_under_root(
+    env_utils.get_str("SOURCE_DIR", "DragonGraph's Project")
+)
+RELEASE_OUTPUT_DIR = path_utils.resolve_under_root(
+    env_utils.get_str("RELEASE_OUTPUT_DIR", "Generated Nodepacks")
+)
+NIGHTLY_OUTPUT_DIR = path_utils.resolve_under_root(
+    env_utils.get_str("NIGHTLY_OUTPUT_DIR", "DragonGraph's Nighty Build")
+)
 
-COMPRESSION_LEVEL = 9
+PACK_NAME_TEMPLATE = env_utils.get_str(
+    "PACK_NAME_TEMPLATE", "DragonGraph's Toolset Pack {node_version}"
+)
+RELEASE_NAME_TEMPLATE = env_utils.get_str(
+    "RELEASE_NAME_TEMPLATE", "{pack_name} - Asset Library.zip"
+)
+NIGHTLY_NAME_TEMPLATE = env_utils.get_str(
+    "NIGHTLY_NAME_TEMPLATE",
+    "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip",
+)
 
-# ZIP exclusion policy (hard-coded, applied to both release and nightly packs).
-BLEND_AUTOSAVE_SUFFIXES = tuple(f".blend{d}" for d in range(1, 10))  # .blend1..9
-EXCLUDED_SUFFIXES = (".md", ".log", ".tmp", "~", ".orig", ".rej") + BLEND_AUTOSAVE_SUFFIXES
+DEFAULT_NODE_VERSION = env_utils.get_str("DEFAULT_NODE_VERSION", "v1.1.0-alpha")
+COMPRESSION_LEVEL = env_utils.get_int("ZIP_COMPRESSION_LEVEL", 9)
 
-PAUSE_PROMPT = "Press enter to exit..."
+# ZIP exclusion policy, applied to both release and nightly packs.
+EXCLUDED_SUFFIXES = env_utils.get_suffixes(
+    "ZIP_EXCLUDED_SUFFIXES",
+    (".md", ".log", ".tmp", "~", ".orig", ".rej")
+    + tuple(f".blend{index}" for index in range(1, 10)),
+)
 
 
 @dataclass(frozen=True)
@@ -47,38 +74,8 @@ class ArchiveEntry:
         return self.source.is_file()
 
 
-def setup_logging() -> logging.Logger:
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter(LOG_FORMAT)
-
-    file_handler = RotatingFileHandler(LOG_FILE, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT)
-    file_handler.setFormatter(formatter)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(formatter)
-
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    return logger
-
-
-def prompt_read(prompt_text: str) -> str:
-    """Print a prompt, flush it, then read one line from the user."""
-    sys.stdout.write(prompt_text)
-    sys.stdout.flush()
-    return input().strip()
-
-
-def ask(prompt: str, default: str | None = None) -> str:
-    """Read one line from the user, accepting the bracketed default on empty input."""
-    if default is None:
-        prompt_text = f"{prompt}: "
-    else:
-        prompt_text = f"{prompt} [{default}]: "
-    return prompt_read(prompt_text) or default or ""
+def setup_logging():
+    return log_utils.setup_logging("nodepack_zip_generator", LOG_FILE)
 
 
 def nightly_hex_ident() -> str:
@@ -139,7 +136,7 @@ def pack_version_from_entries(entries: list[ArchiveEntry]) -> str | None:
     return None
 
 
-def ensure_entries_exist(entries: list[ArchiveEntry], logger: logging.Logger) -> None:
+def ensure_entries_exist(entries: list[ArchiveEntry], logger) -> None:
     missing = [entry.source for entry in entries if not entry.exists()]
     if not missing:
         return
@@ -148,7 +145,7 @@ def ensure_entries_exist(entries: list[ArchiveEntry], logger: logging.Logger) ->
     raise FileNotFoundError(f"{len(missing)} source file(s) are missing.")
 
 
-def build_archive(entries: list[ArchiveEntry], output_path: Path, logger: logging.Logger) -> None:
+def build_archive(entries: list[ArchiveEntry], output_path: Path, logger) -> None:
     with zipfile.ZipFile(
         output_path,
         "w",
@@ -166,7 +163,7 @@ def build_pack(
     nightly: bool,
     node_version: str | None,
     output_dir: str | None,
-    logger: logging.Logger,
+    logger,
 ) -> int:
     """Perform the actual build for a fully resolved set of options."""
     if nightly:
@@ -180,7 +177,7 @@ def build_pack(
         out = Path(output_dir) if output_dir else RELEASE_OUTPUT_DIR
         output_path = out / RELEASE_NAME_TEMPLATE.format(pack_name=pack_name)
 
-    out.mkdir(exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     build_archive(entries, output_path, logger)
 
     logger.info("Wrote %s", output_path)
@@ -188,7 +185,7 @@ def build_pack(
     return 0
 
 
-def interactive_build(logger: logging.Logger) -> int:
+def interactive_build(logger) -> int:
     """Guided CLI UI for users running the script without any --options."""
     entries = collect_entries()
     ensure_entries_exist(entries, logger)
@@ -196,6 +193,7 @@ def interactive_build(logger: logging.Logger) -> int:
     print("")
     print("Dragongraph's Toolset Pack - ZIP generator")
     print("==========================================")
+    print(f"Settings: {env_utils.source_description()}")
     print("What do you want to build?")
     print("  1) Release (versioned asset library .zip)")
     print("  2) Nightly snapshot")
@@ -203,7 +201,7 @@ def interactive_build(logger: logging.Logger) -> int:
     sys.stdout.flush()
 
     while True:
-        choice = prompt_read("Choose [1/2/3]: ") or "3"
+        choice = prompt_utils.prompt_read("Choose [1/2/3]: ") or "3"
         if choice in ("1", "2", "3"):
             break
     if choice == "2":
@@ -215,7 +213,7 @@ def interactive_build(logger: logging.Logger) -> int:
     elif choice == "1":
         nightly = False
         default_version = pack_version_from_entries(entries) or DEFAULT_NODE_VERSION
-        node_version = ask("Node version", default_version)
+        node_version = prompt_utils.ask("Node version", default_version)
         default_out = RELEASE_OUTPUT_DIR.as_posix()
         kind = "release"
         version_note = f" {node_version!r}"
@@ -223,12 +221,10 @@ def interactive_build(logger: logging.Logger) -> int:
         logger.info("Exiting without building.")
         return 0
 
-    out_dir = Path(ask("Output directory", default_out))
-    if not out_dir.is_absolute():
-        out_dir = REPO_ROOT / out_dir
+    out_dir = path_utils.resolve_under_root(prompt_utils.ask("Output directory", default_out))
 
     print(f"  -> Build {kind}{version_note} into {out_dir}")
-    confirm = prompt_read("Continue? [Y/n]: ").lower()
+    confirm = prompt_utils.prompt_read("Continue? [Y/n]: ").lower()
     if confirm in ("n", "no"):
         logger.info("Cancelled by user.")
         return 0
@@ -248,6 +244,7 @@ def main(args, logger) -> int:
     ensure_entries_exist(entries, logger)
 
     logger.info("Collected %d source file(s).", len(entries))
+    logger.info("Settings: %s", env_utils.source_description())
 
     node_version = None
     if not args.nightly:
@@ -282,19 +279,42 @@ def run(argv: list[str] | None = None) -> int:
         "--node-version",
         default=None,
         help="Release version string (e.g. v1.1.0-alpha). When omitted the version "
-        "is parsed from the first .blend filename (falling back to a default).",
+        "is parsed from the first .blend filename (falling back to DEFAULT_NODE_VERSION).",
     )
     parser.add_argument(
         "--output-dir",
         default=None,
         help="Override the output directory; relative paths resolve under the "
-        "repository root (default: 'Generated Nodepacks' for releases, "
-        "'DragonGraph's Nighty Build' for nightlies).",
+        f"repository root (default: {RELEASE_OUTPUT_DIR.name!r} for releases, "
+        f"{NIGHTLY_OUTPUT_DIR.name!r} for nightlies).",
     )
-    parser.add_argument("--no-pause", action="store_true", help="Do not wait for Enter on exit.")
+    parser.add_argument(
+        "--no-pause",
+        action="store_true",
+        help="Do not wait for Enter on exit (PAUSE_PROMPT comes from .env).",
+    )
+    parser.add_argument(
+        "--show-settings",
+        action="store_true",
+        help="Print the resolved .env settings and exit.",
+    )
     args = parser.parse_args(argv)
 
     logger = setup_logging()
+
+    if args.show_settings:
+        logger.info("Settings: %s", env_utils.source_description())
+        for name, value in (
+            ("SOURCE_DIR", SOURCE_DIR),
+            ("RELEASE_OUTPUT_DIR", RELEASE_OUTPUT_DIR),
+            ("NIGHTLY_OUTPUT_DIR", NIGHTLY_OUTPUT_DIR),
+            ("DEFAULT_NODE_VERSION", DEFAULT_NODE_VERSION),
+            ("ZIP_COMPRESSION_LEVEL", COMPRESSION_LEVEL),
+            ("ZIP_EXCLUDED_SUFFIXES", ", ".join(EXCLUDED_SUFFIXES)),
+            ("LOG_FILE", LOG_FILE),
+        ):
+            logger.info("  %s = %s", name, value)
+        return 0
 
     by_options = (
         args.nightly or args.node_version is not None or args.output_dir is not None
@@ -321,8 +341,7 @@ def run(argv: list[str] | None = None) -> int:
         logger.error("Error: %s", error, exc_info=True)
         exit_code = 1
 
-    if not args.no_pause and sys.stdin.isatty():
-        input(PAUSE_PROMPT)
+    prompt_utils.pause_if_requested(args.no_pause)
     return exit_code
 
 

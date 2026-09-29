@@ -1,0 +1,13 @@
+# Line-ending rules.
+#
+# Only shell scripts are pinned here, and deliberately so: a global
+# "* text=auto eol=lf" would renormalise every text file in the repository and
+# produce an enormous unrelated diff. The .blend pack is binary and is already
+# detected as such, so leaving the rest to git's defaults is correct.
+
+# A hook or script committed with CRLF endings fails on every platform with
+# "bad interpreter: /usr/bin/env bash^M". core.autocrlf is commonly true on
+# Windows, so pin these to LF in the repository rather than relying on each
+# contributor's local git config.
+*.sh text eol=lf
+.github/hooks/pre-push text eol=lf

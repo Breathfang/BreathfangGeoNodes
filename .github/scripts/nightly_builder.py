@@ -2,7 +2,7 @@
 """Nightly ZIP builder for "DragonGraph's Toolset Pack".
 
 Packages every project asset below a source directory recursively into a single
-versioned snapshot archive with the exact naming convention:
+versioned snapshot archive:
 
     Dragongraph's Toolset Pack NightlyBuilds_<8-hex>_<YYYYMMDD-HHMMSS>.zip
 
@@ -11,11 +11,10 @@ environment variable (CI), a ``git rev-parse --short=8 HEAD`` lookup, or a
 cryptographically random 8-hex value. The timestamp is always UTC.
 
 ZIP contents: every regular file below the source directory (all file types,
-including Collabs/ subfolders), except hard-coded policy exclusions that do not
-depend on how the script is invoked:
-  - Files ending in .md (e.g. Collabs/Collabs.md), .log or .tmp.
-  - Editor backup files: '*~', '*.orig', '*.rej'.
-  - Blender autosave files: '*.blend1' .. '*.blend9'.
+including Collabs/ subfolders), except the exclusion policy configured in this
+folder's ``.env`` - by default .md/.log/.tmp, the editor backups '*~', '*.orig'
+and '*.rej', and the Blender autosaves '*.blend1' .. '*.blend9'. Those
+exclusions do not depend on how the script is invoked.
 
 By default the archive is written to "DragonGraph's Nighty Build/" so it can be
 committed to the repository while still being stored as a GitHub artifact.
@@ -29,45 +28,42 @@ import argparse
 import datetime
 import os
 import secrets
-import subprocess
 import sys
 import zipfile
 from pathlib import Path
 
-SOURCE_DIR_NAME = "DragonGraph's Project"
-OUTPUT_DIR_NAME = "DragonGraph's Nighty Build"
-ZIP_NAME_TEMPLATE = "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip"
-COMPRESSION_LEVEL = 9
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-# --------------------------------------------------------------------------
-# Master toggle for the GitHub Actions nightly pipeline.
-#   Set to True  -> CI builds, commits and pushes the nightly snapshot.
-#   Set to False -> the pipeline short-circuits; nothing is built or pushed
-#                   (local/manual runs are NOT affected, only GitHub Actions).
-# --------------------------------------------------------------------------
-BUILDS_ENABLED = False
+from functions import ci_utils, env_utils, path_utils, scan_utils  # noqa: E402
 
-# Explicit exclusion policy (see module docstring).
-BLEND_AUTOSAVE_SUFFIXES = tuple(f".blend{d}" for d in range(1, 10))  # .blend1..9
-EXCLUDED_SUFFIXES = (".md", ".log", ".tmp", "~", ".orig", ".rej") + BLEND_AUTOSAVE_SUFFIXES
+# Re-exported under its historical name: the workflow's import-time gate reads
+# nightly_builder.BUILDS_ENABLED to decide whether to run the pipeline at all.
+BUILDS_ENABLED = ci_utils.BUILDS_ENABLED
+
+SOURCE_DIR_NAME = env_utils.get_str("SOURCE_DIR", "DragonGraph's Project")
+OUTPUT_DIR_NAME = env_utils.get_str("NIGHTLY_OUTPUT_DIR", "DragonGraph's Nighty Build")
+ZIP_NAME_TEMPLATE = env_utils.get_str(
+    "NIGHTLY_ZIP_NAME", "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip"
+)
+COMPRESSION_LEVEL = env_utils.get_int("ZIP_COMPRESSION_LEVEL", 9)
+
+# Explicit exclusion policy (see .env).
+EXCLUDED_SUFFIXES = env_utils.get_suffixes(
+    "ZIP_EXCLUDED_SUFFIXES",
+    (".md", ".log", ".tmp", "~", ".orig", ".rej")
+    + tuple(f".blend{index}" for index in range(1, 10)),
+)
 
 
 def build_hex_ident() -> str:
     sha = os.environ.get("GITHUB_SHA")
     if sha:
         return sha[:8]
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--short=8", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=10,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()[:8]
-    except (OSError, subprocess.SubprocessError):
-        pass
+    short = ci_utils.short_sha()
+    if short:
+        return short
     return secrets.token_hex(4)
 
 
@@ -116,7 +112,9 @@ def main(argv: list[str] | None = None) -> int:
         description="Package DragonGraph's Project assets into a nightly .zip "
         "under DragonGraph's Nighty Build/."
     )
-    parser.add_argument("--repo", default=".", help="Path to the git repository root")
+    parser.add_argument(
+        "--repo", default=".", help="Path to the git repository root (default: the repo root)"
+    )
     parser.add_argument(
         "--source-dir",
         default=SOURCE_DIR_NAME,
@@ -137,24 +135,37 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Override the UTC timestamp YYYYMMDD-HHMMSS (for deterministic tests)",
     )
+    parser.add_argument(
+        "--show-settings",
+        action="store_true",
+        help="Print the resolved .env settings and exit",
+    )
     parser.add_argument("-q", "--quiet", action="store_true")
     args = parser.parse_args(argv)
 
     # CI pause switch: when BUILDS_ENABLED is False, GitHub Actions runs bail
     # out early (belt-and-suspenders on top of the workflow gate). Local and
     # manual invocations still build normally.
-    ci_run = os.environ.get("GITHUB_ACTIONS") == "true"
-    if ci_run and not BUILDS_ENABLED:
+    if ci_utils.in_ci() and not BUILDS_ENABLED:
         print(
             "[nightly-builder] nightly builds are DISABLED "
-            "(BUILDS_ENABLED = False in .github/scripts/nightly_builder.py); "
+            "(NIGHTLY_BUILDS_ENABLED = false in .github/scripts/.env); "
             "nothing was created or pushed"
         )
         return 0
 
-    repo = Path(args.repo).expanduser().resolve()
-    source_dir = (repo / args.source_dir).resolve()
-    output_dir = (repo / args.output_dir).resolve()
+    if args.show_settings:
+        print(f"Settings: {env_utils.source_description()}")
+        print(f"  NIGHTLY_BUILDS_ENABLED = {BUILDS_ENABLED}")
+        print(f"  SOURCE_DIR = {SOURCE_DIR_NAME!r}")
+        print(f"  NIGHTLY_OUTPUT_DIR = {OUTPUT_DIR_NAME!r}")
+        print(f"  ZIP_COMPRESSION_LEVEL = {COMPRESSION_LEVEL}")
+        print(f"  ZIP_EXCLUDED_SUFFIXES = {', '.join(EXCLUDED_SUFFIXES)}")
+        return 0
+
+    repo = scan_utils.resolve_repo(args.repo)
+    source_dir = path_utils.resolve_against(repo, args.source_dir)
+    output_dir = path_utils.resolve_against(repo, args.output_dir)
 
     if not source_dir.is_dir():
         print(f"[nightly-builder] source directory not found: {source_dir}", file=sys.stderr)

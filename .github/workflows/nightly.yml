@@ -1,0 +1,198 @@
+name: Nightly
+
+# ---------------------------------------------------------------------------
+#  Trigger contract
+# ---------------------------------------------------------------------------
+#  push         -> a commit landed on main. Security scan, then build+deploy.
+#  pull_request -> a PR targets main. Security scan ONLY, never a deploy.
+#
+#  paths-ignore on push exists for one reason: build-and-deploy commits the
+#  generated zip back to main. Without this, that bot commit would re-trigger
+#  the workflow and build a second zip forever. Everything else in the repo,
+#  including .github/ and the scanner itself, still triggers a scan.
+# ---------------------------------------------------------------------------
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "DragonGraph's Nighty Build/**"
+  pull_request:
+    branches: [main]
+
+# Least privilege by default. Only build-and-deploy needs to write, and it
+# raises its own permission below.
+permissions:
+  contents: read
+
+# Cancel superseded PR scans, but never cancel a deploy mid-push.
+concurrency:
+  group: nightly-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # ==========================================================================
+  #  security-scan
+  #
+  #  The only job that can veto a merge. Runs on PRs and on pushes to main.
+  #  There is no bypass, no `set +e` and no .nightly-bypassed marker: a
+  #  confirmed violation exits 1 and this job goes red, which is exactly what
+  #  branch protection requires before a PR can merge.
+  # ==========================================================================
+  security-scan:
+    name: Security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      nightly_enabled: ${{ steps.gate.outputs.nightly_enabled }}
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install scanner dependencies
+        run: python -m pip install --disable-pip-version-check -r .github/scripts/requirements.txt
+
+      # ---------------------------------------------------------------------
+      #  Gate toggle, checked first so a broken gate fails fast before we
+      #  spend any time scanning.
+      #
+      #  gate_check.py exits 1 when NIGHTLY_BUILDS_ENABLED cannot be resolved
+      #  (missing .env, missing key, empty value, non-boolean). That is a hard
+      #  failure: a gate that cannot read its own toggle must never be allowed
+      #  to guess and quietly publish.
+      #
+      #  An explicit `false` is NOT a failure. It reports nightly_enabled=false
+      #  and the deploy job is skipped, while this scan still runs and still
+      #  blocks a merge on a real finding. Failing the scan job on a
+      #  deliberately paused build would block every unrelated pull request,
+      #  which is the opposite of what a security gate is for.
+      # ---------------------------------------------------------------------
+      - name: Check nightly-builds toggle
+        id: gate
+        run: python .github/scripts/gate_check.py
+
+      # Step 1: Python security scanner. AST + tokenizer pass for dangerous
+      # system calls in the code that can end up inside the shipped .zip.
+      # Exit 1 = confirmed violation = this step and job fail.
+      # Exit 2 = the scan could not be completed = also fails, on purpose.
+      # Corrupt or unparseable files inside the scan root are reported as
+      # [WARNING] and skipped, so one broken file cannot block a PR.
+      - name: Scan .py files for dangerous patterns
+        run: |
+          python .github/scripts/python_security_scanner.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --root "DragonGraph's Project"
+
+      # Step 2: .blend scanner. Policy from CONTRIBUTING.md: no Python embedded
+      # in .blend files, because the pack ships the .blend itself.
+      - name: Scan .blend files for embedded Python
+        run: |
+          python .github/scripts/blend_scanner.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --root "DragonGraph's Project"
+
+      - name: Summarise scan result
+        if: always()
+        run: |
+          {
+            echo "## Security scan"
+            echo
+            echo "| Setting | Value |"
+            echo "| --- | --- |"
+            echo "| Nightly builds enabled | \`${{ steps.gate.outputs.nightly_enabled || 'unknown' }}\` |"
+            echo "| Event | \`${{ github.event_name }}\` |"
+            echo "| Ref | \`${{ github.ref }}\` |"
+            echo
+            if [ "${{ steps.gate.outputs.nightly_enabled }}" = "true" ]; then
+              echo "Deploy will run: this was a push to \`main\` and the toggle is on."
+            else
+              echo "Deploy is skipped. A pull request never deploys, and the toggle gates the rest."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ==========================================================================
+  #  build-and-deploy
+  #
+  #  Runs only when every one of these is true:
+  #    1. security-scan succeeded (needs: below).
+  #    2. The event is a push, not a pull_request.
+  #    3. The target is main.
+  #    4. NIGHTLY_BUILDS_ENABLED resolved to true.
+  # ==========================================================================
+  build-and-deploy:
+    name: Build and deploy
+    needs: security-scan
+    if: >-
+      github.event_name == 'push'
+      && github.ref == 'refs/heads/main'
+      && needs.security-scan.outputs.nightly_enabled == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # The builder and cleaner share the toggle's .env; the gate above already
+      # proved it parses, so this is belt-and-braces for the direct entry point.
+      - name: Confirm builds are enabled
+        run: python .github/scripts/gate_check.py
+
+      # Step 3: build the nightly ZIP under DragonGraph's Nighty Build/
+      # (.md/.log/.tmp and editor backups are excluded inside the script; the
+      # Utilities sibling folder is outside the scan root).
+      - name: Build nightly zip
+        run: |
+          python .github/scripts/nightly_builder.py --repo "$GITHUB_WORKSPACE"
+          ls -lh "DragonGraph's Nighty Build"
+
+      # Step 4: rotate, keeping at most 10 builds or 300 MiB, oldest first.
+      # A failure here fails the job, so a failed run can never leave the
+      # repository with a deletion committed on its own.
+      - name: Rotate and clean nightly builds
+        run: python .github/scripts/nightly_cleaner.py --repo "$GITHUB_WORKSPACE"
+
+      # Step 5: dual output. The same ZIP is kept as a downloadable Actions
+      # artifact for 7 days and committed back to the repository.
+      - name: Upload nightly build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-build
+          path: "DragonGraph's Nighty Build/*.zip"
+          if-no-files-found: error
+          retention-days: 7
+
+      # Step 6: commit and push the ZIP on the branch that triggered the
+      # workflow, which is main. The push trigger's paths-ignore excludes this
+      # directory, so committing here cannot start another build.
+      #
+      # NOTE: main is expected to be protected and to require a pull request.
+      # GitHub rejects a direct push from GITHUB_TOKEN to such a branch unless
+      # the bot is on the protection rule's bypass list. See
+      # .github/BRANCH_PROTECTION.md - add github-actions[bot] there, or this
+      # step fails on the first deployment.
+      - name: Commit and push nightly build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "DragonGraph's Nighty Build"
+          if git diff --cached --quiet; then
+            echo "No new nightly zip to commit."
+            exit 0
+          fi
+          git commit -m "build(nightly): toolset pack snapshot $(date -u +%Y%m%d-%H%M%S)"
+          git push origin HEAD:"${{ github.ref_name }}"

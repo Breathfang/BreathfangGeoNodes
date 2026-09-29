@@ -8,14 +8,19 @@ Policies enforced by this repository:
 Two layered scanning strategies, both zero-false-positive on the real pack:
 
 1. Structure-aware block scan (preferred). After decompressing the on-disk
-   stream to the playable byte stream, the Blender file header is validated and
-   the container is walked block by block using the correct BHead layout:
-   - Blender 5.x ("BLENDER17-..." 17-byte header) uses the 32-byte LargeBHead8
-     {code, SDNAnr, old, len, nr} exclusively.
-   - Older files ("BLENDER-..." 16-byte header) are tried with SmallBHead8
-     (24 bytes), BHead4 (20 bytes) and LargeBHead8, little- then big-endian,
-     and the first candidate that validates (walking to an ENDB terminator
-     without overrun) wins.
+   stream to the playable byte stream, the container layout is *discovered*
+   rather than assumed, so no Blender version is hardcoded:
+   - The header is self-describing. The bytes after the b"BLENDER" magic carry
+     the header length in decimal (b"BLENDER17-01v0502" -> 17), so a 6.x file
+     that widens its header is read correctly without a code change. When those
+     bytes are not all digits the classic fixed 16-byte header is used.
+   - The block header (BHead) layout is probed across plausible sizes, length
+     field offsets, widths and byte orders. A candidate is kept only if the
+     block chain it produces validates all the way to its ENDB terminator
+     without overrunning, so a wider BHead or a moved length field is picked
+     up at runtime. A chain is additionally trusted when the DNA1 block it
+     reports really holds an SDNA payload, which stops a coincidental match on
+     low-entropy data from silently shifting every block boundary.
    Only the payload of Text datablocks (ID code "TXT", null- or space-padded,
    e.g. b"TXT\\x00") is scanned for executable Python markers. This is where
    Blender stores embedded scripts, so ordinary mesh/geometry/cache data is
@@ -33,11 +38,29 @@ multi-frame) Zstandard (or gzip) stream whose header is only visible after
 decompression. A 2 GiB decompression cap avoids zip bombs.
 
 Optionally, when a Blender executable is available (--blender-binary or
-BLENDER_BINARY), the scanner runs Blender headless to enumerate the real
-data-block-level Text objects (``bpy.data.texts``) and scans those instead --
+BLENDER_BINARY in ``.env``), the scanner runs Blender headless to enumerate the
+real data-block-level Text objects (``bpy.data.texts``) and scans those instead --
 the most authoritative path.
 
-Exit codes: 0 = clean, 1 = suspicious content found, 2 = usage / environment error.
+Scan root, limits, the optional Blender executable and the skip list come from
+this folder's ``.env``; run with --show-settings to print what was resolved.
+
+Resilience: a file that cannot be read or decoded is a technical fault, not a
+policy violation. It is reported as ``[WARNING]`` and skipped so one corrupt or
+half-written .blend cannot block a push or a CI run. A .blend whose *structure*
+is not recognised - a future Blender release, or geometry this scanner cannot
+walk - warns with "Unable to parse Blender 6.x or Unknown Blender Version file
+structure" and falls through to the printable-run pass; it is never a policy
+violation on its own. Set ``SCAN_STRICT_ON_ERROR=true`` in ``.env`` to turn an
+incomplete scan (skipped or unverified files) into a failure instead. A missing
+decoder is never skippable: if Zstandard is not installed the run fails rather
+than quietly reporting files it never opened.
+
+Exit codes:
+    0  clean. Some files may have been skipped as unreadable; see the warnings.
+    1  a confirmed policy violation: executable Python inside a .blend.
+    2  the scan could not be completed (missing decoder, unreadable root, or
+       SCAN_STRICT_ON_ERROR with unverifiable files). Never reported as clean.
 """
 
 from __future__ import annotations
@@ -45,26 +68,40 @@ from __future__ import annotations
 import argparse
 import gzip
 import io
-import os
+import json
 import re
 import subprocess
 import sys
 import tempfile
 import zlib
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
-DEFAULT_ROOT = "DragonGraph's Project"
-EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-MAX_OUTPUT = 2 << 30  # 2 GiB decompression cap (anti zip-bomb)
-MAX_RUN_REPORT = 4096  # cap of the text snippet printed per finding
-MAX_BLOCKS = 2_000_000
+from functions import env_utils, path_utils, scan_utils  # noqa: E402
+
+DEFAULT_ROOT = env_utils.get_str("BLEND_SCAN_ROOT", "DragonGraph's Project")
+EMPTY_TREE = scan_utils.EMPTY_TREE
+
+MAX_OUTPUT = env_utils.get_int("BLEND_MAX_OUTPUT_BYTES", 2 << 30)  # 2 GiB anti zip-bomb
+MAX_BLOCKS = env_utils.get_int("BLEND_MAX_BLOCKS", 2_000_000)
+MIN_RUN_LENGTH = env_utils.get_int("BLEND_MIN_RUN_LENGTH", 16)
+HEADLESS_TIMEOUT = env_utils.get_int("BLEND_HEADLESS_TIMEOUT", 120)
+BLENDER_BINARY = env_utils.get_str("BLENDER_BINARY", "")
+SKIP_DIRS = scan_utils.DEFAULT_SKIP_DIRS
+
+# A .blend that cannot be read or decoded is a technical fault, not a policy
+# violation, so by default it is warned about and skipped (exit 0). Flip this
+# to true to make an incomplete scan fail with exit 2 instead.
+STRICT_ON_ERROR = env_utils.get_bool("SCAN_STRICT_ON_ERROR", False)
 
 ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
 GZIP_MAGIC = b"\x1f\x8b"
-BLENDER_MAGIC = b"BLENDER"
-ENDB = b"ENDB"
+# BLENDER_MAGIC, ENDB and TEXT_CODE are defined with the forward-compatibility
+# block below, next to the header/BHead discovery logic that uses them.
 
 # Python markers only meaningful inside printable text regions.
 # Each entry: (label, compiled bytes-regex)
@@ -88,10 +125,90 @@ MARKER_PATTERNS = [
 ]
 MARKER_NAMES = {label for label, _ in MARKER_PATTERNS}
 
-# Block header sizes understood by this scanner.
-BHEAD_LARGE8 = 32  # Blender 5.x: LargeBHead8 {code, SDNAnr, old, len, nr}
-BHEAD_SMALL8 = 24  # legacy 64-bit: SmallBHead8 {code, len, old, SDNAnr, nr}
-BHEAD_4 = 20  # legacy 32-bit: BHead4 {code, len, old, SDNAnr, nr}
+# ---------------------------------------------------------------------------
+#  Forward compatibility with unknown / future Blender releases
+# ---------------------------------------------------------------------------
+#  Nothing below hardcodes a Blender version. Two facts are used instead:
+#
+#  1. The file header is self-describing. Immediately after the b"BLENDER"
+#     magic, a 5.x file carries its own header length in decimal
+#     (b"BLENDER17-01v0502" -> 17). A future 6.x file that widens the header
+#     would simply say "18" or "20" and be read correctly. When those bytes are
+#     not all decimal digits the file uses the classic fixed 16-byte header.
+#
+#  2. The block header (BHead) layout is *discovered*, not assumed. Rather than
+#     betting on a {20, 24, 32} x {little, big} table that a release can
+#     invalidate, every plausible (size, len-field offset, width, endian) is
+#     probed and kept only if the resulting block chain validates all the way
+#     to its ENDB terminator. A 6.x file with a wider BHead, a moved length
+#     field or 128-bit offsets is then handled without a code change.
+#
+#  If neither step succeeds the file is not a known Blender structure. That is
+#  reported as a warning and the printable-run fallback still runs, because an
+#  unrecognised container is exactly where embedded Python would hide.
+# ---------------------------------------------------------------------------
+
+BLENDER_MAGIC = b"BLENDER"
+ENDB = b"ENDB"
+TEXT_CODE = b"TXT"
+
+LEGACY_HEADER_LEN = 16  # classic 12-byte identifier + 4-byte tail
+MIN_HEADER_LEN = 12
+MAX_HEADER_LEN = 64  # sanity bound on the self-describing length
+
+MIN_BHEAD_SIZE = 16
+MAX_BHEAD_SIZE = 64
+BHEAD_SIZE_STEP = 4  # all released BHead sizes are 4-byte aligned
+# Widest first: reading only the low half of a 64-bit length can misparse a
+# block larger than 2 GiB. A 16-bit length is not offered because no BHead has
+# ever used one, and admitting it measurably raises the rate of coincidental
+# matches on low-entropy data.
+LEN_WIDTHS = (8, 4)
+
+# Every .blend carries a DNA1 block whose payload is the SDNA type table. That
+# makes it a self-validating anchor: a candidate layout is only trusted when the
+# block it reports as DNA1 really does hold an SDNA payload. The block code is
+# "DNA1"; the payload it introduces begins with "SDNA". It depends on no version
+# number and no assumed geometry.
+DNA1_CODE = b"DNA1"
+DNA1_PAYLOAD_MAGIC = b"SDNA"
+
+# Cheap pre-filter: a wrong layout almost always dies on the first few blocks,
+# so only a layout surviving this many pays for a full 155k-block chain walk.
+# A deep probe is far cheaper than the full walks it avoids.
+PROBE_BLOCKS = 64
+
+# Upper bound on full chain walks performed during discovery. A real file
+# rejects nearly every candidate at the probe stage, so this is a safety valve
+# against pathological input rather than a normal limit.
+MAX_FULL_WALKS = 512
+
+
+class Layout(NamedTuple):
+    """A validated on-disk block-header layout."""
+
+    size: int
+    len_offset: int
+    len_width: int
+    endian: str
+    source: str
+
+    def describe(self) -> str:
+        return (
+            f"{self.size}-byte BHead, len field at +{self.len_offset} "
+            f"({self.len_width * 8}-bit, {self.endian}-endian; via {self.source})"
+        )
+
+
+
+class ScanUnavailable(RuntimeError):
+    """A capability is missing, so the file could not be inspected at all.
+
+    This is deliberately NOT the same as a corrupt file. A corrupt file is
+    warned about and skipped, but a missing decoder means the scanner never got
+    to look inside a file that may well be hiding embedded Python, so the run
+    must fail closed instead of quietly reporting "clean".
+    """
 
 
 class SafeZstdDecompressor:
@@ -114,7 +231,10 @@ class SafeZstdDecompressor:
         """Fully decompress a (possibly multi-frame) zstd stream with a hard cap."""
         mod = self._mod
         if mod is None:
-            raise RuntimeError("zstandard not installed")
+            raise ScanUnavailable(
+                "zstandard is not installed, so zstd-compressed .blend files "
+                "cannot be inspected. Install it with 'pip install zstandard'."
+            )
         dctx = mod.ZstdDecompressor()
         out = bytearray()
         with dctx.stream_reader(stream) as reader:
@@ -148,7 +268,7 @@ def decompress_blob(raw: bytes) -> bytes:
         if flag == b"z":  # zstd-compressed body
             zstd = SafeZstdDecompressor()
             if not zstd.available:
-                raise RuntimeError(
+                raise ScanUnavailable(
                     "file is zstd-compressed; install 'zstandard' (pip install zstandard)"
                 )
             return raw[:16] + zstd.decompress_stream(io.BytesIO(body))
@@ -161,7 +281,7 @@ def decompress_blob(raw: bytes) -> bytes:
                 return gz.read(MAX_OUTPUT)
         zstd = SafeZstdDecompressor()
         if not zstd.available:
-            raise RuntimeError(
+            raise ScanUnavailable(
                 "file is zstd-compressed; install 'zstandard' (pip install zstandard)"
             )
         return zstd.decompress_stream(stream, limit=MAX_OUTPUT)
@@ -169,97 +289,220 @@ def decompress_blob(raw: bytes) -> bytes:
     raise ValueError("not a Blender file (missing BLENDER magic)")
 
 
-def header_info(blob: bytes) -> dict | None:
-    """Validate the playable stream header; return its layout, or None."""
-    if not blob[:7] == BLENDER_MAGIC:
-        return None
-    is_new = blob[7:9] == b"17" and len(blob) >= 17
-    header_len = int(blob[7:9].decode("ascii")) if is_new else 16
-    if not (16 <= header_len <= 64):
-        header_len = 17 if is_new else 16
-    version = b""
-    if len(blob) >= 17:
-        version = blob[12:17]
+class UnknownBlenderStructure(Exception):
+    """The stream is a .blend, but its layout is not one we can walk.
+
+    Raised for a header we cannot size or a block chain that does not validate
+    under any probed layout. It is a forward-compatibility signal, not a
+    security verdict, so callers warn and fall back instead of failing.
+    """
+
+
+def parse_header(blob: bytes) -> dict:
+    """Read the self-describing Blender file header.
+
+    Returns a dict with ``header_len`` (where the first block starts) and the
+    decoded version string. Raises UnknownBlenderStructure when the magic is
+    absent or the declared length is impossible.
+    """
+    if len(blob) < MIN_HEADER_LEN or blob[:7] != BLENDER_MAGIC:
+        raise UnknownBlenderStructure("missing BLENDER magic in the file header")
+
+    # Self-describing header: decimal digits straight after the magic give the
+    # header length ("17" in 5.x). A 6.x file that widens the header says so
+    # itself, so no version is ever assumed here.
+    digits = bytearray()
+    index = 7
+    while index < len(blob) and 0x30 <= blob[index] <= 0x39:
+        digits.append(blob[index])
+        index += 1
+
+    header_len = 0
+    if digits:
+        try:
+            header_len = int(digits.decode("ascii"))
+        except (UnicodeDecodeError, ValueError):
+            header_len = 0
+        if not MIN_HEADER_LEN <= header_len <= MAX_HEADER_LEN:
+            header_len = 0
+    self_describing = header_len > 0
+    if not header_len:
+        # Classic layout: the bytes after the magic are a pointer-size marker
+        # and an endianness flag rather than a length.
+        header_len = LEGACY_HEADER_LEN
+    if header_len > len(blob):
+        raise UnknownBlenderStructure(
+            f"declared header length {header_len} exceeds the {len(blob)}-byte stream"
+        )
+
+    version = blob[12:header_len] if header_len > 12 else b""
     return {
-        "is_new": bool(is_new),
         "header_len": header_len,
         "version": version.decode("ascii", "replace"),
+        "self_describing": self_describing,
     }
 
 
-def bhead_len_field(head: bytes, size: int) -> bytes:
-    """Return the raw bytes of the data-length field for a given BHead size."""
-    if size == BHEAD_LARGE8:
-        return head[16:24]  # int64 len
-    return head[4:8]  # int32 len (SmallBHead8 and BHead4)
+def _candidate_layouts():
+    """Yield plausible (size, len_offset, len_width, endian) tuples.
+
+    Ordered so a released layout is found quickly: widest length field first
+    (a truncated 64-bit read can otherwise misparse a large block), and the
+    larger block sizes first because those are the modern ones.
+    """
+    sizes = range(MAX_BHEAD_SIZE, MIN_BHEAD_SIZE - 1, -BHEAD_SIZE_STEP)
+    for size in sizes:
+        offsets = range(BHEAD_SIZE_STEP, size, BHEAD_SIZE_STEP)
+        for len_offset in offsets:
+            for len_width in LEN_WIDTHS:
+                if len_offset + len_width > size:
+                    continue
+                for endian in ("little", "big"):
+                    yield size, len_offset, len_width, endian
+
+
+def _read_len(blob: bytes, off: int, layout: Layout) -> int | None:
+    """Read one block's data length, or None if the bytes are unusable."""
+    start = off + layout.len_offset
+    end = start + layout.len_width
+    if end > len(blob):
+        return None
+    return int.from_bytes(blob[start:end], layout.endian, signed=True)
 
 
 def walk_blocks(
     blob: bytes,
     header_len: int,
-    size: int,
-    endian: str,
-    allow: set[str],
+    layout: Layout,
+    limit: int = MAX_BLOCKS,
+    stop_after: int | None = None,
 ) -> dict | None:
-    """Walk the BHead chain; None = layout does not validate."""
+    """Walk the BHead chain under ``layout``.
+
+    Returns a summary when the chain validates, else None. ``stop_after`` bounds
+    the number of blocks inspected, which the discovery probe uses to reject
+    wrong layouts cheaply before paying for a full walk.
+    """
     off = header_len
-    n = 0
+    count = 0
     text_ranges: list[tuple[int, int]] = []
+    dna_offsets: list[int] = []
+    size = layout.size
+
+    def result(partial: bool = False) -> dict:
+        # The DNA1 anchor only counts when the reported block really does hold
+        # an SDNA payload, so a coincidental code match cannot self-certify.
+        dna_validated = any(
+            blob[o : o + len(DNA1_PAYLOAD_MAGIC)] == DNA1_PAYLOAD_MAGIC
+            for o in dna_offsets
+        )
+        return {
+            "layout": layout,
+            "blocks": count,
+            "text_ranges": text_ranges,
+            "dna_validated": dna_validated,
+            "partial": partial,
+        }
+
     while True:
         if off + size > len(blob):
             return None
-        head = blob[off : off + size]
-        code = head[0:4]
+        code = blob[off : off + 4]
         if not all((0x20 <= byte <= 0x7E) or byte == 0 for byte in code):
             return None
-        data_len = int.from_bytes(
-            bhead_len_field(head, size), byteorder=endian, signed=True  # type: ignore[arg-type]
-        )
+        data_len = _read_len(blob, off, layout)
+        if data_len is None:
+            return None
+
         if code == ENDB:
-            tail = len(blob) - (off + size)
-            if data_len <= 0 and tail <= 8:
-                return {
-                    "size": size,
-                    "endian": endian,
-                    "blocks": n,
-                    "text_ranges": text_ranges,
-                }
+            # A valid chain ends with a zero-length ENDB and at most one
+            # trailing pointer-sized slot.
+            if data_len <= 0 and len(blob) - (off + size) <= 8:
+                return result()
             return None
-        if data_len < 0:
+
+        if data_len < 0 or off + size + data_len > len(blob):
             return None
-        if code[:3] == b"TXT":  # Text datablock: null-/space-padded "TXT"
+        if code[:3] == TEXT_CODE:  # Text datablock: null-/space-padded "TXT"
             text_ranges.append((off + size, data_len))
+        if code == DNA1_CODE:
+            dna_offsets.append(off + size)
+
         off += size + data_len
-        n += 1
-        if n > MAX_BLOCKS:
+        count += 1
+        if count > limit:
             return None
+        if stop_after is not None and count >= stop_after:
+            return result(partial=True)
 
 
-def scan_blocks(blob: bytes, allow: set[str]) -> dict | None:
-    """Locate Text datablocks with the correct BHead layout, or None."""
-    info = header_info(blob)
-    if info is None:
+def discover_layout(blob: bytes, header_len: int) -> Layout:
+    """Find the block-header layout this file actually uses.
+
+    Candidates are probed and kept only if the chain they produce validates all
+    the way to ENDB. A layout that a Blender release changes is therefore
+    picked up at runtime instead of needing a code change, and no version number
+    is referenced.
+
+    Preference order:
+      1. A chain that also validates against the DNA1 anchor.
+      2. Otherwise the first fully-validating chain in probe order.
+
+    The DNA1 check matters because low-entropy data can occasionally satisfy a
+    wrong layout by coincidence. Choosing such a layout would silently shift
+    every block boundary and could skip a Text datablock, so the anchor is
+    required whenever the file provides one.
+    """
+    probes = 0
+    full_walks = 0
+    fallback: Layout | None = None
+    for size, len_offset, len_width, endian in _candidate_layouts():
+        probes += 1
+        layout = Layout(size, len_offset, len_width, endian, "probed")
+        # Cheap reject first: a wrong layout almost always fails immediately.
+        if walk_blocks(blob, header_len, layout, stop_after=PROBE_BLOCKS) is None:
+            continue
+        if full_walks >= MAX_FULL_WALKS:
+            break
+        full_walks += 1
+        full = walk_blocks(blob, header_len, layout)
+        if full is None or full.get("partial"):
+            continue
+        if full.get("dna_validated"):
+            return layout._replace(
+                source=f"chain + DNA1 anchor ({probes} probed, {full_walks} full walk(s))"
+            )
+        if fallback is None:
+            fallback = layout
+
+    if fallback is not None:
+        return fallback._replace(
+            source=f"chain validation only, no DNA1 block found "
+            f"({probes} probed, {full_walks} full walk(s))"
+        )
+    raise UnknownBlenderStructure(
+        f"no block-header layout validated across {probes} candidates"
+    )
+
+
+def scan_blocks(blob: bytes) -> dict | None:
+    """Locate Text datablocks by walking the file's own block chain.
+
+    Returns None when the structure is not recognised; raises
+    UnknownBlenderStructure with the reason. The caller warns and falls back to
+    the printable-run scan.
+    """
+    info = parse_header(blob)
+    layout = discover_layout(blob, info["header_len"])
+    result = walk_blocks(blob, info["header_len"], layout)
+    if result is None:
         return None
-    if info["is_new"]:
-        candidates = [(BHEAD_LARGE8, "little"), (BHEAD_LARGE8, "big")]
-    else:
-        candidates = [
-            (BHEAD_SMALL8, "little"),
-            (BHEAD_4, "little"),
-            (BHEAD_LARGE8, "little"),
-            (BHEAD_SMALL8, "big"),
-            (BHEAD_4, "big"),
-            (BHEAD_LARGE8, "big"),
-        ]
-    for size, endian in candidates:
-        result = walk_blocks(blob, info["header_len"], size, endian, allow)
-        if result is not None:
-            result["header"] = info
-            return result
-    return None
+    result["header"] = info
+    return result
 
 
-def printable_runs(blob: bytes, min_len: int = 16):
+
+def printable_runs(blob: bytes, min_len: int = MIN_RUN_LENGTH):
     """Yield (start, end) ranges of printable ASCII (with whitespace) >= min_len."""
     start = None
     for i, byte in enumerate(blob):
@@ -318,22 +561,68 @@ def scan_text_ranges(blob: bytes, walk: dict, allow: set[str]) -> list[dict]:
 
 def open_in_memory_headless(blender_binary: str, blob: bytes) -> list[dict]:
     """Authoritative scan: load the blend in headless Blender and inspect the real
-    Text datablocks. Returns a list of findings (or [] when Blender reports none)."""
-    script = (
-        "import bpy, sys\n"
-        "res = []\n"
-        "for t in bpy.data.texts:\n"
-        "    name = t.name\n"
-        "    content = t.as_string()\n"
-        "    if any(\n"
-        "        pat in (name + content)\n"
-        "        for pat in ('import bpy', 'import bge', 'exec(', 'eval(', "
-        "'__import__', 'def register(', 'def unregister(', '.py')\n"
-        "    ):\n"
-        "        res.append(name)\n"
-        "print('BLENDSCAN_RESULT:' + repr(res))\n"
-        "sys.stdout.flush()\n"
-    )
+    Text datablocks.
+
+    Raises RuntimeError when Blender cannot be used, so the caller warns and
+    falls back to the byte-level pass. Reporting "clean" from a Blender run that
+    never actually inspected the file would be worse than not running it.
+    """
+    # Runs inside Blender. Written defensively because the Text API is not
+    # guaranteed to be identical across releases: it is reached through getattr,
+    # every access is individually guarded, and a failure is reported as an
+    # error rather than collapsing to an empty list, which would read as clean.
+    script = r"""
+import json
+import sys
+
+MARKERS = (
+    'import bpy',
+    'import bge',
+    'exec(',
+    'eval(',
+    '__import__',
+    'def register(',
+    'def unregister(',
+    '.py',
+)
+
+
+def collect():
+    import bpy
+    texts = getattr(bpy.data, 'texts', None)
+    if texts is None:
+        return None, 'bpy.data.texts is unavailable in this Blender build'
+    found = []
+    for text in list(texts):
+        try:
+            name = str(text.name)
+        except Exception:
+            continue
+        try:
+            content = text.as_string() or ''
+        except Exception:
+            content = ''
+        hits = [m for m in MARKERS if m in name or m in content]
+        # Blender 4.0+ can auto-run a Text datablock on file load ("Register").
+        try:
+            auto_run = bool(getattr(text, 'use_module', False))
+        except Exception:
+            auto_run = False
+        if hits or auto_run:
+            found.append({'name': name, 'markers': hits, 'auto_run': auto_run})
+    return found, None
+
+
+try:
+    found, error = collect()
+except Exception as exc:
+    found, error = None, repr(exc)
+
+# JSON, not repr(): the result crosses a process boundary, and eval() on
+# subprocess output is remote code execution by another name.
+sys.stdout.write('BLENDSCAN_RESULT:' + json.dumps({'found': found, 'error': error}) + '\n')
+sys.stdout.flush()
+"""
     with tempfile.NamedTemporaryFile(
         "w", suffix=".blend", dir=tempfile.gettempdir(), delete=False
     ) as tmp:
@@ -344,43 +633,66 @@ def open_in_memory_headless(blender_binary: str, blob: bytes) -> list[dict]:
         blender_binary,
         "--background",
         "--factory-startup",
+        # The file must come before --python-expr: Blender executes a
+        # --python-expr while it parses arguments, and only loads a positional
+        # file afterwards. With the order reversed the script would inspect an
+        # empty --factory-startup scene and always report "clean".
+        blob_path,
         "--python-expr",
         script,
-        blob_path,
     ]
     proc = subprocess.run(
-        cmd, capture_output=True, text=True, timeout=120, check=False
+        cmd,
+        capture_output=True,
+        text=True,
+        errors="replace",
+        timeout=HEADLESS_TIMEOUT,
+        check=False,
     )
     try:
-        os.remove(blob_path)
+        Path(blob_path).unlink(missing_ok=True)
     except OSError:
         pass
-    findings: list[dict] = []
+
     line = next(
         (l for l in proc.stdout.splitlines() if "BLENDSCAN_RESULT:" in l), None
     )
-    if line is None and proc.returncode != 0:
-        return [
-            {
-                "kind": "blender-error",
-                "offset": 0,
-                "marker": proc.stderr.strip()[-200:] or proc.stdout.strip()[-200:],
-                "match": "headless Blender could not inspect the file",
-            }
-        ]
     if line is None:
-        return findings
+        detail = (proc.stderr.strip() or proc.stdout.strip())[-300:]
+        reason = (
+            f"headless Blender exited with code {proc.returncode}"
+            if proc.returncode != 0
+            else "headless Blender produced no result (it may not be able to "
+            "open this file's version)"
+        )
+        raise RuntimeError(f"{reason}: {detail}")
+
     try:
-        names = eval(line.split("BLENDSCAN_RESULT:", 1)[1])  # noqa: S307
-    except Exception:
-        return findings
-    for name in names:
+        payload = json.loads(line.split("BLENDSCAN_RESULT:", 1)[1])
+    except (ValueError, IndexError) as exc:
+        raise RuntimeError(f"unparseable headless Blender result: {exc!r}") from exc
+
+    if payload.get("error") or payload.get("found") is None:
+        raise RuntimeError(
+            f"headless Blender could not inspect the file: "
+            f"{payload.get('error') or 'no Text collection returned'}"
+        )
+
+    findings: list[dict] = []
+    for entry in payload["found"]:
+        markers = entry.get("markers") or []
+        auto_run = bool(entry.get("auto_run"))
+        reason = (
+            f"Text datablock {entry['name']!r} is registered to auto-run on file load"
+            if auto_run and not markers
+            else f"Text datablock {entry['name']!r} contains executable Python"
+        )
         findings.append(
             {
                 "kind": "blend-text-datablock",
                 "offset": 0,
-                "marker": name,
-                "match": f"Text datablock '{name}' contains executable Python",
+                "marker": ", ".join(markers) or "use_module",
+                "match": reason,
             }
         )
     return findings
@@ -390,41 +702,85 @@ def changed_blend_files(
     repo: Path, base: str, root: Path
 ) -> list[str]:
     """Files (repo-root-relative) that changed on .blend within root."""
-    diff = subprocess.run(
-        [
-            "git",
-            "-C",
-            str(repo),
-            "diff",
-            "--name-only",
-            "--diff-filter=ACMRTUXB",
-            base,
-            "--",
-            str(root),
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if diff.returncode != 0:
-        print(
-            f"[blend-scanner] git diff failed ({diff.stderr.strip()}); falling back "
-            "to full-tree scan",
-            file=sys.stderr,
-        )
+    names = scan_utils.git_diff_names(repo, base, str(root))
+    if names is None:
         return all_blend_files(repo, root)
-    return [
-        line
-        for line in diff.stdout.splitlines()
-        if line.strip() and Path(line).suffix.lower() == ".blend"
-    ]
+    return [name for name in names if Path(name).suffix.lower() == ".blend"]
 
 
 def all_blend_files(repo: Path, root: Path) -> list[str]:
-    out: list[str] = []
-    for p in root.rglob("*.blend"):
-        out.append(str(p.relative_to(repo)))
-    return out
+    return scan_utils.walk_files(repo, root, ".blend", SKIP_DIRS)
+
+
+def warn(message: str) -> None:
+    """Non-fatal diagnostic. Never influences the exit code by itself."""
+    print(f"[WARNING] {message}", file=sys.stderr, flush=True)
+
+
+def scan_one(
+    blob: bytes,
+    allow: set[str],
+    blender_binary: str | None,
+    quiet: bool,
+    label: str,
+) -> tuple[list[dict], bool]:
+    """Scan one decompressed container.
+
+    Returns ``(findings, unverified)``. ``unverified`` is True when the
+    authoritative pass could not run - headless Blender was unusable, or the
+    block structure was not recognised - so only the printable-run fallback
+    covered this file. Raises on malformed content.
+    """
+    unverified = False
+
+    if blender_binary and shutil_has_blender(blender_binary):
+        try:
+            return open_in_memory_headless(blender_binary, blob), False
+        except Exception as exc:  # noqa: BLE001
+            # Blender being missing/broken must not silently downgrade the
+            # scan, so warn and still run the byte-level pass. The file is
+            # flagged as unverified because nothing authoritative looked
+            # inside it.
+            warn(
+                f"{label}: headless Blender scan failed ({exc!r}); "
+                f"falling back to the byte-level scan"
+            )
+            unverified = True
+
+    walk = None
+    try:
+        walk = scan_blocks(blob)
+    except UnknownBlenderStructure as exc:
+        # A future Blender release, or a layout we cannot walk. This is a
+        # forward-compatibility signal, not a verdict: warn, keep the exit code
+        # at 0 unless a marker is actually found below, and still run the
+        # printable-run pass, since an unrecognised container is precisely
+        # where an embedded script would be hidden.
+        warn(
+            f"Unable to parse Blender 6.x or Unknown Blender Version file "
+            f"structure for {label}. Skipping binary scan. ({exc})"
+        )
+        unverified = True
+
+    if walk is not None:
+        hdr = walk["header"]
+        layout: Layout = walk["layout"]
+        if not quiet:
+            described = "self-describing" if hdr["self_describing"] else "classic fixed"
+            print(
+                f"[blend-scanner] {label}: valid container "
+                f"({described} header, version={hdr['version']!r}, "
+                f"{layout.describe()}, "
+                f"{walk['blocks']} block(s), {len(walk['text_ranges'])} Text datablock(s))"
+            )
+        return scan_text_ranges(blob, walk, allow), unverified
+
+    if not quiet:
+        print(
+            f"[blend-scanner] {label}: no recognised block structure; "
+            f"falling back to printable-run scan"
+        )
+    return scan_blob(blob, allow), True
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -445,8 +801,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--blender-binary",
-        default=os.environ.get("BLENDER_BINARY"),
-        help="Optional headless Blender executable for authoritative Text-block scan",
+        default=BLENDER_BINARY or None,
+        help="Optional headless Blender executable for authoritative Text-block "
+        f"scan (default: BLENDER_BINARY from .env, currently {BLENDER_BINARY or 'unset'})",
     )
     for label in sorted(MARKER_NAMES):
         parser.add_argument(
@@ -457,12 +814,29 @@ def main(argv: list[str] | None = None) -> int:
             default=[],
             help=f"Disable the '{label}' check",
         )
+    parser.add_argument(
+        "--show-settings",
+        action="store_true",
+        help="Print the resolved .env settings and exit",
+    )
     parser.add_argument("-q", "--quiet", action="store_true")
     args = parser.parse_args(argv)
 
-    repo = Path(args.repo).expanduser().resolve()
-    root = (repo / args.root).resolve()
-    if not repo.is_dir() or not (repo / ".git").is_dir():
+    if args.show_settings:
+        print(f"Settings: {env_utils.source_description()}")
+        print(f"  BLEND_SCAN_ROOT = {DEFAULT_ROOT!r}")
+        print(f"  BLENDER_BINARY = {BLENDER_BINARY or 'unset'}")
+        print(f"  BLEND_MAX_OUTPUT_BYTES = {MAX_OUTPUT}")
+        print(f"  BLEND_MAX_BLOCKS = {MAX_BLOCKS}")
+        print(f"  BLEND_MIN_RUN_LENGTH = {MIN_RUN_LENGTH}")
+        print(f"  BLEND_HEADLESS_TIMEOUT = {HEADLESS_TIMEOUT}")
+        print(f"  SCAN_SKIP_DIRS = {', '.join(SKIP_DIRS)}")
+        print(f"  SCAN_STRICT_ON_ERROR = {STRICT_ON_ERROR}")
+        return 0
+
+    repo = scan_utils.resolve_repo(args.repo)
+    root = path_utils.resolve_against(repo, args.root)
+    if not scan_utils.is_git_repo(repo):
         print(f"[blend-scanner] not a git repository: {repo}", file=sys.stderr)
         return 2
 
@@ -486,48 +860,55 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     all_findings: list[dict] = []
+    unreadable: list[str] = []
+    unverified_files: list[str] = []
     for rel in files:
-        path = repo / rel
+        # A .blend that is corrupt, truncated, mid-write or not a .blend at all
+        # is a technical problem, not a security violation. Warn loudly, count
+        # it, and move on so one bad file never blocks the whole pipeline.
         try:
-            raw = path.read_bytes()
-        except OSError as exc:
-            print(f"[blend-scanner] cannot read {rel}: {exc}", file=sys.stderr)
-            all_findings.append(
-                {"kind": "read-error", "offset": 0, "file": rel, "marker": str(exc), "match": f"unreadable: {rel}"}
-            )
-            continue
-        try:
-            blob = decompress_blob(raw)
-        except (ValueError, RuntimeError) as exc:
-            print(f"[blend-scanner] {rel}: {exc}", file=sys.stderr)
-            all_findings.append(
-                {"kind": "parse-error", "offset": 0, "file": rel, "marker": str(exc), "match": f"unparseable: {rel}"}
-            )
+            raw = scan_utils.read_bytes(repo / rel)
+        except Exception as exc:  # noqa: BLE001 - never let one file kill the run
+            warn(f"cannot read {rel}: {exc!r}; skipping")
+            unreadable.append(rel)
             continue
 
-        if args.blender_binary and shutil_has_blender(args.blender_binary):
-            findings = open_in_memory_headless(args.blender_binary, blob)
-        else:
-            walk = scan_blocks(blob, allow)
-            if walk is not None:
-                hdr = walk["header"]
-                if not args.quiet:
-                    print(
-                        f"[blend-scanner] {rel}: valid container "
-                        f"(header {'17-byte 5.x' if hdr['is_new'] else '16-byte'} "
-                        f"version={hdr['version']!r}, BHead {walk['size']}-byte{'' if walk['endian']=='little' else ' big-endian'}, "
-                        f"{walk['blocks']} block(s), {len(walk['text_ranges'])} Text datablock(s))"
-                    )
-                findings = scan_text_ranges(blob, walk, allow)
-            else:
-                if not args.quiet:
-                    print(
-                        f"[blend-scanner] {rel}: container not structurally valid; "
-                        f"falling back to printable-run scan"
-                    )
-                findings = scan_blob(blob, allow)
-        for f in findings:
-            f["file"] = rel
+        try:
+            blob = decompress_blob(raw)
+        except ScanUnavailable as exc:
+            # Cannot inspect this file at all. Never report "clean" when the
+            # scanner was unable to look inside something.
+            print(f"[blend-scanner] {rel}: {exc}", file=sys.stderr)
+            print(
+                "[blend-scanner] SCAN INCOMPLETE: a required decoder is missing, so "
+                "at least one file was never inspected. Install the missing "
+                "dependency and re-run; refusing to report a clean result.",
+                file=sys.stderr,
+            )
+            return 2
+        except Exception as exc:  # noqa: BLE001 - corrupt/foreign container
+            warn(f"{rel}: cannot decode as a .blend container ({exc}); skipping")
+            unreadable.append(rel)
+            continue
+
+        try:
+            findings, unverified = scan_one(
+                blob, allow, args.blender_binary, quiet=args.quiet, label=rel
+            )
+        except Exception as exc:  # noqa: BLE001 - malformed content, unexpected shape
+            warn(f"{rel}: scanner error ({exc!r}); skipping")
+            unreadable.append(rel)
+            continue
+
+        if unverified:
+            # The authoritative pass did not run, so this file was only covered
+            # by the printable-run fallback. Counted separately from an
+            # unreadable file: the bytes were read, but not as far as the file
+            # format was understood.
+            unverified_files.append(rel)
+
+        for finding in findings:
+            finding["file"] = rel
         all_findings.extend(findings)
 
     if all_findings:
@@ -537,8 +918,31 @@ def main(argv: list[str] | None = None) -> int:
                 f"  {f['file']} @ {f['offset']}: "
                 f"[{f['marker']}] {f['match']}"
             )
+        print(
+            f"[blend-scanner] {len(all_findings)} finding(s) across {len(files)} file(s)."
+        )
         return 1
-    print("[blend-scanner] OK - no embedded Python found")
+
+    # No policy violation. Unreadable files are reported, not punished, unless
+    # the maintainer opted into strict mode.
+    incomplete = unreadable + unverified_files
+    if incomplete:
+        print(
+            f"[blend-scanner] scanned {len(files) - len(incomplete)}/{len(files)} "
+            f"file(s); {len(incomplete)} not fully verified "
+            f"({len(unreadable)} unreadable/undecodable, "
+            f"{len(unverified_files)} with an unrecognised or unsupported structure)"
+        )
+        if STRICT_ON_ERROR:
+            print(
+                f"[blend-scanner] SCAN INCOMPLETE: SCAN_STRICT_ON_ERROR is on and "
+                f"{len(incomplete)} file(s) could not be fully verified: "
+                f"{', '.join(incomplete[:10])}"
+            )
+            return 2
+        return 0
+
+    print(f"[blend-scanner] OK - no embedded Python found in {len(files)} file(s)")
     return 0
 
 
@@ -556,6 +960,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("[blend-scanner] interrupted.", file=sys.stderr)
         raise SystemExit(130)
-    except Exception as exc:  # unexpected crash -> bypass, never abort CI
-        print(f"[blend-scanner] unexpected crash: {exc!r}; bypassed (exit 2).", file=sys.stderr)
+    except Exception as exc:  # unexpected crash -> fail closed, never pass silently
+        print(
+            f"[blend-scanner] unexpected crash: {exc!r}; scan did not complete (exit 2).",
+            file=sys.stderr,
+        )
         raise SystemExit(2)

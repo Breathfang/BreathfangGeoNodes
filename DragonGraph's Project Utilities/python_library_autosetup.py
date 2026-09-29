@@ -1,58 +1,51 @@
+#!/usr/bin/env python3
+"""Install the Sphinx documentation toolchain used by the docs build.
+
+The Python floor, the list of PyPI distributions to install and the log
+location come from the single ``.env`` in this folder, read through
+``functions/``; each falls back to a built-in default.
+"""
+
+from __future__ import annotations
+
 import argparse
 import importlib.metadata
-import logging
 import platform
 import subprocess
 import sys
-from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-LOG_FILE = Path("python_library_autosetup.log")
-LOG_MAX_BYTES = 1_000_000
-LOG_BACKUP_COUNT = 5
-LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-MIN_PYTHON = (3, 13)
+from functions import env_utils, log_utils, path_utils, prompt_utils  # noqa: E402
+
+LOG_FILE = path_utils.resolve_under_root(
+    env_utils.get_str("LIBRARY_AUTOSETUP_LOG", "python_library_autosetup.log")
+)
+
+MIN_PYTHON = tuple(
+    int(part) for part in env_utils.get_str("MIN_PYTHON", "3.13").split(".") if part.strip()
+)
 MIN_PYTHON_VERSION = ".".join(map(str, MIN_PYTHON))
 
 # PyPI distribution names. Note these differ from import names for some packages
 # (for example sphinx-autobuild is imported as sphinx_autobuild).
-REQUIRED_PACKAGES = (
-    "sphinx",
-    "sphinx-autobuild",
-    "sphinx_rtd_theme",
+REQUIRED_PACKAGES = env_utils.get_list(
+    "DOCS_PACKAGES", ("sphinx", "sphinx-autobuild", "sphinx_rtd_theme")
 )
 
-PAUSE_PROMPT = "Press enter to exit..."
+
+def setup_logging():
+    return log_utils.setup_logging("python_library_autosetup", LOG_FILE)
 
 
-def setup_logging() -> logging.Logger:
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter(LOG_FORMAT)
-
-    file_handler = RotatingFileHandler(LOG_FILE, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT)
-    file_handler.setFormatter(formatter)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    console_handler.setFormatter(formatter)
-
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    return logger
-
-
-def pause() -> None:
-    if sys.stdin.isatty():
-        input(PAUSE_PROMPT)
-
-
-def describe_environment(logger: logging.Logger) -> None:
+def describe_environment(logger) -> None:
     logger.info("Minimum Python version: %s", MIN_PYTHON_VERSION)
     logger.info("Current Python version: %s", platform.python_version())
     logger.info("Interpreter: %s", sys.executable)
+    logger.info("Settings: %s", env_utils.source_description())
 
 
 def check_python_version() -> None:
@@ -63,10 +56,6 @@ def check_python_version() -> None:
         )
 
 
-def prompt_yes_no(question: str) -> bool:
-    return input(f"{question} (y/n): ").strip().lower() in {"y", "yes"}
-
-
 def is_installed(distribution: str) -> bool:
     try:
         importlib.metadata.version(distribution)
@@ -75,7 +64,7 @@ def is_installed(distribution: str) -> bool:
     return True
 
 
-def install(distribution: str, upgrade: bool, logger: logging.Logger) -> bool:
+def install(distribution: str, upgrade: bool, logger) -> bool:
     command = [sys.executable, "-m", "pip", "install"]
     if upgrade:
         command.append("--upgrade")
@@ -91,7 +80,7 @@ def install(distribution: str, upgrade: bool, logger: logging.Logger) -> bool:
     return True
 
 
-def install_required_packages(logger: logging.Logger) -> list[str]:
+def install_required_packages(logger) -> list[str]:
     failed = []
     for distribution in REQUIRED_PACKAGES:
         upgrade = is_installed(distribution)
@@ -102,12 +91,14 @@ def install_required_packages(logger: logging.Logger) -> list[str]:
     return failed
 
 
-def main(logger: logging.Logger, assume_yes: bool) -> int:
+def main(logger, assume_yes: bool) -> int:
     logger.info("Checking Python version...")
     describe_environment(logger)
     check_python_version()
 
-    if not assume_yes and not prompt_yes_no("Do you want to install the required documentation packages?"):
+    if not assume_yes and not prompt_utils.ask_yes_no(
+        "Do you want to install the required documentation packages?"
+    ):
         logger.info("Process stopped by user.")
         return 0
 
@@ -129,18 +120,33 @@ def run(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the confirmation prompt and install directly (for CI).",
     )
-    parser.add_argument("--no-pause", action="store_true", help="Do not wait for Enter on exit.")
+    parser.add_argument(
+        "--no-pause",
+        action="store_true",
+        help="Do not wait for Enter on exit (PAUSE_PROMPT comes from .env).",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="Print the resolved .env settings and exit.",
+    )
     args = parser.parse_args(argv)
 
     logger = setup_logging()
+    if args.list:
+        logger.info("Settings: %s", env_utils.source_description())
+        logger.info("  MIN_PYTHON = %s", MIN_PYTHON_VERSION)
+        logger.info("  DOCS_PACKAGES = %s", ", ".join(REQUIRED_PACKAGES))
+        logger.info("  LIBRARY_AUTOSETUP_LOG = %s", LOG_FILE)
+        return 0
+
     try:
         exit_code = main(logger, args.yes)
     except Exception as error:
         logger.error("Error: %s", error, exc_info=True)
         exit_code = 1
 
-    if not args.no_pause:
-        pause()
+    prompt_utils.pause_if_requested(args.no_pause)
     return exit_code
 
 

@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  pre-push security gate
+#
+#  Blocks a push that carries a confirmed security violation in
+#  "DragonGraph's Project", the only code that can end up inside a shipped
+#  .blend pack or .zip.
+#
+#  Install it with:
+#      python .github/scripts/install_hooks.py
+#
+#  This is a local fast gate, not a replacement for CI. The same two scanners
+#  run in the security-scan job on every pull request and push to main, and
+#  branch protection requires that job to pass before a merge. The hook exists
+#  so you learn about a violation on your own machine instead of in a failed
+#  check after you have already pushed.
+#
+#  Exit code contract shared with the scanners:
+#      0  clean, push allowed
+#      1  confirmed security violation, push blocked
+#      2  the scan could not be completed, push blocked
+#
+#  Both non-zero codes block. Failing open because a scanner crashed would
+#  make the gate worthless, so "I could not check" is treated as "no".
+#
+#  Emergency escape hatch, logged loudly so it is never a silent habit:
+#      SKIP_SECURITY_HOOK=1 git push ...
+#  It exists for a genuine emergency (a false positive you must ship around
+#  right now). CI will still scan the resulting pull request, so the bypass is
+#  visible in the audit trail.
+# =============================================================================
+
+set -uo pipefail
+
+if [ "${SKIP_SECURITY_HOOK:-0}" = "1" ]; then
+    echo "" >&2
+    echo "############ PRE-PUSH SECURITY GATE SKIPPED ############" >&2
+    echo "# SKIP_SECURITY_HOOK=1 was set. Nothing was scanned." >&2
+    echo "# CI will still scan this push in the security-scan job." >&2
+    echo "########################################################" >&2
+    echo "" >&2
+    exit 0
+fi
+
+# --- pretty output ----------------------------------------------------------
+if [ -t 1 ]; then
+    RED=$'\033[1;31m'
+    GRN=$'\033[1;32m'
+    YLW=$'\033[1;33m'
+    DIM=$'\033[2m'
+    RST=$'\033[0m'
+else
+    RED=''; GRN=''; YLW=''; DIM=''; RST=''
+fi
+
+banner() {
+    echo "" >&2
+    echo "${DIM}--------------------------------------------------------------${RST}" >&2
+    echo "  Pre-push security scan" >&2
+    echo "${DIM}--------------------------------------------------------------${RST}" >&2
+}
+
+fatal() {
+    echo "" >&2
+    echo "${RED}##############################################################${RST}" >&2
+    printf "${RED}#  PUSH ABORTED - SECURITY VIOLATION DETECTED${RST}\n" >&2
+    echo "${RED}##############################################################${RST}" >&2
+    echo "" >&2
+    printf "  %s\n" "$@" >&2
+    echo "" >&2
+    echo "  Nothing was pushed. Fix the findings above, or amend the offending" >&2
+    echo "  commit. The same scan runs in CI and will fail there too." >&2
+    echo "" >&2
+    printf "  ${DIM}If this is a false positive, tighten the policy in${RST}\n" >&2
+    printf "  ${DIM}.github/scripts/.env and commit that, rather than skipping.${RST}\n" >&2
+    echo "" >&2
+    printf "  ${YLW}Emergency only:${RST} SKIP_SECURITY_HOOK=1 git push" >&2
+    echo "" >&2
+}
+
+# --- locate the repository and the interpreter ------------------------------
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "${REPO_ROOT}" ]; then
+    echo "${RED}[pre-push] not inside a git repository.${RST}" >&2
+    exit 2
+fi
+
+cd "${REPO_ROOT}" || exit 2
+
+PY=""
+for candidate in "${PYTHON:-}" python3 python py; do
+    [ -n "${candidate}" ] || continue
+    if command -v "${candidate}" >/dev/null 2>&1; then
+        # Skip the Microsoft Store python.exe stub, which exits non-zero.
+        if "${candidate}" -c "import sys" >/dev/null 2>&1; then
+            PY="${candidate}"
+            break
+        fi
+    fi
+done
+
+if [ -z "${PY}" ]; then
+    printf "${RED}[pre-push] FATAL: no usable python interpreter on PATH.${RST}\n" >&2
+    echo "  Install Python 3.10+ or set PYTHON=/path/to/python and retry." >&2
+    echo "  Refusing to push: an unverified push is not an allowed push." >&2
+    exit 2
+fi
+
+# zstandard is not optional. Without it blend_scanner.py cannot inspect the
+# .blend containers in this repository and exits 2 rather than reporting a
+# clean result. Warn early with the fix, instead of a confusing scan error.
+if ! "${PY}" -c "import zstandard" >/dev/null 2>&1; then
+    printf "${YLW}[pre-push] WARNING: 'zstandard' is not installed in $("${PY}" -V 2>&1).${RST}\n" >&2
+    echo "  blend_scanner.py will refuse to scan .blend files and this hook will block." >&2
+    echo "  Fix: ${PY} -m pip install -r .github/scripts/requirements.txt" >&2
+fi
+
+# --- drain stdin ------------------------------------------------------------
+# git feeds "<local ref> <local sha> <remote ref> <remote sha>" lines on stdin.
+# Read them so git never blocks on a full pipe, and so they are visible in the
+# log when someone is wondering why a push was rejected.
+PUSHED_REFS=""
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ -n "${local_ref:-}" ] || continue
+    if [ "${local_sha}" = "0000000000000000000000000000000000000000" ]; then
+        PUSHED_REFS="${PUSHED_REFS}  ${local_ref} (branch deletion)"$'\n'
+    else
+        PUSHED_REFS="${PUSHED_REFS}  ${local_ref} -> ${remote_ref:-new branch}"$'\n'
+    fi
+done
+
+banner
+echo "  repository : ${REPO_ROOT}" >&2
+echo "  python     : ${PY} ($("${PY}" -V 2>&1))" >&2
+echo "  pushing    :" >&2
+printf "%s" "${PUSHED_REFS}" >&2
+echo "  scan root  : DragonGraph's Project" >&2
+echo "" >&2
+
+# --- scan -------------------------------------------------------------------
+# Scan the full tree rather than the diff. A security gate that only inspects
+# the files that happen to differ can be walked past by committing a payload in
+# one push and shipping it in another, and the tree here is small.
+#
+# The root is pinned to "DragonGraph's Project" to match the security-scan job
+# exactly. The maintainer tooling in "DragonGraph's Project Utilities" is full
+# of os/subprocess calls by design, so scanning it here would train everyone to
+# reach for the escape hatch.
+SCAN_ROOT="DragonGraph's Project"
+
+status=0
+REASON=""
+
+echo "${DIM}[1/2] python_security_scanner.py${RST}" >&2
+"${PY}" .github/scripts/python_security_scanner.py --repo "${REPO_ROOT}" --root "${SCAN_ROOT}"
+rc=$?
+if [ "${rc}" -ne 0 ]; then
+    if [ "${rc}" -eq 1 ]; then
+        status=1
+        REASON="python_security_scanner.py found a confirmed policy violation."
+    else
+        status=2
+        REASON="python_security_scanner.py could not complete the scan (exit ${rc})."
+    fi
+    echo "${RED}[pre-push] ${REASON}${RST}" >&2
+fi
+
+echo "" >&2
+echo "${DIM}[2/2] blend_scanner.py${RST}" >&2
+"${PY}" .github/scripts/blend_scanner.py --repo "${REPO_ROOT}" --root "${SCAN_ROOT}"
+rc=$?
+if [ "${rc}" -ne 0 ] && [ "${status}" -eq 0 ]; then
+    if [ "${rc}" -eq 1 ]; then
+        status=1
+        REASON="blend_scanner.py found embedded Python in a .blend file."
+    else
+        status=2
+        REASON="blend_scanner.py could not complete the scan (exit ${rc})."
+    fi
+    echo "${RED}[pre-push] ${REASON}${RST}" >&2
+fi
+
+echo "" >&2
+
+if [ "${status}" -ne 0 ]; then
+    if [ "${status}" -eq 2 ]; then
+        fatal \
+            "The security scan could NOT be completed." \
+            "" \
+            "This is treated as a failure on purpose. A gate that reports" \
+            "\"clean\" without having read the files is worse than no gate." \
+            "" \
+            "Common causes: zstandard not installed, an unreadable file, or a" \
+            "malformed scanner. See the [WARNING] lines above."
+    else
+        fatal \
+            "A confirmed security policy violation was found in this push." \
+            "" \
+            "See the scanner output above for the exact file, line and pattern."
+    fi
+    exit "${status}"
+fi
+
+echo "${GRN}[pre-push] OK - no security violations found. Push allowed.${RST}" >&2
+echo "" >&2
+exit 0

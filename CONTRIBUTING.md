@@ -82,12 +82,53 @@ Full usage notes for every tool (including `temporary_file_cleaner.py` and the t
 helpers) live in the
 [Utilities guide](DragonGraph's%20Project%20Utilities/README.md).
 
+## Security checks
+
+Two scanners guard everything under `DragonGraph's Project/`, the only code that can end up inside
+a shipped pack:
+
+| Script | Checks for |
+| ------ | ---------- |
+| [`python_security_scanner.py`](.github/scripts/python_security_scanner.py) | Dangerous Python: `os`/`subprocess`/`socket` imports, `eval`/`exec`, `.system()`-style calls, and obfuscated patterns. AST plus a tokenizer pass. |
+| [`blend_scanner.py`](.github/scripts/blend_scanner.py) | Python embedded in a `.blend` file, which would run on anyone who opens the pack. |
+
+Both exit `1` only for a confirmed violation. A file that is corrupt, truncated or unparseable is
+reported as `[WARNING]` and skipped, so one broken `.blend` will not block an unrelated pull
+request. `zstandard` is a required dependency for the `.blend` scanner &mdash; the files here are
+Zstandard frames &mdash; so install it once with:
+
+```bash
+python -m pip install -r .github/scripts/requirements.txt
+```
+
+### Local pre-push gate
+
+Install the hook once per clone so a violation is caught before you push rather than in a failed
+check afterwards:
+
+```bash
+python .github/scripts/install_hooks.py
+```
+
+It runs both scanners and aborts the push on a confirmed violation. For a genuine emergency,
+`SKIP_SECURITY_HOOK=1 git push` skips it &mdash; the hook says so loudly, and CI still scans the
+resulting pull request.
+
+### In CI
+
+The `Nightly` workflow runs `Security scan` on every pull request and every push to `main`, and
+`Build and deploy` runs only when that scan passes. There is no bypass. `main` is expected to
+require the `Security scan` status check before merging; see
+[`.github/BRANCH_PROTECTION.md`](.github/BRANCH_PROTECTION.md) for the one-time setup, including
+the bot entry the bypass list needs so the nightly job can still push its zip.
+
 ## Merge process
 
 1. You submit a pull request or an issue with your file attached.
-2. It gets reviewed. If it is not ready yet, you will be notified.
-3. Once it is considered ready, it gets polished and merged into the main pack file.
-4. You get a notification when it lands in an update.
+2. The `Security scan` check runs automatically. It must pass before a merge is possible.
+3. It gets reviewed. If it is not ready yet, you will be notified.
+4. Once it is considered ready, it gets polished and merged into the main pack file.
+5. You get a notification when it lands in an update.
 
 There is no guaranteed turnaround time. Merging happens as soon as a contribution is considered
 ready and acceptable. If your work is not merged after an update, the usual reasons are listed
@@ -102,3 +143,6 @@ in [Why isn't my node merged yet?](FAQ.md#why-isnt-my-node-merged-after-an-updat
 | `docs/` | Sphinx documentation sources. |
 | `Generated Nodepacks/` | Release `.zip` output. Not tracked by Git. |
 | `Icon and Logo Designs/` | Icon and logo source artwork. |
+| `.github/scripts/` | CI scripts and the shared `functions/` helpers. |
+| `.github/hooks/pre-push` | Tracked source of the local pre-push gate, installed by `.github/scripts/install_hooks.py`. |
+| `.github/workflows/nightly.yml` | `Security scan`, then `Build and deploy`. |

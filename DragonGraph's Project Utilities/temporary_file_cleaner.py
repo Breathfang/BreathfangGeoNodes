@@ -2,21 +2,24 @@
 """Interactive temporary-file cleaner for the "Breathfang's Nodes" repository.
 
 Scans the repository root for temporary/leftover files and, after listing them
-in pages of 10 and showing a final preview, deletes them on an explicit "Y".
+in pages of ``CLEANER_PAGE_SIZE`` and showing a final preview, deletes them on
+an explicit "Y". The suffix policy, the page size and the repository anchor
+come from the single ``.env`` in this folder, read through ``functions/``.
 
 Safety:
-  - The search is rooted at the repository root (parent of this script's
-    directory), so it can never go above "Breathfang's Nodes".
+  - The search is rooted at the repository root, so it can never go above
+    "Breathfang's Nodes".
   - Every candidate is re-validated to still be inside the repository root just
     before deletion; anything outside (or a symlink, or a .git entry) is skipped.
   - Nothing is deleted without an explicit confirmation (preview first).
 
-Temporary-file policy (same suffixes that are excluded from the toolset packs):
+Temporary-file policy (the same suffixes that are excluded from the toolset
+packs, minus .md):
   - *.log, *.tmp
   - Editor backups: '*~' (e.g. blender_assets.cats.txt~), '*.orig', '*.rej'
   - Blender autosaves: '*.blend1' .. '*.blend9'
 
-Exit codes: 0 = finished (deleted or aborted), 130 = interrupted.
+Exit codes: 0 = finished (deleted or aborted), 2 = bad environment, 130 = interrupted.
 """
 
 from __future__ import annotations
@@ -26,50 +29,26 @@ import sys
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = _SCRIPT_DIR.parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
-PAGE_SIZE = 10  # entries shown per page in the CLI listing
+from functions import env_utils, log_utils, path_utils, prompt_utils  # noqa: E402
 
-# Same suffix policy shared with the ZIP builders.
-BLEND_AUTOSAVE_SUFFIXES = tuple(f".blend{d}" for d in range(1, 10))  # .blend1..9
-TEMP_SUFFIXES = (".log", ".tmp", "~", ".orig", ".rej") + BLEND_AUTOSAVE_SUFFIXES
+REPO_ROOT = path_utils.repo_root()
 
+PAGE_SIZE = env_utils.get_int("CLEANER_PAGE_SIZE", 10)  # entries per page in the listing
+TEMP_SUFFIXES = env_utils.get_suffixes(
+    "CLEANER_SUFFIXES",
+    (".log", ".tmp", "~", ".orig", ".rej")
+    + tuple(f".blend{index}" for index in range(1, 10)),
+)
 
-def prompt_read(prompt_text: str) -> str:
-    """Print a prompt, flush it, then read one line from the user."""
-    sys.stdout.write(prompt_text)
-    sys.stdout.flush()
-    return input().strip()
-
-
-def fmt_size(num_bytes: int) -> str:
-    """Format a byte count into a short human-readable string."""
-    if num_bytes < 1024:
-        return f"{num_bytes} B"
-    if num_bytes < 1024 * 1024:
-        return f"{num_bytes / 1024:.1f} KiB"
-    return f"{num_bytes / (1024 * 1024):.1f} MiB"
-
-
-def is_inside_repo(path: Path) -> bool:
-    """True only when the resolved path is really below the repository root."""
-    try:
-        resolved = path.resolve()
-    except OSError:
-        return False
-    try:
-        resolved.relative_to(REPO_ROOT)
-    except ValueError:
-        return False
-    return True
+fmt_size = log_utils.fmt_size
 
 
 def rel(path: Path) -> str:
     """Short repository-relative display path."""
-    try:
-        return path.resolve().relative_to(REPO_ROOT).as_posix()
-    except (OSError, ValueError):
-        return str(path)
+    return path_utils.display(path)
 
 
 def collect_candidates() -> list[Path]:
@@ -86,7 +65,7 @@ def collect_candidates() -> list[Path]:
             continue  # never touch the git directory
         if path.name.lower().endswith(TEMP_SUFFIXES):
             candidates.append(path)
-    return sorted(candidates, key=lambda p: rel(p))
+    return sorted(candidates, key=rel)
 
 
 def total_size(candidates: list[Path]) -> int:
@@ -119,7 +98,10 @@ def paginate(candidates: list[Path], title: str) -> None:
         index = end
         if index >= total:
             break
-        answer = prompt_read("more [Enter] / quit listing [q]: ")
+        try:
+            answer = prompt_utils.prompt_read("more [Enter] / quit listing [q]: ")
+        except EOFError:
+            break  # no interactive input: show the rest without pausing
         if answer.lower() == "q":
             break
 
@@ -127,7 +109,7 @@ def paginate(candidates: list[Path], title: str) -> None:
 def delete_candidates(candidates: list[Path], dry_run: bool) -> int:
     deleted = 0
     for path in candidates:
-        if not is_inside_repo(path):
+        if not path_utils.is_inside(path, REPO_ROOT):
             print(f"  SKIP (outside repo): {path}", file=sys.stderr)
             continue
         if path.is_symlink():
@@ -160,7 +142,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Show what would be deleted without deleting anything",
     )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="Print the resolved .env settings and exit",
+    )
     args = parser.parse_args(argv)
+
+    if args.list:
+        print(f"Settings: {env_utils.source_description()}")
+        print(f"  REPO_ROOT = {REPO_ROOT}")
+        print(f"  CLEANER_PAGE_SIZE = {PAGE_SIZE}")
+        print(f"  CLEANER_SUFFIXES = {', '.join(TEMP_SUFFIXES)}")
+        return 0
 
     if not REPO_ROOT.is_dir():
         print(f"[temp-cleaner] repository root not found: {REPO_ROOT}", file=sys.stderr)
@@ -177,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     print()
 
-    # Step 1: list everything, 10 entries per page.
+    # Step 1: list everything, PAGE_SIZE entries per page.
     paginate(candidates, "Temporary files")
 
     # Step 2: explicit preview right before confirmation.
@@ -187,7 +181,7 @@ def main(argv: list[str] | None = None) -> int:
     print()
     what = "would delete" if args.dry_run else "delete"
     try:
-        answer = prompt_read(f"{what} {len(candidates)} file(s) [y/N]: ")
+        answer = prompt_utils.prompt_read(f"{what} {len(candidates)} file(s) [y/N]: ")
     except EOFError:
         print("\n[temp-cleaner] no interactive input; aborting, nothing deleted.")
         return 0

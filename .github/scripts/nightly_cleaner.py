@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """Rotation and cleanup for nightly build archives.
 
-Deletes the oldest matching archives under TARGET_DIR until both of the elastic
-limits below are satisfied. Archives are sorted chronologically (oldest first,
-ties broken by name).
+Deletes the oldest matching archives under the target directory until both of
+the elastic limits below are satisfied. Archives are sorted chronologically
+(oldest first, ties broken by name). Both limits, the target directory and the
+filename pattern come from this folder's ``.env``.
 
 Rotation rules:
   Rule 1 (count): delete the oldest archive repeatedly until the number of
-      matching archives is <= MAX_BUILD_COUNT.
+      matching archives is <= NIGHTLY_MAX_BUILD_COUNT.
   Rule 2 (size): delete the oldest archive repeatedly until the total size of
-      the matching archives drops safely below MAX_TOTAL_SIZE_MB.
+      the matching archives drops safely below NIGHTLY_MAX_TOTAL_SIZE_MB.
 
-The policy is list-agnostic, so raising or lowering the elastic variables below
-is enough to capture more or fewer historical builds.
+The policy is list-agnostic, so raising or lowering those two values is enough
+to capture more or fewer historical builds.
 
 Exit codes: always 0 when the directory was inspected successfully.
 """
@@ -21,23 +22,29 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
-import os
 import sys
 from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:  # importable from any working directory
+    sys.path.insert(0, str(_SCRIPT_DIR))
+
+from functions import ci_utils, env_utils, path_utils, scan_utils  # noqa: E402
 
 # Shares the single master toggle with the builder: when BUILDS_ENABLED is False
 # this script refuses to run under CI (defense-in-depth on top of the workflow
 # gate), so no archives are ever cleaned while the pipeline is paused.
-from nightly_builder import BUILDS_ENABLED
+BUILDS_ENABLED = ci_utils.BUILDS_ENABLED
 
 # --------------------------------------------------------------------------
-# Elastic configuration (edit here)
+# Elastic configuration, all overridable in .github/scripts/.env
 # --------------------------------------------------------------------------
-TARGET_DIR = Path("DragonGraph's Nighty Build")
-MAX_BUILD_COUNT = 10  # maximum number of matching ZIP files to keep
-MAX_TOTAL_SIZE_MB = 300.0  # maximum total directory size of matching ZIP files
-FILE_PATTERN = "Dragongraph's Toolset Pack NightlyBuilds_*.zip"
-# --------------------------------------------------------------------------
+TARGET_DIR_NAME = env_utils.get_str("NIGHTLY_OUTPUT_DIR", "DragonGraph's Nighty Build")
+MAX_BUILD_COUNT = env_utils.get_int("NIGHTLY_MAX_BUILD_COUNT", 10)
+MAX_TOTAL_SIZE_MB = env_utils.get_float("NIGHTLY_MAX_TOTAL_SIZE_MB", 300.0)
+FILE_PATTERN = env_utils.get_str(
+    "NIGHTLY_ZIP_GLOB", "Dragongraph's Toolset Pack NightlyBuilds_*.zip"
+)
 
 _MIB = 1024 * 1024
 
@@ -114,11 +121,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Rotate nightly build archives under DragonGraph's Nighty Build/."
     )
-    parser.add_argument("--repo", default=".", help="Path to the git repository root")
+    parser.add_argument(
+        "--repo", default=".", help="Path to the git repository root (default: the repo root)"
+    )
     parser.add_argument(
         "--target-dir",
         default=None,
-        help=f"Target directory (default: {TARGET_DIR})",
+        help=f"Target directory (default: {TARGET_DIR_NAME!r})",
     )
     parser.add_argument(
         "--max-count",
@@ -137,6 +146,11 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=f"Filename pattern (default: {FILE_PATTERN!r})",
     )
+    parser.add_argument(
+        "--show-settings",
+        action="store_true",
+        help="Print the resolved .env settings and exit",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Report only, delete nothing")
     parser.add_argument("-q", "--quiet", action="store_true")
     args = parser.parse_args(argv)
@@ -144,21 +158,35 @@ def main(argv: list[str] | None = None) -> int:
     # CI pause switch: mirrors nightly_builder.BUILDS_ENABLED so this script can
     # never delete archives (or end up committed) while nightly builds are
     # paused. Local/manual runs are still allowed.
-    ci_run = os.environ.get("GITHUB_ACTIONS") == "true"
-    if ci_run and not BUILDS_ENABLED:
+    if ci_utils.in_ci() and not BUILDS_ENABLED:
         print(
             "[nightly-cleaner] nightly builds are DISABLED "
-            "(BUILDS_ENABLED = False in .github/scripts/nightly_builder.py); "
+            "(NIGHTLY_BUILDS_ENABLED = false in .github/scripts/.env); "
             "cleanup skipped, nothing was deleted",
             file=sys.stderr,
         )
         return 0
 
-    repo = Path(args.repo).expanduser().resolve()
-    target = Path(args.target_dir).expanduser().resolve() if args.target_dir else (repo / TARGET_DIR).resolve()
+    if args.show_settings:
+        print(f"Settings: {env_utils.source_description()}")
+        print(f"  NIGHTLY_BUILDS_ENABLED = {BUILDS_ENABLED}")
+        print(f"  NIGHTLY_OUTPUT_DIR = {TARGET_DIR_NAME!r}")
+        print(f"  NIGHTLY_ZIP_GLOB = {FILE_PATTERN!r}")
+        print(f"  NIGHTLY_MAX_BUILD_COUNT = {MAX_BUILD_COUNT}")
+        print(f"  NIGHTLY_MAX_TOTAL_SIZE_MB = {MAX_TOTAL_SIZE_MB}")
+        return 0
+
+    repo = scan_utils.resolve_repo(args.repo)
+    target = (
+        path_utils.resolve_against(repo, args.target_dir)
+        if args.target_dir
+        else path_utils.resolve_against(repo, TARGET_DIR_NAME)
+    )
 
     max_count = MAX_BUILD_COUNT if args.max_count is None else args.max_count
-    max_size_bytes = int((MAX_TOTAL_SIZE_MB if args.max_size_mb is None else args.max_size_mb) * _MIB)
+    max_size_bytes = (
+        int((MAX_TOTAL_SIZE_MB if args.max_size_mb is None else args.max_size_mb) * _MIB)
+    )
     pattern = FILE_PATTERN if args.pattern is None else args.pattern
 
     if not target.is_dir():

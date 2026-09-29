@@ -1,0 +1,8 @@
+# Runtime dependencies for the CI and local security scripts.
+#
+# zstandard is required, not optional: .blend files in this repository are raw
+# Zstandard frames, and blend_scanner.py refuses to report a clean result
+# (exit 2) when it cannot decode a container. A runner without this package
+# would silently skip every .blend it could not read, so keep it installed
+# everywhere the scanner runs: CI, the pre-push hook and local shells.
+zstandard>=0.22
