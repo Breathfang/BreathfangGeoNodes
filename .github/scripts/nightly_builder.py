@@ -4,7 +4,7 @@
 Packages every project asset below a source directory recursively into a single
 versioned snapshot archive:
 
-    Dragongraph's Toolset Pack NightlyBuilds_<8-hex>_<YYYYMMDD-HHMMSS>.zip
+    DragonGraph's Toolset Pack NightlyBuilds_<8-hex>_<YYYYMMDD-HHMMSS>.zip
 
 The 8-hex identifier is derived, in order of preference, from the GITHUB_SHA
 environment variable (CI), a ``git rev-parse --short=8 HEAD`` lookup, or a
@@ -45,7 +45,7 @@ BUILDS_ENABLED = ci_utils.BUILDS_ENABLED
 SOURCE_DIR_NAME = env_utils.get_str("SOURCE_DIR", "DragonGraph's Project")
 OUTPUT_DIR_NAME = env_utils.get_str("NIGHTLY_OUTPUT_DIR", "DragonGraph's Nighty Build")
 ZIP_NAME_TEMPLATE = env_utils.get_str(
-    "NIGHTLY_ZIP_NAME", "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip"
+    "NIGHTLY_ZIP_NAME", "DragonGraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip"
 )
 COMPRESSION_LEVEL = env_utils.get_int("ZIP_COMPRESSION_LEVEL", 9)
 

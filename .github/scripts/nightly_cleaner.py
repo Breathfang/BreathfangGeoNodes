@@ -43,7 +43,7 @@ TARGET_DIR_NAME = env_utils.get_str("NIGHTLY_OUTPUT_DIR", "DragonGraph's Nighty 
 MAX_BUILD_COUNT = env_utils.get_int("NIGHTLY_MAX_BUILD_COUNT", 10)
 MAX_TOTAL_SIZE_MB = env_utils.get_float("NIGHTLY_MAX_TOTAL_SIZE_MB", 300.0)
 FILE_PATTERN = env_utils.get_str(
-    "NIGHTLY_ZIP_GLOB", "Dragongraph's Toolset Pack NightlyBuilds_*.zip"
+    "NIGHTLY_ZIP_GLOB", "DragonGraph's Toolset Pack NightlyBuilds_*.zip"
 )
 
 _MIB = 1024 * 1024

@@ -1,6 +1,6 @@
 # DragonGraph's Project Utilities
 
-Development toolbox for the Dragongraph's Toolset Pack repository. Everything here is for
+Development toolbox for the DragonGraph's Toolset Pack repository. Everything here is for
 **maintainers and contributors working on the repository** &mdash; none of it ships inside the
 released or nightly `.zip` files (this folder is explicitly excluded from the pack builds and
 from the GitHub Actions trigger).
@@ -69,14 +69,19 @@ the scanner policy &mdash; `PY_SCAN_ROOTS`, `SCAN_SKIP_DIRS`, `PY_DENIED_MODULES
 `PY_DENIED_CALLS`, `PY_DENIED_ATTR_SUFFIX`, `PY_DENIED_CALLABLE_ATTRS`, plus the `.blend` limits.
 See its own header comments.
 
-**Pausing nightly builds:** `NIGHTLY_BUILDS_ENABLED=false` stops CI from building, pushing *and*
-deleting archives. Local and manual runs are unaffected. To resume, set it to `true` in
+### Pausing nightly builds
+
+`NIGHTLY_BUILDS_ENABLED=false` stops CI from building, pushing *and*
+deleting archives. The security scan still runs either way, so pausing a build never unblocks an
+unreviewed merge. Local and manual runs are unaffected. To resume, set it to `true` in
 `.github/scripts/.env` and commit; the workflow reads the committed value through
 `nightly_builder.BUILDS_ENABLED`.
 
-Note that the workflow's `on.push.paths` filter only matches `DragonGraph's Project/**`, so that
-commit *arms* the pipeline without running it. The first push that also touches
-`DragonGraph's Project/` is what produces a nightly build.
+The toggle is committed rather than kept private for the reason above, and the workflow triggers on
+any push to `main` with a `paths-ignore` on `DragonGraph's Nighty Build/**` so the zip the bot
+commits cannot start a second build. The toggle therefore gates the deploy job directly &mdash; see
+[`.github/BRANCH_PROTECTION.md`](../.github/BRANCH_PROTECTION.md) for what the gate does when
+the key is missing or malformed.
 
 | Tool | Purpose |
 | ---- | ------- |
@@ -141,7 +146,7 @@ python nodepack_zip_generator.py --nightly
 python nodepack_zip_generator.py --node-version v1.3.0-beta --output-dir Generated Nodepacks
 ```
 
-- `--nightly` &mdash; snapshot named `Dragongraph's Toolset Pack NightlyBuilds_<short-sha>_<timestamp>.zip`.
+- `--nightly` &mdash; snapshot named `DragonGraph's Toolset Pack NightlyBuilds_<short-sha>_<timestamp>.zip`.
 - `--node-version` &mdash; version string for releases; parsed from the first `.blend` if omitted.
 - `--output-dir` &mdash; override where the zip goes; relative paths resolve under the repo root.
 - `--no-pause` &mdash; don't wait for a keypress on exit.

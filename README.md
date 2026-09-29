@@ -15,7 +15,7 @@
     <img alt="160+-nodes" src="https://img.shields.io/badge/160+-nodes-orange">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
-    <img alt="100+-commits" src="https://img.shields.io/badge/100+-commits-brown">
+    <img alt="110+-commits" src="https://img.shields.io/badge/110+-commits-brown">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/stargazers">
     <img alt="10+-stars" src="https://img.shields.io/badge/10+-stars-gold">
@@ -40,6 +40,14 @@
 > installation, every node group, and troubleshooting. Note that the hosted documentation is
 > currently **outdated** &mdash; geometry nodes are being prioritised over docs. Contributions to
 > the documentation are very welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
+>
+> Looking for a file? [CONTENTS.md](CONTENTS.md) indexes the contents of
+> [`DragonGraph's Project/`](DragonGraph's%20Project/), and the
+> [documentation](https://breathfanggeonodes.readthedocs.io/en/latest/) remains the single
+> reference for individual nodes.
+>
+> Reporting a problem or asking for a feature? Start from
+> [ISSUE_TEMPLATES.md](ISSUE_TEMPLATES.md).
 
 ## Stargazer History
 
@@ -53,7 +61,7 @@
 
 ## Table of contents
 
-- [Star History](#star-history)
+- [Stargazer History](#stargazer-history)
 - [Requirements](#requirements)
 - [Installation](#installation)
   - [Method 1: as an Add-on](#method-1-as-an-add-on)
@@ -189,19 +197,13 @@ Before you start, please read [CONTRIBUTING.md](CONTRIBUTING.md) for the require
 
 ## Repository scripts
 
-These helper scripts live in [`DragonGraph's Project Utilities/`](DragonGraph's%20Project%20Utilities/) and require **Python 3.13 or higher**.
-The toolset scripts are development utilities; the asset snapshots built by
-`.github/scripts/nightly_builder.py` deliberately keep `DragonGraph's Project Utilities/`
-out of the shipped `.zip`. For full usage, see the
-[Utilities guide](DragonGraph's%20Project%20Utilities/README.md).
+Development helpers live in [`DragonGraph's Project Utilities/`](DragonGraph's%20Project%20Utilities/)
+and require **Python 3.13 or higher**; the two `.bat` helpers are Windows only. They are maintainer
+tools, and the asset snapshots built by `.github/scripts/nightly_builder.py` deliberately keep that
+folder out of the shipped `.zip`.
 
-| Script | Purpose |
-| ------ | ------- |
-| [`DragonGraph's Project Utilities/python_library_autosetup.py`](DragonGraph's%20Project%20Utilities/python_library_autosetup.py) | Installs the documentation toolchain (`sphinx`, `sphinx-autobuild`, `sphinx_rtd_theme`) into your current interpreter. |
-| [`DragonGraph's Project Utilities/.docsbuild.bat`](DragonGraph's%20Project%20Utilities/.docsbuild.bat) | Builds the documentation and serves it at <http://127.0.0.1:8000> with live reload. Windows only. |
-| [`DragonGraph's Project Utilities/language_server_taskkill_blender_save.bat`](DragonGraph's%20Project%20Utilities/language_server_taskkill_blender_save.bat) | Kills the Blender language server process (`language_server_windows_x64.exe`) so `.blend` save prompts do not hang. Windows only. |
-| [`DragonGraph's Project Utilities/nodepack_zip_generator.py`](DragonGraph's%20Project%20Utilities/nodepack_zip_generator.py) | Packages `DragonGraph's Project/` recursively into a release `.zip` under `Generated Nodepacks/` (or a nightly snapshot under `DragonGraph's Nighty Build/` with `--nightly`), with that folder as the archive root. Run from the repository root. |
-| [`DragonGraph's Project Utilities/temporary_file_cleaner.py`](DragonGraph's%20Project%20Utilities/temporary_file_cleaner.py) | Interactive CLI that lists temporary files (10 per page), shows a preview, then deletes them on confirmation. Cleans `.log`, `.tmp`, `*~`, `*.orig`, `*.rej`, `.blend1`–`.blend9` — only inside the repository (never escapes). Add `--dry-run` to preview without deleting. |
+The [Utilities guide](DragonGraph's%20Project%20Utilities/README.md) covers every tool, the
+`.env` settings they share, and how to build a pack or preview the documentation.
 
 ## Upcoming features
 

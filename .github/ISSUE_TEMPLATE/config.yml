@@ -1,0 +1,8 @@
+# Shows the four templates on the New issue page and hides the blank-issue button.
+#
+# Security reports must not be filed as issues - contact a maintainer instead
+# (Breathfang, TheLycanFenrir; see DragonGraph's Project/Collabs/Collabs.md).
+#
+# Labels must exist under Settings > Issues > Labels, or GitHub ignores them:
+#   bug, documentation, enhancement
+blank_issues_enabled: false

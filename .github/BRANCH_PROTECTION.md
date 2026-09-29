@@ -70,15 +70,15 @@ registered as required yet and the rule is not doing anything.
 
 ## Enabling the nightly build
 
-`build-and-deploy` is additionally gated on
-`NIGHTLY_BUILDS_ENABLED` in `.github/scripts/.env`. To resume builds, set it to
-`true` and commit.
+`build-and-deploy` is additionally gated on `NIGHTLY_BUILDS_ENABLED` in
+`.github/scripts/.env`. Where that key lives and how to flip it is documented in the
+[Utilities guide](../DragonGraph's%20Project%20Utilities/README.md#pausing-nightly-builds).
 
 `gate_check.py` fails the run with exit `1` if that toggle cannot be resolved
 (missing `.env`, missing key, empty value, non-boolean). That is intentional:
 a gate that cannot read its own toggle must not be allowed to guess. An
 explicit `false` is not an error — it skips the deploy and leaves the security
-scan running.
+scan running, so pausing a build never unblocks an unreviewed merge.
 
 ## Emergency bypasses
 

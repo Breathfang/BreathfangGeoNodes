@@ -51,7 +51,7 @@ RELEASE_NAME_TEMPLATE = env_utils.get_str(
 )
 NIGHTLY_NAME_TEMPLATE = env_utils.get_str(
     "NIGHTLY_NAME_TEMPLATE",
-    "Dragongraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip",
+    "DragonGraph's Toolset Pack NightlyBuilds_{hex}_{timestamp}.zip",
 )
 
 DEFAULT_NODE_VERSION = env_utils.get_str("DEFAULT_NODE_VERSION", "v1.1.0-alpha")
@@ -191,7 +191,7 @@ def interactive_build(logger) -> int:
     ensure_entries_exist(entries, logger)
 
     print("")
-    print("Dragongraph's Toolset Pack - ZIP generator")
+    print("DragonGraph's Toolset Pack - ZIP generator")
     print("==========================================")
     print(f"Settings: {env_utils.source_description()}")
     print("What do you want to build?")
