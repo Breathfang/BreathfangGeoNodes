@@ -15,8 +15,10 @@ Two notes worth reading once:
 - **A broken node has no traceback.** Nodes are data, not code, so Blender shows a warning icon on
   the node header and outputs wrong geometry. A screenshot or short video is the most useful thing
   you can attach. A traceback only applies to the add-on, which is Python.
-- **Check your Blender version first.** The pack needs **5.2 LTS or newer**. On an older LTS,
-  `DGraph:` nodes silently vanish when appended, which accounts for a lot of reports. See
+- **Check your Blender version first.** The base pack needs **5.2 LTS or newer**. On an older LTS,
+  `DGraph:` nodes silently vanish when appended, which accounts for a lot of reports. `DGraphExt:`
+  nodes from an extension pack are stricter and work only in the version they target, so mention
+  which pack a node came from. See
   [Minimum Blender version by pack version](README.md#minimum-blender-version-by-pack-version).
 
 Security problems must not be filed as issues &mdash; a public issue stays public even after it is

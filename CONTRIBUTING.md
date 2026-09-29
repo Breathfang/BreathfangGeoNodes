@@ -23,6 +23,12 @@ New here? Check [FAQ.md](FAQ.md) first &mdash; it answers the questions that com
 
 Develop against **Blender 5.2 LTS** unless a section below says otherwise.
 
+The **base asset library** stays on **5.2 LTS** and uses the `DGraph:` prefix. A node that needs a
+newer Blender &mdash; 5.3, 5.4, 5.5, or anything else &mdash; does not go in the base library. It
+belongs in a separate **extension pack** under the `DGraphExt:` prefix, so the base library keeps
+working for everyone still on 5.2 LTS. The full table is in
+[Requirements](README.md#requirements).
+
 ### What you can contribute
 
 The pack is not limited to Geometry Nodes. Every node type below is welcome, and none of them need
@@ -31,11 +37,11 @@ Compositing library never has to share a file with a Geometry Nodes pack.
 
 | Node type | Blender node system | Where it must live |
 | --------- | ------------------- | ------------------- |
-| **Geometry Nodes** | Geometry Nodes | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` |
+| **Geometry Nodes** | Geometry Nodes | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` (or `DGraphExt:` in an extension pack) |
 | **Shading Nodes** | Shader Editor | Its own asset catalog &mdash; see below |
 | **Compositing Nodes** | Compositor Editor | Its own asset catalog &mdash; see below |
-| **Simulation Nodes** | Geometry Nodes (simulation sub-discipline) | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` |
-| **Modifier groups** | Geometry Nodes modifiers | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` |
+| **Simulation Nodes** | Geometry Nodes (simulation sub-discipline) | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` (or `DGraphExt:` in an extension pack) |
+| **Modifier groups** | Geometry Nodes modifiers | Asset catalog `🐲 DragonGraph's Node Pack`, prefix `DGraph:` (or `DGraphExt:` in an extension pack) |
 
 `🐲 DragonGraph's Node Pack` is a **Geometry Nodes** asset library, so Shading and Compositing
 groups must not be dropped into it &mdash; Blender cannot append a Shader or Compositor group from a
@@ -51,7 +57,11 @@ Simulation Nodes are Geometry Nodes under the hood, so they follow the Geometry 
 
 ### Blend file contributions
 
-- Authored in **Blender 5.2 LTS**.
+- Authored in **Blender 5.2 LTS**, using the `DGraph:` prefix.
+- A node that requires a **newer Blender** (5.3, 5.4, 5.5, or other) is not a contribution to the
+  base library. Ship it in its own **extension pack** with the `DGraphExt:` prefix instead, in a
+  separate `.blend`, and say which Blender version it needs. Do not raise the base library's
+  minimum version to accommodate one node.
 - Create a **new** `.blend` file and place it in the `DragonGraph's Project` folder. Do not edit
   the main pack file directly.
 - Follow the node-type rules in [What you can contribute](#what-you-can-contribute) &mdash; in
@@ -63,7 +73,10 @@ Simulation Nodes are Geometry Nodes under the hood, so they follow the Geometry 
 - **Never embed Python scripts in a `.blend` file.** This is a hard rule and it applies to every
   node type, not only Geometry Nodes &mdash; see
   [Can I embed Python scripts inside a .blend file?](FAQ.md#can-i-embed-python-scripts-inside-a-blend-file).
-  Python is fine inside the add-on directory.
+  Python is fine inside the add-on directory. This is enforced automatically on every push and pull
+  request by `blend_scanner.py`, so a found script fails the check rather than being reviewed by
+  hand. Breaking it is the most common cause of
+  [a ban](FAQ.md#why-was-i-banned-from-contributing).
 
 ### Add-on contributions
 
@@ -138,6 +151,11 @@ python .github/scripts/install_hooks.py
 It runs both scanners and aborts the push on a confirmed violation. For a genuine emergency,
 `SKIP_SECURITY_HOOK=1 git push` skips it &mdash; the hook says so loudly, and CI still scans the
 resulting pull request.
+
+The scanner is a backstop, not the policy. Passing it does not make a contribution acceptable; it
+only means the file is not obviously hostile. For the rules that actually govern whether a
+contribution is welcome, including what ends in a ban, see
+[Contributing & Security](FAQ.md#contributing-security).
 
 ### In CI
 

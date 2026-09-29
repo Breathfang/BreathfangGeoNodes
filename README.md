@@ -78,15 +78,25 @@
 | Pack | Minimum Blender | Node prefix |
 | ---- | --------------- | ----------- |
 | Base asset library | 5.2 LTS | `DGraph: Node Name Here` |
+| Extension packs | The version each one targets &mdash; 5.3, 5.4, 5.5, or other | `DGraphExt: Node Name Here` |
 
-Contributors should develop against **Blender 5.2 LTS**. See
-[Minimum version by pack version](#minimum-blender-version-by-pack-version) for the full
-compatibility table, and note the warning below.
+The **base asset library stays on Blender 5.2 LTS**, so it keeps working in the widest possible
+range of installs. A node that genuinely needs a newer Blender cannot live in there, so it ships
+in a separate **extension pack** instead, prefixed `DGraphExt:` rather than `DGraph:`.
+
+That split is what keeps the warning below honest. A user on 5.2 LTS installs only the base pack
+and is never handed a node their Blender cannot load. A user on a newer Blender installs the base
+pack plus whichever extension pack matches their version.
+
+Contributors should develop against **Blender 5.2 LTS** unless the node specifically needs a newer
+version. See [Minimum version by pack version](#minimum-blender-version-by-pack-version) for the
+full compatibility table, and note the warning below.
 
 > [!WARNING]
-> The pack requires **Blender 5.2 LTS or newer**. Newer `DGraph: Node Name Here` nodes do not
+> The base pack requires **Blender 5.2 LTS or newer**. Newer `DGraph: Node Name Here` nodes do not
 > work in older LTS releases such as Blender 4.5 LTS &mdash; Blender may silently drop them when
-> you append them into an older project.
+> you append them into an older project. `DGraphExt:` nodes are stricter still: each one works only
+> in the exact Blender version its extension pack targets.
 
 ### Minimum Blender version by pack version
 
@@ -107,6 +117,10 @@ compatibility table, and note the warning below.
 | v2.5.x-preview | 5.5 LTS |
 | v3.0.x (stable) | 6.2 LTS |
 | and more | ... |
+
+Anything needing a version newer than **5.2 LTS** ships as an extension pack under the
+`DGraphExt:` prefix rather than in the base library, so the base library can stay on 5.2 LTS
+indefinitely. See [Requirements](#requirements).
 
 ## Installation
 
