@@ -45,6 +45,16 @@ the most authoritative path.
 Scan root, limits, the optional Blender executable and the skip list come from
 this folder's ``.env``; run with --show-settings to print what was resolved.
 
+By default only .blend files that CHANGED or were newly ADDED under the scan
+root are opened, diffed against the newest commit on the remote default branch
+(BLEND_SCAN_BASE, or ``--base``, overrides it; ``--full-tree`` scans
+everything). Re-decompressing an untouched multi-hundred-megabyte pack on every
+run is pure cost, and a file that has not changed cannot have gained a payload.
+Untracked .blend files are always included, since that is what a new pack looks
+like before it is committed. If no base can be resolved, or the diff fails, the
+scan falls back to the full tree: an unknown base is treated as "scan
+everything", never as "nothing to scan".
+
 Resilience: a file that cannot be read or decoded is a technical fault, not a
 policy violation. It is reported as ``[WARNING]`` and skipped so one corrupt or
 half-written .blend cannot block a push or a CI run. A .blend whose *structure*
@@ -85,6 +95,14 @@ from functions import env_utils, path_utils, scan_utils  # noqa: E402
 
 DEFAULT_ROOT = env_utils.get_str("BLEND_SCAN_ROOT", "DragonGraph's Project")
 EMPTY_TREE = scan_utils.EMPTY_TREE
+
+# Optional explicit diff base. Empty (the default) means "auto": use the newest
+# published commit, resolved by scan_utils.resolve_scan_base.
+SCAN_BASE = env_utils.get_str("BLEND_SCAN_BASE", "")
+
+# Escape hatch equivalent to --full-tree: re-verify every .blend under the root
+# even when nothing changed. Off by default.
+SCAN_FULL_TREE = env_utils.get_bool("BLEND_SCAN_FULL_TREE", False)
 
 MAX_OUTPUT = env_utils.get_int("BLEND_MAX_OUTPUT_BYTES", 2 << 30)  # 2 GiB anti zip-bomb
 MAX_BLOCKS = env_utils.get_int("BLEND_MAX_BLOCKS", 2_000_000)
@@ -701,11 +719,24 @@ sys.stdout.flush()
 def changed_blend_files(
     repo: Path, base: str, root: Path
 ) -> list[str]:
-    """Files (repo-root-relative) that changed on .blend within root."""
+    """Files (repo-root-relative) that changed on .blend within root.
+
+    ``git diff`` only knows about tracked files, so a .blend that exists on disk
+    but is not yet tracked would be invisible to it. That is precisely the case
+    a new pack is added in, so untracked .blend files are unioned in: a file is
+    scanned when it is either changed since ``base`` or not tracked at all.
+
+    Returns None when the diff could not be computed, which the caller treats
+    as "scan the whole tree" so a git failure can never pass as clean.
+    """
     names = scan_utils.git_diff_names(repo, base, str(root))
     if names is None:
-        return all_blend_files(repo, root)
-    return [name for name in names if Path(name).suffix.lower() == ".blend"]
+        return None
+    out = {name for name in names if Path(name).suffix.lower() == ".blend"}
+    for name in scan_utils.git_untracked_names(repo, str(root)):
+        if Path(name).suffix.lower() == ".blend":
+            out.add(name)
+    return sorted(out)
 
 
 def all_blend_files(repo: Path, root: Path) -> list[str]:
@@ -791,8 +822,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--base",
         default=None,
-        help="Base commit to diff against (git diff --name-only BASE HEAD). "
-        "Defaults to a full-tree scan.",
+        help="Base commit to diff against (git diff --name-only BASE). "
+        "Defaults to BLEND_SCAN_BASE, then to the newest commit on the remote "
+        "default branch, so only .blend files changed or newly added under the "
+        "scan root are inspected.",
+    )
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="Scan every .blend under the scan root instead of only what "
+        "changed. Use when you want to re-verify a file that has not changed "
+        "since it was last scanned.",
     )
     parser.add_argument(
         "--root",
@@ -825,6 +865,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.show_settings:
         print(f"Settings: {env_utils.source_description()}")
         print(f"  BLEND_SCAN_ROOT = {DEFAULT_ROOT!r}")
+        print(f"  BLEND_SCAN_BASE = {SCAN_BASE or 'auto (newest published commit)'}")
+        print(f"  BLEND_SCAN_FULL_TREE = {SCAN_FULL_TREE}")
         print(f"  BLENDER_BINARY = {BLENDER_BINARY or 'unset'}")
         print(f"  BLEND_MAX_OUTPUT_BYTES = {MAX_OUTPUT}")
         print(f"  BLEND_MAX_BLOCKS = {MAX_BLOCKS}")
@@ -846,17 +888,46 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[blend-scanner] scan root does not exist: {root}", file=sys.stderr)
         return 2
 
-    if args.base:
-        files = changed_blend_files(repo, args.base, root)
-        if not args.quiet:
-            print(f"[blend-scanner] {len(files)} changed .blend file(s) by git diff")
-    else:
+    # Only .blend files that actually changed (or were newly added) under the
+    # scan root are opened. A pack that has not been touched does not need to be
+    # decompressed and re-verified on every run. The base defaults to the newest
+    # published commit so that everything not yet published is covered; when no
+    # such commit can be resolved, this falls back to the full tree rather than
+    # scanning nothing, so an unknown base is never mistaken for "no changes".
+    if args.full_tree or SCAN_FULL_TREE:
         files = all_blend_files(repo, root)
         if not args.quiet:
             print(f"[blend-scanner] full-tree scan: {len(files)} .blend file(s)")
+    else:
+        base = args.base or SCAN_BASE or scan_utils.resolve_scan_base(repo)
+        if base is None:
+            files = all_blend_files(repo, root)
+            if not args.quiet:
+                print(
+                    "[blend-scanner] no base commit to diff against "
+                    "(no remote default branch found); scanning the full tree"
+                )
+        else:
+            files = changed_blend_files(repo, base, root)
+            if files is None:
+                # The diff itself failed. Scan everything: a git failure must
+                # never narrow the scan into a silent pass.
+                files = all_blend_files(repo, root)
+                if not args.quiet:
+                    print(
+                        f"[blend-scanner] could not diff against {base[:12]}; "
+                        "scanning the full tree"
+                    )
+            elif not args.quiet:
+                print(
+                    f"[blend-scanner] scanning {len(files)} .blend file(s) "
+                    f"changed or added since {base[:12]}"
+                )
 
     if not files:
-        print("[blend-scanner] no .blend files to scan")
+        print(
+            f"[blend-scanner] no .blend files changed or added under {root.name}"
+        )
         return 0
 
     all_findings: list[dict] = []

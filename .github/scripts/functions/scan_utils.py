@@ -96,6 +96,39 @@ def git_untracked_names(repo: Path, path_filter: str | None = None) -> list[str]
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
+def rev_parse(repo: Path, rev: str) -> str | None:
+    """Resolve ``rev`` to a commit SHA, or None when it does not exist."""
+    result = run_git(repo, ["rev-parse", "--verify", "--quiet", f"{rev}^{{commit}}"])
+    if result is None or result.returncode != 0:
+        return None
+    sha = result.stdout.strip()
+    return sha or None
+
+
+def resolve_scan_base(repo: Path) -> str | None:
+    """Pick the commit a change-only scan should diff against.
+
+    A change-only scan is only as trustworthy as its base: diff against
+    something too recent and a payload committed earlier is never re-checked.
+    The base is therefore the newest commit reachable from the repository's
+    remote-tracking default branch, i.e. the newest work that has already been
+    published, so everything not yet published is what gets scanned.
+
+    Returns None when no published commit can be found (a fresh clone with no
+    remote, or a detached CI checkout). Callers must treat None as "scan
+    everything" rather than "scan nothing", so a missing base degrades to the
+    slower, stricter full-tree scan instead of silently passing.
+    """
+    # Ordered by trustworthiness. A remote-tracking ref is published work, so it
+    # is preferred; the local default branch is a weaker fallback that is still
+    # real history rather than a guess.
+    for candidate in ("@{upstream}", "origin/HEAD", "origin/main", "origin/master"):
+        sha = rev_parse(repo, candidate)
+        if sha is not None:
+            return sha
+    return None
+
+
 def is_skipped(rel_parts: tuple[str, ...], skip_dirs: tuple[str, ...]) -> bool:
     """True when any path part is a skip directory."""
     return any(part in skip_dirs for part in rel_parts)

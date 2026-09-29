@@ -50,6 +50,12 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+        with:
+          # The .blend scanner only opens packs that changed or were added
+          # since a base commit, so it needs real history to resolve one.
+          # A shallow checkout cannot tell "nothing changed" from "I cannot
+          # see the past", and would fall back to a full scan on every run.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -92,11 +98,31 @@ jobs:
 
       # Step 2: .blend scanner. Policy from CONTRIBUTING.md: no Python embedded
       # in .blend files, because the pack ships the .blend itself.
+      #
+      # Only packs that changed or were added since BASE are opened. BASE is the
+      # commit the branch was at before this event, taken from the event payload
+      # rather than from the remote default branch: on a push to main the remote
+      # default branch IS the pushed commit, so diffing against it would report
+      # no changes and scan nothing. For a pull_request, base.sha is the tip of
+      # the target branch, which covers exactly the commits being proposed.
+      #
+      # On a first push, `before` is all zeros and the diff cannot be computed;
+      # the scanner then falls back to a full-tree scan rather than passing.
       - name: Scan .blend files for embedded Python
+        env:
+          SCAN_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: |
-          python .github/scripts/blend_scanner.py \
-            --repo "$GITHUB_WORKSPACE" \
-            --root "DragonGraph's Project"
+          if [ -n "${SCAN_BASE}" ]; then
+            python .github/scripts/blend_scanner.py \
+              --repo "$GITHUB_WORKSPACE" \
+              --root "DragonGraph's Project" \
+              --base "$SCAN_BASE"
+          else
+            python .github/scripts/blend_scanner.py \
+              --repo "$GITHUB_WORKSPACE" \
+              --root "DragonGraph's Project" \
+              --full-tree
+          fi
 
       - name: Summarise scan result
         if: always()
