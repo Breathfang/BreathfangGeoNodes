@@ -15,7 +15,7 @@
     <img alt="160+-nodes" src="https://img.shields.io/badge/160+-nodes-orange">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/commits/main/">
-    <img alt="110+-commits" src="https://img.shields.io/badge/110+-commits-brown">
+    <img alt="120+-commits" src="https://img.shields.io/badge/120+-commits-brown">
   </a>
   <a href="https://github.com/Breathfang/BreathfangGeoNodes/stargazers">
     <img alt="10+-stars" src="https://img.shields.io/badge/10+-stars-gold">
