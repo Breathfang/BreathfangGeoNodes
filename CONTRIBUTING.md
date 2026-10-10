@@ -181,7 +181,7 @@ in [Why isn't my node merged yet?](FAQ.md#why-isnt-my-node-merged-after-an-updat
 | Path | Contents |
 | ---- | -------- |
 | `DragonGraph's Project/` | Source `.blend` files and the readme. This is where new `.blend` contributions go. |
-| `blend_addon_src/` | Add-on source. Not tracked by Git. |
+| `DragonGraph's Blender Addon/` | Add-on source. Not tracked by Git. `assets/extracted/` holds whatever the installed loader unpacked for whoever is running it, and is ignored. |
 | `docs/` | Sphinx documentation sources. |
 | `Generated Nodepacks/` | Release `.zip` output. Not tracked by Git. |
 | `Icon and Logo Designs/` | Icon and logo source artwork. |

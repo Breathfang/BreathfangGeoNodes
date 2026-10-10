@@ -13,7 +13,7 @@ Both tooling folders keep **exactly one** `.env`, sitting next to the scripts th
 
 ```text
 DragonGraph's Project Utilities/
-  .env                 <- read by the three .py tools below
+  .env                 <- read by the four .py tools below
   functions/           <- shared Python modules only, no .env
 .github/scripts/
   .env                 <- read by the four CI .py scripts
@@ -45,6 +45,7 @@ Inspect what a script actually resolved:
 
 ```text
 python nodepack_zip_generator.py --show-settings
+python nodepack_addon_generator.py --show-settings
 python temporary_file_cleaner.py --list
 python .github/scripts/nightly_builder.py --show-settings
 ```
@@ -55,6 +56,12 @@ python .github/scripts/nightly_builder.py --show-settings
 | `SOURCE_DIR` | `DragonGraph's Project` | zip generator, nightly builder, scanners |
 | `RELEASE_OUTPUT_DIR` | `Generated Nodepacks` | zip generator |
 | `NIGHTLY_OUTPUT_DIR` | `DragonGraph's Nighty Build` | zip generator, nightly builder, cleaner |
+| `ADDON_SOURCE_DIR` | `DragonGraph's Blender Addon` | add-on generator |
+| `ADDON_RELEASE_OUTPUT_DIR` | `Generated Addons` | add-on generator |
+| `ADDON_ZIP_NAME_TEMPLATE` | `DragonGraph's Toolset Pack Addon {addon_version}` | add-on generator |
+| `ADDON_ZIP_LAYOUT` | `extension` | add-on generator |
+| `ADDON_VERSION` | *(empty)* | add-on generator |
+| `ADDON_ZIP_EXCLUDED_SUFFIXES` | `.log,.tmp,~,.orig,.rej,.pyc,.pyo,.blend1-9` | add-on generator |
 | `LOG_MAX_BYTES` / `LOG_BACKUP_COUNT` | `1000000` / `5` | zip generator, autosetup |
 | `PAUSE_PROMPT` | `Press enter to exit...` | the interactive tools |
 | `ZIP_COMPRESSION_LEVEL` | `9` | zip generator, nightly builder |
@@ -90,7 +97,8 @@ the key is missing or malformed.
 | [`language_server_taskkill_blender_save.bat`](language_server_taskkill_blender_save.bat) | Kills the Blender language server process (`language_server_windows_x64.exe`) so `.blend` save prompts stop hanging. Windows only. |
 | [`nodepack_zip_generator.py`](nodepack_zip_generator.py) | Packages `DragonGraph's Project/` into a release `.zip` under `Generated Nodepacks/`, or a nightly snapshot under `DragonGraph's Nighty Build/` (`--nightly`). Runs interactively or via `--` options. |
 | [`temporary_file_cleaner.py`](temporary_file_cleaner.py) | Interactive CLI that finds temporary files inside the repository, lists them a page at a time (10 each), shows a preview, then deletes them on explicit confirmation. |
-| [`functions/`](functions) | Shared Python modules the three tools above import. Code only, no `.env`. |
+| [`nodepack_addon_generator.py`](nodepack_addon_generator.py) | Packages `DragonGraph's Blender Addon/` into an installable add-on `.zip` under `Generated Addons/`. You type the zip name. |
+| [`functions/`](functions) | Shared Python modules the four tools above import. Code only, no `.env`. |
 
 ## Install the documentation toolchain
 
@@ -154,6 +162,46 @@ python nodepack_zip_generator.py --node-version v1.3.0-beta --output-dir Generat
 **What goes inside:** the full contents of `DragonGraph's Project/`, with that folder as the
 archive root (original names, original subpaths, every file type). Only these suffixes are
 excluded: `.md`, `.log`, `.tmp`, `~`, `.orig`, `.rej`, and Blender autosaves `.blend1`-`.blend9`.
+
+## Build the add-on .zip
+
+This one packages the add-on rather than the node pack, and **you type the zip name**:
+
+```text
+python nodepack_addon_generator.py
+```
+
+It prints the add-on's version (read from `blender_manifest.toml` and cross-checked against `bl_info`
+in `__init__.py`), then asks for the zip name, the layout and the output directory, lists exactly what
+will go in, and waits for `Y`. The `.zip` suffix is added for you, and the name gets sanitised: path
+components are dropped, characters Windows forbids are replaced, and a name that doesn't contain the
+version is flagged as a warning (not an error) so a nightly build can be named freely.
+
+The same build runs non-interactively:
+
+```text
+python nodepack_addon_generator.py --zip-name "DragonGraph's Toolset Pack Addon 1.0.0"
+python nodepack_addon_generator.py --dry-run
+```
+
+- `--zip-name` &mdash; the archive name; when omitted, `ADDON_ZIP_NAME_TEMPLATE` is filled in with the manifest version.
+- `--layout` &mdash; `extension` (default) puts `blender_manifest.toml` at the archive root, which is what
+  **Edit &gt; Preferences &gt; Get Extensions &gt; (dropdown) &gt; Install from Disk** wants. `legacy` wraps everything
+  in one folder named after the manifest `id`, for the older install path.
+- `--output-dir` &mdash; override the destination; relative paths resolve under the repo root.
+- `--dry-run` &mdash; validate and list, write nothing.
+
+**What goes inside:** the whole of `DragonGraph's Blender Addon/`, minus `__pycache__`, `.pyc`, logs,
+editor backups and `.blend1`-`.blend9`. Unlike the node-pack policy this **keeps** `.md`, because
+`assets/README.md` and `library/README.md` tell whoever installs it what to put in each folder.
+It also skips any `extracted/` folder: that is where the installed loader unpacks a manually loaded
+`.zip`, so its contents are the user's node packs, not add-on source, and must never be republished
+inside a release.
+
+The archive is written to a `.part` file and moved into place only after it closes cleanly, then
+re-opened and checked, so an interrupted run never leaves a `.zip` that installs as a broken add-on.
+A version that disagrees between the manifest, `bl_info` and `.env` is reported as a warning; a missing
+`__init__.py`, missing manifest or a wrong layout is a hard failure *before* anything is written.
 
 ## Clean temporary files
 

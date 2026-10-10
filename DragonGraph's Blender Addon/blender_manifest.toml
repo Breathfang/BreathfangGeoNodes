@@ -1,0 +1,19 @@
+schema_version = "1.0.0"
+id = "breathfang_gn_toolset_pack"
+version = "1.0.0"
+name = "DragonGraph's Toolset Pack Loader"
+tagline = "Loads DragonGraph's Toolset Pack into Blender's Asset Browser"
+maintainer = "Breathfang <https://github.com/Breathfang/>"
+type = "add-on"
+website = "https://github.com/Breathfang/BreathfangGeoNodes"
+tags = ["Geometry Nodes"]
+blender_version_min = "5.2.0"
+license = ["SPDX:GPL-3.0-or-later"]
+
+# NOTE: `category` and `support` are NOT valid manifest keys in schema 1.0.0
+# (the schema is additionalProperties: false, so they hard-fail validation).
+# The add-on's own Blender category lives in bl_info["category"], and the
+# Asset Browser / panel placement is set in Python.
+
+[permissions]
+network = "Needed by the update check and pack redownload"

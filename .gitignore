@@ -15,13 +15,8 @@ env/
 *.log
 *.tmp
 Generated Nodepacks/
+Generated Addons/
 docs/_build/
-
-# ---------------------------------------------------------------------------
-# Local-only sources
-# ---------------------------------------------------------------------------
-# Not tracked
-blend_addon_src/
 
 # ---------------------------------------------------------------------------
 # Blender
@@ -58,4 +53,9 @@ desktop.ini
 # ---------------------------------------------------------------------------
 # Not tracked; work in progress that is not part of a release
 .unused
+
+# Where the installed loader unpacks a manually loaded pack .zip. This is the
+# user's own node content, not add-on source, so it must never be committed or
+# republished inside a release zip.
+DragonGraph's Blender Addon/assets/extracted/
 
